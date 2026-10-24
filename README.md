@@ -33,6 +33,10 @@ The following features are planned for the application:
 | E2E Testing | Playwright |
 | Deployment | Vercel |
 
+## Recommended VS Code Extensions
+
+- **Better Comments** (optional) — Provides syntax highlighting for comment annotations such as `*`, `!`, `?`, and `TODO`, improving code readability.
+
 ## Getting Started
 
 ### Prerequisites
