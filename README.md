@@ -35,7 +35,45 @@ The following features are planned for the application:
 
 ## Getting Started
 
-Setup and installation instructions will be added once the development environment is configured.
+### Prerequisites
+
+Ensure the following are installed:
+
+- Node.js (a version supported by the project)
+- pnpm
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/dreyyan/scho.git
+   cd scho
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   pnpm install
+   ```
+
+3. Start the development server:
+
+   ```bash
+   pnpm dev
+   ```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### Available Scripts
+
+| Command | Description |
+| --- | --- |
+| `pnpm dev` | Start the development server |
+| `pnpm build` | Create a production build |
+| `pnpm start` | Start the production server after building |
+| `pnpm lint` | Run ESLint |
+| `pnpm exec tsc --noEmit` | Check TypeScript types without generating files |
 
 ## Project Status
 
