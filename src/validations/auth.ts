@@ -8,6 +8,10 @@ const registerSchema = z.object({
   .regex(/[a-z]/, "Password must contain at least one lowercase letter")
   .regex(/[^A-Za-z0-9]/, "Password must contain at least one symbol")
   ,
+  confirmPassword: z.string(),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
 const loginSchema = z.object({
