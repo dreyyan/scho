@@ -25,8 +25,8 @@ export async function POST(request: Request) {
     // Return field-specific validation errors.
     return NextResponse.json(
       {
-        "error": "Invalid registration data",
-        "details": z.flattenError(result.error).fieldErrors,
+        error: "Invalid registration data",
+        details: z.flattenError(result.error).fieldErrors,
       },
       { status: 400 },
     );
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       err.code === "P2002"
     ) {
       return NextResponse.json(
-        { "error": "Email is already registered" },
+        { error: "Email is already registered" },
         { status: 409 },
       );
     }
