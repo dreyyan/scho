@@ -9,6 +9,8 @@ interface InputFieldProps {
   type: "text" | "email" | "password";
   placeholder?: string;
   "aria-describedby"?: string;
+  value: string;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
 };
 
 export default function InputField({
@@ -18,6 +20,8 @@ export default function InputField({
   type,
   placeholder,
   "aria-describedby": describedBy,
+  value,
+  onChange,
 }: InputFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -38,6 +42,8 @@ export default function InputField({
           type={isPassword && showPassword ? "text" : type}
           placeholder={placeholder}
           aria-describedby={describedBy}
+          value={value}
+          onChange={onChange}
           className='
             px-3 py-2 w-full rounded border border-gray-300
             text-sm
