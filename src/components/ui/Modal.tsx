@@ -50,8 +50,8 @@ export default function Modal({
     <dialog
       ref={dialogRef}
       onClose={onClose}
-      aria-labelledby='modal-title'
-      aria-describedby='modal-description'
+      aria-labelledby={titleId}
+      aria-describedby={descriptionId}
       className=''
     >
       {/* Variant indicator */}
