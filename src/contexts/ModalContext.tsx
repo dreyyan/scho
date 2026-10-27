@@ -10,6 +10,11 @@ import Modal from "@/components/ui/Modal";
 import type { ModalOptions } from "@/types/modal";
 
 export interface ModalContextType {
+  /**
+   * Opens the global modal with the specified configuration.
+   * 
+   * @param options - The modal configuration.
+   */
   openModal: (options: ModalOptions) => void;
   closeModal: () => void;
 }
