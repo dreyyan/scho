@@ -2,24 +2,7 @@
 
 import React, { useEffect, useRef, useId } from 'react'
 import { X } from 'lucide-react';
-
-type ModalVariant = "success" | "error" | "confirm";
-
-interface ModalProps {
-  isOpen: boolean;
-  variant: ModalVariant;
-  title: string;
-  description: string;
-  primaryAction: {
-    label: string;
-    onClick: () => void;
-  },
-  secondaryAction?: {
-    label: string;
-    onClick: () => void;
-  },
-  onClose: () => void;
-}
+import type { ModalProps } from '@/types/modal';
 
 export default function Modal({
   isOpen,

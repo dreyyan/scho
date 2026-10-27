@@ -1,21 +1,19 @@
-import { useState } from 'react'
+"use client";
+
+import { useContext } from "react";
+import { ModalContext } from "@/contexts/ModalContext";
 
 /**
- * Manages the open and closed state of a modal.
+ * Provides access to the global modal context.
  * 
- * @returns The modal state and methods to open, close, and toggle modal. 
+ * @returns Methods to open and close the global modal.
  */
 export default function useModal() {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const context = useContext(ModalContext);
 
-  const openModal = () => { setIsOpen(true); }
-  const closeModal = () => { setIsOpen(false); };
-  const toggleModal = () => { setIsOpen((prev) => !prev); }
+  if (!context) {
+    throw new Error("useModal must be used within a ModalProvider");
+  }
 
-  return {
-    isOpen,
-    openModal,
-    closeModal,
-    toggleModal,
-  };
+  return context;
 }
