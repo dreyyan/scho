@@ -42,10 +42,10 @@ export default function Modal({
       '
     >
       {/* Variant indicator */}
-      <div className={`h-2
-        ${variant === "success" ? "bg-green-600" :
-          variant === "error" ? "bg-red-600" :
-          variant === "confirm" ? "bg-blue-600" :
+      <div className={`h-2 bg-linear-to-t ${
+          variant === "success" ? "from-green-500 to-green-700" :
+          variant === "error" ? "from-red-500 to-red-700" :
+          variant === "confirm" ? "from-blue-500 to-blue-700" :
           ""
         }
       `}/>
@@ -53,7 +53,7 @@ export default function Modal({
       <div className='px-4 pt-2 pb-4'>
         <div className='flex justify-between'>
           {/* Header */}
-          <h2 id={titleId} className='font-bold'>
+          <h2 id={titleId} className='font-bold text-gray-700'>
             {title}
           </h2>
           <button
@@ -95,9 +95,10 @@ export default function Modal({
             type='button'
             onClick={primaryAction.onClick}
             className={`
-              ${variant === "success" ? "bg-green-600 hover:bg-green-700" :
-                variant === "error" ? "bg-red-600 hover:bg-red-700" :
-                variant === "confirm" ? "bg-blue-600 hover:bg-blue-700" :
+                bg-linear-to-br ${
+                variant === "success" ? "from-green-600 to-green-700 hover:from-green-700 hover:to-green-800" :
+                variant === "error" ? "from-red-600 to-red-700 hover:from-red-700 hover:to-red-800" :
+                variant === "confirm" ? "from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" :
                 ""
               }
               text-white text-sm font-bold
