@@ -36,7 +36,7 @@ export default function Modal({
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       className='
-      m-auto w-full max-w-md
+      m-auto w-sm max-w-md
       rounded-lg
       shadow-xl
       '
@@ -53,9 +53,9 @@ export default function Modal({
       <div className='px-4 pt-2 pb-4'>
         <div className='flex justify-between'>
           {/* Header */}
-          <h2 id={titleId} className='font-bold text-gray-700'>
+          <h3 id={titleId} className='font-bold text-gray-700'>
             {title}
-          </h2>
+          </h3>
           <button
             type='button'
             onClick={onClose}
@@ -71,7 +71,7 @@ export default function Modal({
         </div>
 
         {/* Description */}
-        <p id={descriptionId} className='text-md text-gray-600'>
+        <p id={descriptionId} className='text-sm text-gray-600'>
           {description}
         </p>
 
