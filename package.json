@@ -9,6 +9,8 @@
     "lint": "eslint",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "db:test": "tsx --env-file=.env scripts/db/test-connection.ts"
   },
   "dependencies": {
