@@ -41,17 +41,26 @@ export default function Register() {
       const data = await res.json();
 
       if (!res.ok) {
+        const details = data.details as Record<string, string[]> | undefined;
+
+        const firstError = details
+          ? Object.values(details).flat().find(Boolean)
+          : undefined;
+
         openModal({
           variant: "error",
           title: "Registration Failed",
-          description: data.error || "An unexpected error occured, please try again.",
+          description:
+            firstError ??
+            data.error ??
+            "An unexpected error occurred. Please try again.",
           primaryAction: {
             label: "Try again",
             onClick: closeModal,
           },
         });
 
-        throw new Error(data.error || "Registration failed.");
+        return;
       }
 
       openModal({
