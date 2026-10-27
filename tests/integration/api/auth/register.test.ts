@@ -26,7 +26,7 @@ describe("POST /api/auth/register", () => {
       const result = await response.json();
 
       expect(response.status).toBe(201);
-      expect(result.message).toBe("User registered successfully");
+      expect(result.message).toBe("User registered successfully.");
     } finally {
       await prisma.user.deleteMany({
         where: { email: validRegistrationData.email },
@@ -47,7 +47,7 @@ describe("POST /api/auth/register", () => {
     const result = await response.json();
 
     expect(response.status).toBe(400);
-    expect(result.error).toBe("Malformed JSON request body");
+    expect(result.error).toBe("Malformed JSON request body.");
   });
 
   it.each([
@@ -67,7 +67,7 @@ describe("POST /api/auth/register", () => {
     const result = await response.json();
 
     expect(response.status).toBe(400);
-    expect(result.error).toBe("Invalid registration data");
+    expect(result.error).toBe("Invalid registration data.");
   });
 
   it("rejects already registered email", async () => {
@@ -96,7 +96,7 @@ describe("POST /api/auth/register", () => {
       const result = await response.json();
 
       expect(response.status).toBe(409);
-      expect(result.error).toBe("Email is already registered");
+      expect(result.error).toBe("Email is already registered.");
     } finally {
       await prisma.user.delete({
         where: { id: existingUser.id },

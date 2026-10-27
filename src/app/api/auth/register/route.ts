@@ -13,7 +13,7 @@ export async function POST(request: Request) {
     body = await request.json();
   } catch {
     return NextResponse.json(
-      { error: "Malformed JSON request body" },
+      { error: "Malformed JSON request body." },
       { status: 400 },
     );
   }
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     // Return field-specific validation errors.
     return NextResponse.json(
       {
-        error: "Invalid registration data",
+        error: "Invalid registration data.",
         details: z.flattenError(result.error).fieldErrors,
       },
       { status: 400 },
@@ -53,7 +53,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { 
-        message: "User registered successfully",
+        message: "User registered successfully.",
         data: { user },
       },
       { status: 201 },
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       err.code === "P2002"
     ) {
       return NextResponse.json(
-        { error: "Email is already registered" },
+        { error: "Email is already registered." },
         { status: 409 },
       );
     }
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     logger.error("Registration failed: ", err);
 
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: "Internal server error." },
       { status: 500 },
     );
   }
