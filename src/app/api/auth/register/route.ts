@@ -1,10 +1,12 @@
 import z from "zod";
 import * as argon2 from "argon2";
 import { NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
-import { registerSchema } from "@/validations/auth";
+
 import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
+
 import { Prisma } from "@/generated/prisma/client";
+import { registerSchema } from "@/validations/auth";
 
 export async function POST(request: Request) {
   let body: unknown;
