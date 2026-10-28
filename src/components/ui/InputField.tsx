@@ -12,6 +12,7 @@ interface InputFieldProps {
   value: string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   required: boolean;
+  error?: string;
 };
 
 export default function InputField({
@@ -24,6 +25,7 @@ export default function InputField({
   value,
   onChange,
   required,
+  error,
 }: InputFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -75,7 +77,13 @@ export default function InputField({
             { showPassword ? (<EyeOff size={16}/>) : (<Eye size={16}/>) }
           </button>
         )}
+        
       </div>
+      {error && (
+        <p id={`${id}-error`} className="mt-1 text-xs text-red-600">
+          {error}
+        </p>
+      )}
     </div>
   )
 }
