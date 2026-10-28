@@ -7,6 +7,7 @@ import InputField from '@/components/ui/InputField'
 import Button from '@/components/ui/Button'
 import Logo from '@/components/ui/Logo';
 import useModal from '@/hooks/useModal';
+import useIsHydrated from '@/hooks/useIsHydrated';
 
 type RegisterFormData = z.input<typeof registerSchema>;
 
@@ -17,6 +18,7 @@ export default function Register() {
     password: "",
     confirmPassword: "",
   });
+  const isHydrated = useIsHydrated();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -95,54 +97,59 @@ export default function Register() {
         rounded-lg
         shadow-md
       '>
-        <form onSubmit={handleRegister} className='space-y-3'>
-          <header className='mb-4'>
-            <Logo />
-            <h1 className='text-gray-700'>Sign up</h1>
-          </header>
+        <form data-hydrated={isHydrated} onSubmit={handleRegister} className='space-y-3'>
+          <fieldset disabled={!isHydrated}>
+            <header className='mb-4'>
+              <Logo />
+              <h1 className='text-gray-700'>Sign up</h1>
+            </header>
 
-          <hr className='text-gray-500 mb-6' />
+            <hr className='text-gray-500 mb-6' />
 
-          <InputField
-            id='email'
-            name='email'
-            label='Email'
-            type='email'
-            placeholder='example@domain.com'
-            value={registerForm.email}
-            onChange={handleChange}
-          />
-
-          {/* Password input field with requirements. */}
-          <div className='space-y-1'>
             <InputField
-              id='password'
-              name='password'
-              label='Password'
+              id='email'
+              name='email'
+              label='Email'
+              type='email'
+              placeholder='example@domain.com'
+              value={registerForm.email}
+              onChange={handleChange}
+              required
+            />
+
+            {/* Password input field with requirements. */}
+            <div className='space-y-1'>
+              <InputField
+                id='password'
+                name='password'
+                label='Password'
+                type='password'
+                placeholder='********'
+                value={registerForm.password}
+                onChange={handleChange}
+                required
+              />
+              <p id='password-requirements' className='text-xs text-gray-500'>
+                At least 8 characters, including uppercase, lowercase, and a symbol.
+              </p>
+            </div>
+
+            <InputField
+              id='confirm-password'
+              name='confirmPassword'
+              label='Confirm Password'
               type='password'
               placeholder='********'
-              value={registerForm.password}
+              aria-describedby="password-requirements"
+              value={registerForm.confirmPassword}
               onChange={handleChange}
+              required
             />
-            <p className='text-xs text-gray-500'>
-              At least 8 characters, including uppercase, lowercase, and a symbol.
-            </p>
-          </div>
-
-          <InputField
-            id='confirm-password'
-            name='confirmPassword'
-            label='Confirm Password'
-            type='password'
-            placeholder='********'
-            aria-describedby="password-requirements"
-            value={registerForm.confirmPassword}
-            onChange={handleChange}
-          />
-          
-          <div className='pt-2'>
-            <Button label='Create Account' variant='primary' type="submit" />
-          </div>
+            
+            <div className='pt-2'>
+              <Button label='Create Account' variant='primary' type="submit" />
+            </div>
+          </fieldset>
         </form>
       </section>
     </div>
