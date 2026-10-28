@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { POST } from "@/app/api/auth/register/route";
+import { prisma } from "@/lib/prisma";
+
 import { malformedJSON } from "../../../fixtures/common";
 import { invalidAuthData, validRegistrationData } from "../../../fixtures/auth";
-import { prisma } from "@/lib/prisma";
+
+import { POST } from "@/app/api/auth/register/route";
 
 const PORT = process.env.PORT ?? "3001";
 
