@@ -1,4 +1,4 @@
-import { defineConfig } from "vitest/config";
+import { configDefaults, defineConfig } from "vitest/config";
 import { fileURLToPath, URL } from "node:url";
 import { config } from "dotenv";
 
@@ -21,5 +21,9 @@ export default defineConfig({
     env: {
       TEST_DATABASE_URL: process.env.TEST_DATABASE_URL,
     },
+    exclude: [
+      ...configDefaults.exclude,
+      "tests/e2e/**",
+    ],
   },
 });
