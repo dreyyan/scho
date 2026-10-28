@@ -13,19 +13,27 @@ type RegisterFormData = z.input<typeof registerSchema>;
 
 export default function Register() {
   const { openModal, closeModal } = useModal();
+  const isHydrated = useIsHydrated();
   const [registerForm, setRegisterForm] = useState<RegisterFormData>({
     email: "",
     password: "",
     confirmPassword: "",
   });
-  const isHydrated = useIsHydrated();
+  const [errors, setErrors] = useState<Partial<Record<keyof RegisterFormData, string>>>({});
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
+    const field = name as keyof RegisterFormData;
 
     setRegisterForm((prev) => (
       { ...prev, [name]: value, }
     ));
+
+    // Clear errors when the user edits a field.
+    setErrors((prev) => ({
+      ...prev,
+      [field]: undefined,
+    }));
   };
 
   const handleRegister = async (event: React.SubmitEvent<HTMLFormElement>) => {
@@ -43,17 +51,24 @@ export default function Register() {
       const data = await res.json();
 
       if (!res.ok) {
-        const details = data.details as Record<string, string[]> | undefined;
+        const details = data.details as
+          | Record<string, string[]>
+          | undefined;
 
-        const firstError = details
-          ? Object.values(details).flat().find(Boolean)
-          : undefined;
+        if (details) {
+          setErrors({
+            email: details.email?.[0],
+            password: details.password?.[0],
+            confirmPassword: details.confirmPassword?.[0],
+          });
+
+          return;
+        }
 
         openModal({
           variant: "error",
           title: "Registration Failed",
           description:
-            firstError ??
             data.error ??
             "An unexpected error occurred. Please try again.",
           primaryAction: {
@@ -97,7 +112,7 @@ export default function Register() {
         rounded-lg
         shadow-md
       '>
-        <form data-hydrated={isHydrated} onSubmit={handleRegister} className='space-y-3'>
+        <form noValidate data-hydrated={isHydrated} onSubmit={handleRegister} className='space-y-3'>
           <fieldset disabled={!isHydrated}>
             <header className='mb-4'>
               <Logo />
@@ -115,6 +130,7 @@ export default function Register() {
               value={registerForm.email}
               onChange={handleChange}
               required
+              error={errors.email}
             />
 
             {/* Password input field with requirements. */}
@@ -128,8 +144,9 @@ export default function Register() {
                 value={registerForm.password}
                 onChange={handleChange}
                 required
+              error={errors.password}
               />
-              <p id='password-requirements' className='text-xs text-gray-500'>
+              <p id='password-requirements' className='text-xs font-semibold text-gray-400'>
                 At least 8 characters, including uppercase, lowercase, and a symbol.
               </p>
             </div>
@@ -144,6 +161,7 @@ export default function Register() {
               value={registerForm.confirmPassword}
               onChange={handleChange}
               required
+              error={errors.confirmPassword}
             />
             
             <div className='pt-2'>
