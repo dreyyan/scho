@@ -11,6 +11,7 @@ interface InputFieldProps {
   "aria-describedby"?: string;
   value: string;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
+  required: boolean;
 };
 
 export default function InputField({
@@ -22,6 +23,7 @@ export default function InputField({
   "aria-describedby": describedBy,
   value,
   onChange,
+  required,
 }: InputFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -44,6 +46,7 @@ export default function InputField({
           aria-describedby={describedBy}
           value={value}
           onChange={onChange}
+          required={required}
           className='
             px-3 py-2 w-full rounded border border-gray-300
             text-sm
