@@ -1,27 +1,27 @@
 "use client";
 
 import React, { useState } from 'react'
-import z from 'zod';
-import { registerSchema } from '@/validations/auth';
-import InputField from '@/components/ui/InputField'
-import Button from '@/components/ui/Button'
-import Logo from '@/components/ui/Logo';
-import useModal from '@/hooks/useModal';
-import useIsHydrated from '@/hooks/useIsHydrated';
 import { useRouter } from 'next/navigation';
 
-type RegisterFormData = z.input<typeof registerSchema>;
+import useModal from '@/hooks/useModal';
+import useIsHydrated from '@/hooks/useIsHydrated';
+
+import Button from '@/components/ui/Button'
+import InputField from '@/components/ui/InputField'
+import Logo from '@/components/ui/Logo';
+import { RegisterFormData, RegisterFormErrors } from '@/types/auth';
 
 export default function Register() {
   const { openModal, closeModal } = useModal();
   const isHydrated = useIsHydrated();
   const router = useRouter();
+
   const [registerForm, setRegisterForm] = useState<RegisterFormData>({
     email: "",
     password: "",
     confirmPassword: "",
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof RegisterFormData, string>>>({});
+  const [errors, setErrors] = useState<RegisterFormErrors>({});
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -52,6 +52,7 @@ export default function Register() {
 
       const data = await res.json();
 
+      // Handle field-specific validation errors.
       if (!res.ok) {
         const details = data.details as
           | Record<string, string[]>
