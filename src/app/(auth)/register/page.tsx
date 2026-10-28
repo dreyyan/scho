@@ -8,12 +8,14 @@ import Button from '@/components/ui/Button'
 import Logo from '@/components/ui/Logo';
 import useModal from '@/hooks/useModal';
 import useIsHydrated from '@/hooks/useIsHydrated';
+import { useRouter } from 'next/navigation';
 
 type RegisterFormData = z.input<typeof registerSchema>;
 
 export default function Register() {
   const { openModal, closeModal } = useModal();
   const isHydrated = useIsHydrated();
+  const router = useRouter();
   const [registerForm, setRegisterForm] = useState<RegisterFormData>({
     email: "",
     password: "",
@@ -85,8 +87,11 @@ export default function Register() {
         title: "Registration Successful",
         description: "Your account was created successfully!",
         primaryAction: {
-          label: "Got it",
-          onClick: closeModal,
+          label: "Continue to Login",
+          onClick: () => {
+            closeModal();
+            router.replace("/login");
+          },
         },
       });
     } catch (err: unknown) {
@@ -164,7 +169,7 @@ export default function Register() {
               error={errors.confirmPassword}
             />
             
-            <div className='pt-2'>
+            <div className='pt-4'>
               <Button label='Create Account' variant='primary' type="submit" />
             </div>
           </fieldset>
