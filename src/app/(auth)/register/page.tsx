@@ -117,14 +117,14 @@ export default function Register() {
         rounded-lg
         shadow-md
       '>
-        <form noValidate data-hydrated={isHydrated} onSubmit={handleRegister} className='space-y-3'>
-          <fieldset disabled={!isHydrated}>
+        <form noValidate data-hydrated={isHydrated} onSubmit={handleRegister}>
+          <fieldset disabled={!isHydrated} className='space-y-3'>
             <header className='mb-4'>
               <Logo />
               <h1 className='text-gray-700'>Sign up</h1>
             </header>
 
-            <hr className='text-gray-500 mb-6' />
+            <hr className='text-gray-400 mb-6' />
 
             <InputField
               id='email'
@@ -169,7 +169,7 @@ export default function Register() {
               error={errors.confirmPassword}
             />
             
-            <div className='pt-4'>
+            <div className='pt-1'>
               <Button label='Create Account' variant='primary' type="submit" />
             </div>
           </fieldset>
