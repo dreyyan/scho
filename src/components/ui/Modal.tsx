@@ -36,7 +36,7 @@ export default function Modal({
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       className='
-      m-auto w-sm max-w-md
+      m-auto w-md max-w-md
       rounded-lg
       shadow-xl
       '
@@ -50,7 +50,7 @@ export default function Modal({
         }
       `}/>
 
-      <div className='px-4 pt-2 pb-4'>
+      <div className='px-4 pt-2 pb-4 space-y-2'>
         <div className='flex justify-between'>
           {/* Header */}
           <h3 id={titleId} className='font-bold text-gray-700'>
