@@ -1,4 +1,4 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 import { invalidAuthData, validRegistrationData } from "../fixtures/auth";
 
 const getRegistrationForm = (page: Page) => {
@@ -20,6 +20,18 @@ test.describe("Registration", () => {
       http://localhost:3000/register/
     */
     await expect(page).toHaveURL(/\/register\/?$/);
+
+    const {
+      emailInputField,
+      passwordInputField,
+      confirmPasswordInputField,
+      registerButton
+    } = getRegistrationForm(page);
+
+    await expect(emailInputField).toBeVisible();
+    await expect(passwordInputField).toBeVisible();
+    await expect(confirmPasswordInputField).toBeVisible();
+    await expect(registerButton).toBeVisible();
   });
 
   test("successfully register a new user", async ({ page }) => {
