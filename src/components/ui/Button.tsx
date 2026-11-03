@@ -9,7 +9,7 @@ interface ButtonProps {
 
 const BUTTON_STYLES = {
   "primary": "from-green-600 to-green-700 hover:from-green-700 hover:to-green-800",
-  "secondary": "from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800",
+  "secondary": "from-gray-300 to-gray-400",
 };
 
 export default function Button({
