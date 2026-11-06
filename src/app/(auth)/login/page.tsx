@@ -10,6 +10,7 @@ import Button from '@/components/ui/Button'
 import InputField from '@/components/ui/InputField'
 import Logo from '@/components/ui/Logo';
 import { LoginFormData, LoginFormErrors } from '@/types/auth';
+import { signIn } from 'next-auth/react';
 
 export default function Login() {
   const { openModal, closeModal } = useModal();
@@ -41,37 +42,17 @@ export default function Login() {
     event.preventDefault(); // Prevent browser's default form submission behavior.
 
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginForm),
+      const result = await signIn("credentials", {
+        email: loginForm.email,
+        password: loginForm.password,
+        redirect: false,
       });
 
-      const data = await res.json();
-
-      // Handle field-specific validation errors.
-      if (!res.ok) {
-        const details = data.details as
-          | Record<string, string[]>
-          | undefined;
-
-        if (details) {
-          setErrors({
-            email: details.email?.[0],
-            password: details.password?.[0],
-          });
-
-          return;
-        }
-
+      if (result?.error) {
         openModal({
           variant: "error",
           title: "Login Failed",
-          description:
-            data.error ??
-            "An unexpected error occurred. Please try again.",
+          description: "Invalid email or password.",
           primaryAction: {
             label: "Try again",
             onClick: closeModal,
