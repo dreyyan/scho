@@ -6,6 +6,7 @@ const createTaskSchema = z.object({
     .trim()
     .min(1, "Title is required.")
     .max(150, "Title must not exceed 150 characters."),
+  sourceItemId: z.uuid().optional(),
 });
 
 const updateTaskSchema = createTaskSchema.extend({
