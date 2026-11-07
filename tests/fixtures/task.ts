@@ -12,6 +12,7 @@ const invalidTaskCreationData = {
 }
 
 const validTaskUpdateData = {
+  title: validTaskCreationData.title,
   isCompleted: true,
 };
 

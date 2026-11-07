@@ -4,12 +4,13 @@ import { Session } from "next-auth";
 import { auth } from "@/auth";
 import * as argon2 from "argon2";
 
-import { invalidTaskCreationData, validTaskCreationData } from "../../../fixtures/task";
+import { invalidTaskCreationData, validTaskCreationData, validTaskUpdateData } from "../../../fixtures/task";
 import { validLoginData } from "../../../fixtures/auth";
 import { malformedJSON } from "../../../fixtures/common";
 
 import { POST } from "@/app/api/tasks/route";
 import { generateRandomEmail } from "../../../helpers/generateRandomEmail";
+import { PATCH } from "@/app/api/tasks/[id]/route";
 
 const PORT = process.env.PORT ?? 3001;
 const TASK_URL = `http://localhost:${PORT}/api/tasks`;
@@ -21,9 +22,9 @@ const testLoginData = {
 let testUserId: string;
 
 vi.mock("@/auth", () => ({ auth: vi.fn() }));
-const mockAuth = vi.mocked(auth) as unknown as {
-  mockResolvedValue: (value: Session | null) => void;
-};
+const mockAuth = vi.mocked(
+  auth as () => Promise<Session | null>
+);
 
 describe("POST /api/tasks", () => {
   beforeAll(async () => {
@@ -137,4 +138,72 @@ describe("POST /api/tasks", () => {
       where: { id: testUserId },
     });
   })
+});
+
+describe("PATCH /api/tasks/:id", () => {
+  let testUserId: string;
+  let testTaskId: string;
+
+  beforeAll(async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: testLoginData.email,
+        passwordHash: await argon2.hash(testLoginData.password, {
+          type: argon2.argon2id,
+        }),
+      },
+    });
+
+    testUserId = user.id;
+
+    const task = await prisma.task.create({
+      data: {
+        userId: testUserId,
+        title: "Original task title",
+      },
+    });
+
+    testTaskId = task.id;
+  });
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+
+    mockAuth.mockResolvedValue({
+      user: {
+        id: testUserId,
+      },
+      expires: "2026-12-31T00:00:00.000Z",
+    });
+  });
+
+  it("accepts vaild task update data", async () => {
+    const request = new Request(`${TASK_URL}/${testTaskId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(validTaskUpdateData),
+    });
+
+    const response = await PATCH(request, {
+      params: Promise.resolve({ id: testTaskId })
+    });
+    const result = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(result.message).toBe("Task updated successfully.");
+  });
+
+  afterAll(async () => {
+    if (!testUserId) return;
+
+    await prisma.task.deleteMany({
+      where: { userId: testUserId },
+    });
+
+    await prisma.user.delete({
+      where: { id: testUserId },
+    });
+  });
 });

@@ -1,0 +1,117 @@
+import { z } from "zod";
+import { NextResponse } from "next/server";
+
+import { updateTaskSchema } from "@/validations/task";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
+import { logger } from "@/lib/logger";
+import { Prisma } from "@/generated/prisma/client";
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  let body: unknown;
+  let userId: string;
+  const { id: taskId } = await params;
+
+  // Validate user authorization.
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized." },
+        { status: 401 },
+      );
+    }
+
+    userId = session.user.id;
+  } catch (err: unknown) {
+    logger.error("Authentication failed: ", err);
+
+    return NextResponse.json(
+      { error: "Internal server error." },
+      { status: 500 },
+    );
+  }
+
+  const taskIdResult = z.uuid().safeParse(taskId);
+
+  if (!taskIdResult.success) {
+    return NextResponse.json(
+      { error: "Invalid task ID." },
+      { status: 400 },
+    );
+  }
+
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Malformed JSON request body." },
+      { status: 400 },
+    );
+  }
+
+  // Validate the incoming task update data.
+  const result = updateTaskSchema.safeParse(body);
+
+  if (!result.success) {
+    // Return field-specific validation errors.
+    return NextResponse.json(
+      {
+        error: "Invalid task update data.",
+        details: z.flattenError(result.error).fieldErrors,
+      },
+      { status: 400 },
+    );
+  }
+
+  const { title, isCompleted } = result.data;
+
+  try {
+    const task = await prisma.task.update({
+      where: {
+        id: taskId,
+        userId,
+      },
+      data: {
+        title,
+        isCompleted,
+      },
+      select: {
+        id: true,
+        title: true,
+        isCompleted: true,
+        updatedAt: true,
+      }
+    });
+
+    return NextResponse.json(
+      {
+        message: "Task updated successfully.",
+        data: { task },
+      },
+      { status: 200 },
+    );
+  } catch (err: unknown) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2025"
+    ) {
+      return NextResponse.json(
+        { error: "Task not found." },
+        { status: 404 },
+      );
+    }
+
+    // Log unexpected task update errors.
+    logger.error("Task update failed: ", err);
+
+    return NextResponse.json(
+      { error: "Internal server error." },
+      { status: 500 },
+    );
+  }
+}
