@@ -8,6 +8,15 @@ import { logger } from "@/lib/logger";
 import { Prisma } from "@/generated/prisma/client";
 import { registerSchema } from "@/validations/auth";
 
+/**
+ ** POST — Register a new user.
+ * 
+ * Validates registration data, hashes the password using argon2id, and
+ * creates a user record in the database.
+ * 
+ * @param request - The HTTP request containing the registration credentials.
+ * @returns a JSON response of the registered user or an error.
+ */
 export async function POST(request: Request) {
   let body: unknown;
 
