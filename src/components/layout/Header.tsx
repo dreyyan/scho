@@ -25,9 +25,11 @@ export default function Header() {
         <Logo />
       </Link>
 
-      <div className='space-x-4'>
+      <div className='flex justify-center items-center space-x-4'>
         <button onClick={handleProfile}><CircleUserRound /></button>
-        <button onClick={handleSettings}><Settings /></button>
+        <Link href="/settings">
+          <Settings />
+        </Link>
       </div>
     </div>
   )
