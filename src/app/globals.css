@@ -16,3 +16,27 @@
     font-weight: 600;
   }
 }
+
+.form {
+  @apply
+  w-full max-w-sm
+  px-6 py-8
+  bg-gray-50
+  border border-gray-200
+  rounded-2xl
+  shadow-md
+}
+
+.separator {
+  @apply text-gray-500;
+}
+
+.link {
+  @apply text-sm text-gray-500
+  hover:underline
+  ;
+}
+
+.text-caption {
+  @apply text-sm text-gray-400;
+}

@@ -5,22 +5,23 @@ import { malformedJSON } from "../../../fixtures/common";
 import { invalidAuthData, validRegistrationData } from "../../../fixtures/auth";
 
 import { POST } from "@/app/api/auth/register/route";
+import { generateRandomEmail } from "../../../helpers/generateRandomEmail";
 
 const PORT = process.env.PORT ?? "3001";
+const REGISTER_URL = `http://localhost:${PORT}/api/auth/register`;
+const testRegistrationData = {
+  ...validRegistrationData,
+  email: generateRandomEmail("register"),
+}
 
 describe("POST /api/auth/register", () => {
   it("accepts valid registration data", async () => {
-    const registrationData = {
-      ...validRegistrationData,
-      email: `test-${crypto.randomUUID()}@example.com`,
-    };
-
-    const request = new Request(`http://localhost:${PORT}/api/auth/register`, {
+    const request = new Request(REGISTER_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(registrationData),
+      body: JSON.stringify(testRegistrationData),
     });
 
     try {
@@ -31,13 +32,13 @@ describe("POST /api/auth/register", () => {
       expect(result.message).toBe("User registered successfully.");
     } finally {
       await prisma.user.deleteMany({
-        where: { email: validRegistrationData.email },
+        where: { email: testRegistrationData.email },
       });
     }
   });
 
   it("rejects malformed JSON request body", async () => {
-    const request = new Request(`http://localhost:${PORT}/api/auth/register`, {
+    const request = new Request(REGISTER_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -57,7 +58,7 @@ describe("POST /api/auth/register", () => {
     ["short password", invalidAuthData.registration.shortPassword],
     ["mismatched passwords", invalidAuthData.registration.mismatchedPasswords],
   ])("rejects invalid registration data with %s", async (_, data) => {
-    const request = new Request(`http://localhost:${PORT}/api/auth/register`, {
+    const request = new Request(REGISTER_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -73,25 +74,20 @@ describe("POST /api/auth/register", () => {
   });
 
   it("rejects already registered email", async () => {
-    const registrationData = {
-      ...validRegistrationData,
-      email: `test-${crypto.randomUUID()}@example.com`,
-    };
-
     const existingUser = await prisma.user.create({
       data: {
-        email: registrationData.email,
+        email: testRegistrationData.email,
         passwordHash: "test-password-hash",
       },
     });
 
     try {
-      const request = new Request(`http://localhost:${PORT}/api/auth/register`, {
+      const request = new Request(REGISTER_URL, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(registrationData),
+        body: JSON.stringify(testRegistrationData),
       });
 
       const response = await POST(request);
