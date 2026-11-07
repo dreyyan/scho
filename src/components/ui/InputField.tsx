@@ -55,7 +55,7 @@ export default function InputField({
             placeholder-gray-300
             transition-colors duration-300
             outline-none
-            focus:ring-2 focus:border-green-400 focus:ring-green-500/20
+            focus:ring-2 focus:border-green-600 focus:ring-green-700/20
           '
         />
 
