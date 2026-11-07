@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import Header from "@/components/layout/Header";
 import { redirect } from "next/navigation";
 
 export const instant = false;
@@ -14,5 +15,10 @@ export default async function ProtectedLayout({
     redirect("/login");
   }
 
-  return <>{children}</>;
+  return (
+    <div className="flex flex-col min-h-screen">
+      <Header />
+      <main className="flex-1">{children}</main>
+    </div>
+  )
 }
