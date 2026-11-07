@@ -11,6 +11,7 @@ import InputField from '@/components/ui/InputField'
 import Logo from '@/components/ui/Logo';
 import { LoginFormData, LoginFormErrors } from '@/types/auth';
 import { signIn } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function Login() {
   const { openModal, closeModal } = useModal();
@@ -79,36 +80,27 @@ export default function Login() {
 
   return (
     <div className='flex min-h-screen justify-center items-center'>
-      <section className='
-        w-full max-w-md
-        px-6 py-8
-        bg-gray-50
-        border border-gray-200
-        rounded-lg
-        shadow-md
-      '>
+      <section className='form'>
         <form noValidate data-hydrated={isHydrated} onSubmit={handleLogin}>
-          <fieldset disabled={!isHydrated} className='space-y-3'>
+          <fieldset disabled={!isHydrated} className='space-y-6'>
             <header className='mb-4'>
               <Logo />
               <h1 className='text-gray-700'>Login</h1>
             </header>
 
-            <hr className='text-gray-400 mb-6' />
+            <div className='space-y-4'>
+              <InputField
+                id='email'
+                name='email'
+                label='Email'
+                type='email'
+                placeholder='example@domain.com'
+                value={loginForm.email}
+                onChange={handleChange}
+                required
+                error={errors.email}
+              />
 
-            <InputField
-              id='email'
-              name='email'
-              label='Email'
-              type='email'
-              placeholder='example@domain.com'
-              value={loginForm.email}
-              onChange={handleChange}
-              required
-              error={errors.email}
-            />
-
-            <div className='space-y-1'>
               <InputField
                 id='password'
                 name='password'
@@ -121,8 +113,17 @@ export default function Login() {
               error={errors.password}
               />
             </div>
-            <div className='pt-1'>
+
+            <div className='space-y-3'>
               <Button label='Login' variant='primary' type="submit" />
+              <span className='flex justify-center items-center gap-x-1 text-sm text-gray-800'>
+                Don&apos;t have an account yet?
+                <Link
+                  href="/register"
+                  className="link"
+                  >Create an Account
+                </Link>
+              </span>
             </div>
           </fieldset>
         </form>
