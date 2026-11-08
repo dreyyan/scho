@@ -10,7 +10,7 @@ import { malformedJSON } from "../../../fixtures/common";
 
 import { POST } from "@/app/api/tasks/route";
 import { generateRandomEmail } from "../../../helpers/generateRandomEmail";
-import { PATCH } from "@/app/api/tasks/[id]/route";
+import { PATCH, DELETE } from "@/app/api/tasks/[id]/route";
 
 const PORT = process.env.PORT ?? 3001;
 const TASK_URL = `http://localhost:${PORT}/api/tasks`;
@@ -193,6 +193,130 @@ describe("PATCH /api/tasks/:id", () => {
 
     expect(response.status).toBe(200);
     expect(result.message).toBe("Task updated successfully.");
+  });
+
+  afterAll(async () => {
+    if (!testUserId) return;
+
+    await prisma.task.deleteMany({
+      where: { userId: testUserId },
+    });
+
+    await prisma.user.delete({
+      where: { id: testUserId },
+    });
+  });
+});
+
+describe("DELETE /api/tasks/:id", () => {
+  let testUserId: string;
+  let testTaskId: string;
+
+  beforeAll(async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: testLoginData.email,
+        passwordHash: await argon2.hash(testLoginData.password, {
+          type: argon2.argon2id,
+        }),
+      },
+    });
+
+    testUserId = user.id;
+  });
+
+  beforeEach(async () => {
+    vi.resetAllMocks();
+
+    mockAuth.mockResolvedValue({
+      user: {
+        id: testUserId,
+      },
+      expires: "2026-12-31T00:00:00.000Z",
+    });
+
+    const task = await prisma.task.create({
+      data: {
+        userId: testUserId,
+        title: "Original task title",
+      },
+    });
+
+    testTaskId = task.id;
+  });
+
+  it("accepts valid task deletion data", async () => {
+    const request = new Request(`${TASK_URL}/${testTaskId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const response = await DELETE(request, {
+      params: Promise.resolve({ id: testTaskId })
+    });
+    const result = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(result.message).toBe("Task deleted successfully.");
+  });
+
+  it("rejects an unauthorized user", async () => {
+    mockAuth.mockResolvedValue(null);
+
+    const request = new Request(`${TASK_URL}/${testTaskId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const response = await DELETE(request, {
+      params: Promise.resolve({ id: testTaskId })
+    });
+    const result = await response.json();
+
+    expect(response.status).toBe(401);
+    expect(result.error).toBe("Unauthorized.");
+  });
+
+  it("rejects an invalid task ID", async () => {
+    const invalidTaskId = "invalid-task-id";
+
+    const request = new Request(`${TASK_URL}/${invalidTaskId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const response = await DELETE(request, {
+      params: Promise.resolve({ id: invalidTaskId })
+    });
+    const result = await response.json();
+
+    expect(response.status).toBe(400);
+    expect(result.error).toBe("Invalid task ID.");
+  });
+
+  it("rejects a non-existing task", async () => {
+    const nonExistentTaskId = crypto.randomUUID();
+
+    const request = new Request(`${TASK_URL}/${nonExistentTaskId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const response = await DELETE(request, {
+      params: Promise.resolve({ id: nonExistentTaskId })
+    });
+    const result = await response.json();
+
+    expect(response.status).toBe(404);
+    expect(result.error).toBe("Task not found.");
   });
 
   afterAll(async () => {
