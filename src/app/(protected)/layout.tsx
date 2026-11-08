@@ -26,7 +26,10 @@ export default async function ProtectedLayout({
         <Sidebar />
       </aside>
 
-      <main className="min-w-0">{children}</main>
+      <main className="
+        min-w-0
+        px-16 py-12
+      ">{children}</main>
     </div>
   )
 }
