@@ -2,10 +2,10 @@ import z from "zod";
 import * as argon2 from "argon2";
 import { NextResponse } from "next/server";
 
+import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { logger } from "@/lib/logger";
 
-import { Prisma } from "@/generated/prisma/client";
 import { registerSchema } from "@/validations/auth";
 
 /**

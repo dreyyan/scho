@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { NextResponse } from "next/server";
 
-import { updateTaskSchema } from "@/validations/task";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
-import { logger } from "@/lib/logger";
 import { Prisma } from "@/generated/prisma/client";
+import { prisma } from "@/lib/prisma";
+import { logger } from "@/lib/logger";
+import { auth } from "@/auth";
+
+import { updateTaskSchema } from "@/validations/task";
 
 /**
  ** PATCH — Update an existing task.
@@ -72,7 +73,7 @@ export async function PATCH(
         details: z.flattenError(result.error).fieldErrors,
       },
       { status: 400 },
-    );
+    ); 
   }
 
   const { title, isCompleted } = result.data;

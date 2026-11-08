@@ -1,16 +1,16 @@
 import { afterAll, beforeEach, beforeAll, describe, expect, it, vi } from "vitest";
-import { prisma } from "@/lib/prisma";
-import { Session } from "next-auth";
-import { auth } from "@/auth";
 import * as argon2 from "argon2";
+import { Session } from "next-auth";
+import { prisma } from "@/lib/prisma";
+import { auth } from "@/auth";
 
 import { invalidTaskCreationData, validTaskCreationData, validTaskUpdateData } from "../../../fixtures/task";
 import { validLoginData } from "../../../fixtures/auth";
 import { malformedJSON } from "../../../fixtures/common";
 
 import { POST } from "@/app/api/tasks/route";
-import { generateRandomEmail } from "../../../helpers/generateRandomEmail";
 import { PATCH, DELETE } from "@/app/api/tasks/[id]/route";
+import { generateRandomEmail } from "../../../helpers/generateRandomEmail";
 
 const PORT = process.env.PORT ?? 3001;
 const TASK_URL = `http://localhost:${PORT}/api/tasks`;
@@ -193,6 +193,27 @@ describe("PATCH /api/tasks/:id", () => {
 
     expect(response.status).toBe(200);
     expect(result.message).toBe("Task updated successfully.");
+  });
+
+  it.each([
+    ["completed", true],
+    ["incomplete", false],
+  ])("marks a task as %s", async (_, isCompleted) => {
+    const request = new Request(`${TASK_URL}/${testTaskId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ isCompleted }),
+    });
+
+    const response = await PATCH(request, {
+      params: Promise.resolve({ id: testTaskId })
+    });
+    const result = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(result.data.task.isCompleted).toBe(isCompleted);
   });
 
   afterAll(async () => {

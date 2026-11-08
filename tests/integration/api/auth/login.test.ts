@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { prisma } from "@/lib/prisma";
 import * as argon2 from "argon2";
+import { prisma } from "@/lib/prisma";
 
 import { invalidAuthData, validLoginData } from "../../../fixtures/auth";
 import { malformedJSON } from "../../../fixtures/common";
