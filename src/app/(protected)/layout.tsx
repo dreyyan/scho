@@ -28,7 +28,7 @@ export default async function ProtectedLayout({
 
       <main className="
         min-w-0
-        px-16 py-12
+        px-20 py-14
       ">{children}</main>
     </div>
   )
