@@ -28,6 +28,7 @@ export default function FilterGroup({
             rounded-full
             px-4 py-1
             ${option.value === value ? 'bg-gray-100' : 'bg-transparent'}
+            text-xs
             cursor-pointer
           `}
         >
