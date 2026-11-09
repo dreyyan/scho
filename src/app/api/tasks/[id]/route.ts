@@ -76,7 +76,7 @@ export async function PATCH(
     ); 
   }
 
-  const { title, isCompleted } = result.data;
+  const { title, isCompleted, deadline } = result.data;
 
   try {
     const task = await prisma.task.update({
@@ -87,11 +87,13 @@ export async function PATCH(
       data: {
         title,
         isCompleted,
+        deadline,
       },
       select: {
         id: true,
         title: true,
         isCompleted: true,
+        deadline: true,
         updatedAt: true,
       }
     });

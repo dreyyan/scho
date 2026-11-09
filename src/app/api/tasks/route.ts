@@ -121,7 +121,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { title, sourceItemId } = result.data;
+  const { title, sourceItemId, deadline } = result.data;
 
   try {
     // TODO: Validate whether InboxItem belongs to the user.
@@ -131,11 +131,13 @@ export async function POST(request: Request) {
         userId,
         ...(sourceItemId !== undefined && { sourceItemId }),
         title,
+        deadline,
       },
       select: {
         id: true,
         title: true,
         isCompleted: true,
+        deadline: true,
         createdAt: true,
       },
     });
