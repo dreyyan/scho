@@ -7,6 +7,72 @@ import { auth } from "@/auth";
 import { logger } from "@/lib/logger";
 import { Prisma } from "@/generated/prisma/client";
 
+/**
+ ** GET — Retrieve the user's tasks.
+ * 
+ * @returns a JSON response of the user's tasks.
+ */
+export async function GET() {
+  let userId: string;
+
+  // Validate user authorization.
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json(
+        { error: "Unauthorized." },
+        { status: 401 },
+      );
+    }
+
+    userId = session.user.id;
+  } catch (err: unknown) {
+    logger.error("Authentication failed: ", err);
+
+    return NextResponse.json(
+      { error: "Internal server error." },
+      { status: 500 },
+    );
+  }
+
+  try {
+    const tasks = await prisma.task.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+        title: true,
+        isCompleted: true,
+        createdAt: true,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        message: "Tasks retrieved successfully.",
+        data: { tasks },
+      },
+      { status: 200 },
+    );
+  } catch (err: unknown) {
+    // Log unexpected task retrieving errors.
+    logger.error("Retrieving tasks failed: ", err);
+
+    return NextResponse.json(
+      { error: "Internal server error." },
+      { status: 500 },
+    );
+  }
+}
+
+/**
+ ** POST — Create a new task.
+ *
+ * @param request - The HTTP request containing the new task data.
+ * @returns a JSON response of the new task or an error.
+ */
 export async function POST(request: Request) {
   let body: unknown;
   let userId: string;
