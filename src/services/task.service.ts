@@ -23,7 +23,7 @@ export async function getTasks(): Promise<TaskResponse[]> {
   });
 
   if (!response.ok) {
-    const errMsg = 'Failed to retrieve tasks';
+    const errMsg = 'Failed to retrieve tasks.';
     logger.error(errMsg);
     throw new Error(errMsg);
   }
@@ -50,7 +50,7 @@ export async function createTask(data: TaskFormData): Promise<TaskResponse> {
   });
 
   if (!response.ok) {
-    const errMsg = 'Failed to create task';
+    const errMsg = 'Failed to create task.';
     logger.error(errMsg);
     throw new Error(errMsg);
   }
@@ -58,4 +58,22 @@ export async function createTask(data: TaskFormData): Promise<TaskResponse> {
   const result: CreateTaskResponse = await response.json();
 
   return result.data.task;
+}
+
+/**
+ ** Sends a DELETE request to remove a task.
+ *
+ * @param id - The ID of the task to delete.
+ * @throws Error if the request fails.
+ */
+export async function deleteTask(id: string) {
+  const response = await fetch(`${TASK_API_URL}/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const errMsg = 'Failed to delete task.';
+    logger.error(errMsg);
+    throw new Error(errMsg);
+  }
 }

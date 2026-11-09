@@ -9,7 +9,7 @@ import Button from '@/components/ui/Button';
 import Item from '@/components/ui/Item';
 import TaskForm from '@/components/form/TaskForm';
 
-import { createTask, getTasks } from '@/services/task.service';
+import { createTask, deleteTask, getTasks } from '@/services/task.service';
 import { TaskFormData, TaskResponse } from '@/types/task';
 
 const TASK_FILTER_OPTIONS = [
@@ -46,6 +46,37 @@ export default function Tasks() {
         : item
       )
     )
+  };
+
+  const handleAddTask = async (data: TaskFormData) => {
+    try {
+      const newTask = await createTask(data);
+
+      setItems((prev) => [...prev, {
+        ...newTask,
+      }]);
+
+      closeModal();
+    } catch (err: unknown) {
+      console.error("Failed to add task: ", err);
+    }
+  };
+
+  const handleEditTask = (id: string) => {
+    console.log(`TODO: Handle edit for ${id}.`);
+  };
+
+  const handleDeleteTask = async (id: string) => {
+    try {
+      await deleteTask(id);
+
+      // Update the local state of task items.
+      setItems((prevItems) => prevItems.filter((task) => task.id !== id));
+
+      closeModal();
+    } catch (err: unknown) {
+      console.error("Failed to delete task: ", err);
+    }
   };
 
   const openAddTaskForm = () => {
@@ -93,30 +124,21 @@ export default function Tasks() {
   };
 
   const openDeleteTaskModal = (id: string) => {
-
+    openModal({
+      variant: "error",
+      title: "Delete Task",
+      description: "Are you sure you want to delete this task?",
+      primaryAction: {
+        label: "Delete",
+        type: "button",
+        onClick: () => handleDeleteTask(id),
+      },
+      secondaryAction: {
+        label: "Cancel",
+        onClick: closeModal,
+      },
+    });
   }
-
-  const handleAddTask = async (data: TaskFormData) => {
-    try {
-      const newTask = await createTask(data);
-
-      setItems((prev) => [...prev, {
-        ...newTask,
-      }]);
-
-      closeModal();
-    } catch (err: unknown) {
-      console.error("Failed to add task: ", err);
-    }
-  };
-
-  const handleEditTask = (id: string) => {
-    console.log(`TODO: Handle edit for ${id}.`);
-  };
-
-  const handleDeleteTask = (id: string) => {
-    console.log(`TODO: Handle delete for ${id}.`);
-  };
 
   return (
     <div className='space-y-1'>
