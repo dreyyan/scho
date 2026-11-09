@@ -18,6 +18,7 @@ export interface TaskResponse {
   id: string;
   title: string;
   isCompleted: boolean;
+  deadline?: string | null;
   createdAt: string;
 }
 
