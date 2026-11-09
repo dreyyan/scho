@@ -6,7 +6,7 @@ interface InputFieldProps {
   id: string;
   name: string;
   label: string;
-  type: "text" | "email" | "password";
+  type: "text" | "email" | "password" | "date" | "datetime-local";
   placeholder?: string;
   "aria-describedby"?: string;
   value: string;
