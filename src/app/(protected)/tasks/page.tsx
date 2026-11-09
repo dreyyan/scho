@@ -1,11 +1,17 @@
 "use client";
 
-import FilterGroup from '@/components/ui/FilterGroup'
-import Item from '@/components/ui/Item';
-import React, { useState } from 'react'
-import { ItemProps } from '@/types/item';
-import Button from '@/components/ui/Button';
+import React, { useEffect, useState } from 'react'
+import useModal from '@/hooks/useModal';
 import { Plus } from 'lucide-react';
+
+import FilterGroup from '@/components/ui/FilterGroup'
+import Button from '@/components/ui/Button';
+import Item from '@/components/ui/Item';
+import TaskForm from '@/components/form/TaskForm';
+import { ItemProps } from '@/types/item';
+
+import { createTask, getTasks } from '@/services/task.service';
+import { TaskFormData, TaskResponse } from '@/types/task';
 
 const TASK_FILTER_OPTIONS = [
   { label: "Active", value: "active" },
@@ -13,105 +19,106 @@ const TASK_FILTER_OPTIONS = [
   { label: "All", value: "all" },
 ];
 
-// TODO: Retrieve items from the backend.
-const ITEMS: ItemProps[] = [
-  {
-    id: "0",
-    category: "Task",
-    title: "Review Software Engineering Notes",
-    isChecked: true,
-    onCheckedChange: () => {},
-    canEdit: true,
-    canDelete: true,
-    onEdit: () => {},
-    onDelete: () => {},
-    deadline: "Due tomorrow",
-  },
-  {
-    id: "1",
-    category: "Task",
-    title: "Review Software Engineering Notes",
-    isChecked: true,
-    onCheckedChange: () => {},
-    canEdit: true,
-    canDelete: true,
-    onEdit: () => {},
-    onDelete: () => {},
-    deadline: "Due tomorrow",
-  },
-  {
-    id: "2",
-    category: "Task",
-    title: "Review Software Engineering Notes",
-    isChecked: true,
-    onCheckedChange: () => {},
-    canEdit: true,
-    canDelete: true,
-    onEdit: () => {},
-    onDelete: () => {},
-    deadline: "Due tomorrow",
-  },
-  {
-    id: "3",
-    category: "Task",
-    title: "Review Software Engineering Notes",
-    isChecked: true,
-    onCheckedChange: () => {},
-    canEdit: true,
-    canDelete: true,
-    onEdit: () => {},
-    onDelete: () => {},
-    deadline: "Due tomorrow",
-  },
-  {
-    id: "4",
-    category: "Task",
-    title: "Review Software Engineering Notes",
-    isChecked: true,
-    onCheckedChange: () => {},
-    canEdit: true,
-    canDelete: true,
-    onEdit: () => {},
-    onDelete: () => {},
-    deadline: "Due tomorrow",
-  },
-  {
-    id: "5",
-    category: "Task",
-    title: "Review Software Engineering Notes",
-    isChecked: true,
-    onCheckedChange: () => {},
-    canEdit: true,
-    canDelete: true,
-    onEdit: () => {},
-    onDelete: () => {},
-    deadline: "Due tomorrow",
-  },
-];
-
 export default function Tasks() {
   const [activeFilter, setActiveFilter] = useState<string>(TASK_FILTER_OPTIONS[0].value);
-  const [items, setItems] = useState<ItemProps[]>(ITEMS);
+  const [items, setItems] = useState<TaskResponse[]>([]);
+
+  const { openModal, closeModal } = useModal(); 
+
+  // Retrieve the user's tasks from the backend.
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const items = await getTasks();
+        setItems(items);
+      } catch (err: unknown) {
+        console.error("Failed to retrieve tasks: ", err);
+      }
+    };
+  
+    fetchTasks();
+  }, []);
 
   const handleCheckedChange = (id: string, checked: boolean) => {
     setItems((prevItems) => 
       prevItems.map((item) =>
-        item.id === id && item.category === "Task"
-        ? { ...item, isChecked: checked }
+        item.id === id
+        ? { ...item, isCompleted: checked }
         : item
       )
     )
   };
 
-  const handleAddTask = () => {
-    return null;
+  const openAddTaskForm = () => {
+    openModal({
+      variant: "confirm",
+      title: "Add Task",
+      description: "Add a new task to your list.",
+      children: (
+        <TaskForm
+          onSubmit={handleAddTask}
+        />
+      ),
+      primaryAction: {
+        label: "Add",
+        type: "submit",
+        form: "task-form",
+      },
+      secondaryAction: {
+        label: "Cancel",
+        onClick: closeModal,
+      },
+    });
   };
 
-  const handleEdit = (id: string) => {
+  const openEditTaskForm = (id: string) => {
+    openModal({
+      variant: "confirm",
+      title: "Edit Task",
+      description: "Edit the current task.",
+      children: (
+        <TaskForm
+          onSubmit={() => handleEditTask(id)}
+        />
+      ),
+      primaryAction: {
+        label: "Edit",
+        type: "submit",
+        form: "task-form"
+      },
+      secondaryAction: {
+        label: "Cancel",
+        onClick: closeModal,
+      },
+    });
+  };
+
+  const openDeleteTaskModal = (id: string) => {
+
+  }
+
+  const handleAddTask = async (data: TaskFormData) => {
+    // TODO: POST /api/task.
+    console.log('TODO: Handle add task.');
+
+    try {
+      const newTask = await createTask(data);
+
+      setItems((prev) => [...prev, {
+        ...newTask,
+      }]);
+
+      closeModal();
+    } catch (err: unknown) {
+      console.error("Failed to add task: ", err);
+    }
+  };
+
+  const handleEditTask = (id: string) => {
     console.log(`TODO: Handle edit for ${id}.`);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDeleteTask = (id: string) => {
     console.log(`TODO: Handle delete for ${id}.`);
   };
 
@@ -147,24 +154,28 @@ export default function Tasks() {
               label='Add Task'
               variant='primary'
               type='button'
-              onClick={handleAddTask}
+              onClick={openAddTaskForm}
               icon={Plus}
             />
           </div>
         </div>
 
         <div className='space-y-2'>
-          { items.map((item) => (
+          { items.map((task) => (
             <Item
-              key={item.id}
-              {...item}
-              {...(item.category === "Task" && {
-                onCheckedChange(checked: boolean) {
-                  handleCheckedChange(item.id, checked); 
-                },
-              })}
-              onEdit={() => handleEdit(item.id)}
-              onDelete={() => handleDelete(item.id)}
+              key={task.id}
+              id={task.id}
+              category='Task'
+              title={task.title}
+              isChecked={task.isCompleted}
+              deadline=''
+              canEdit={true}
+              canDelete={true}
+              onCheckedChange={(checked) =>
+                handleCheckedChange(task.id, checked)
+              }
+              onEdit={() => openEditTaskForm(task.id)}
+              onDelete={() => openDeleteTaskModal(task.id)}
             />
           )) }
         </div>
