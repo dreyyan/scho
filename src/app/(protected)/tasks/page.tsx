@@ -186,8 +186,7 @@ export default function Tasks() {
               category='Task'
               title={task.title}
               isChecked={task.isCompleted}
-              // TODO: Add `deadline` field for a task.
-              deadline={task.createdAt}
+              deadline={task.deadline ?? ''}
               canEdit={true}
               canDelete={true}
               onCheckedChange={(checked) =>

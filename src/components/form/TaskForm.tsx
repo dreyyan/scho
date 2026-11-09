@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import InputField from '../ui/InputField'
-import { TaskFormData } from '@/types/task';
+import { TaskFormData, TaskFormErrors } from '@/types/task';
 
 interface TaskFormProps {
   initialValues?: TaskFormData;
@@ -13,10 +13,13 @@ export default function TaskForm({
 }: TaskFormProps) {
   const [data, setData] = useState<TaskFormData>({
     title: initialValues?.title || "",
+    // extract date portion of an ISO DateTime string.
+    deadline: initialValues?.deadline?.slice(0, 10) ?? "",
   });
 
-  const [errors, setErrors] = useState<TaskFormData>({
+  const [errors, setErrors] = useState<TaskFormErrors>({
     title: "",
+    deadline: "",
   });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,13 +40,18 @@ export default function TaskForm({
   const handleSubmit = (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault(); 
 
-    onSubmit(data);
+    onSubmit({
+      ...data,
+      deadline: data.deadline
+        ? new Date(data.deadline).toISOString() // convert localtime to UTC.
+        : null,
+    });
   };
 
   return (
     <form id='task-form' onSubmit={handleSubmit}>
       <InputField
-        id='task'
+        id='title'
         name='title'
         label='Task Name'
         type='text'
@@ -52,6 +60,16 @@ export default function TaskForm({
         onChange={handleChange}
         required
         error={errors.title}
+      />
+      <InputField
+        id='deadline'
+        name='deadline'
+        label='Deadline'
+        type='datetime-local'
+        value={data.deadline ?? ''}
+        onChange={handleChange}
+        required={false}
+        error={errors.deadline ?? ''}
       />
     </form>
   )
