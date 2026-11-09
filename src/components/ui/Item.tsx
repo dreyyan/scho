@@ -58,12 +58,12 @@ export default function Item(props: ItemProps) {
         }
 
         <span className='flex flex-col'>
-          <text className='text-sm font-semibold text-gray-800 hover:underline hover:cursor-pointer'>{props.title}</text>
-          <text className='text-xs'>{props.category}&nbsp;·&nbsp;
-            <text className='text-gray-500'>
+          <span className='text-sm font-semibold text-gray-800 hover:underline hover:cursor-pointer'>{props.title}</span>
+          <span className='text-xs'>{props.category}&nbsp;·&nbsp;
+            <span className='text-gray-500'>
               { props.category === "Link" || props.category === "Item" ? props.createdAt : props.deadline }
-            </text>
-          </text>
+            </span>
+          </span>
         </span>
       </div>
 
