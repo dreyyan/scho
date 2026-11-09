@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 /**
  * Represents the different modal variants.
  */
@@ -8,7 +10,9 @@ export type ModalVariant = "success" | "error" | "confirm";
  */
 export interface ModalAction {
   label: string;
-  onClick: () => void;
+  onClick?: () => void;
+  type?: "button" | "submit";
+  form?: string;
 }
 
 /**
@@ -18,6 +22,7 @@ export interface ModalOptions {
   variant: ModalVariant;
   title: string;
   description: string;
+  children?: ReactNode;
   primaryAction: ModalAction;
   secondaryAction?: ModalAction;
 }

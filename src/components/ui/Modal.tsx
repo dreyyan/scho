@@ -9,6 +9,7 @@ export default function Modal({
   variant,
   title,
   description,
+  children,
   primaryAction,
   secondaryAction,
   onClose,
@@ -75,6 +76,13 @@ export default function Modal({
           {description}
         </p>
 
+        {/* Custom content */}
+        {children && (
+          <div className="py-2">
+            {children}
+          </div>
+        )}
+
         {/* Actions */}
         <div className='flex justify-end gap-x-2'>
           { secondaryAction && (
@@ -92,7 +100,8 @@ export default function Modal({
             >{secondaryAction.label}</button>
           ) }
           <button
-            type='button'
+            type={primaryAction.type || 'button'}
+            form={primaryAction.form}
             onClick={primaryAction.onClick}
             className={`
                 bg-linear-to-br ${
