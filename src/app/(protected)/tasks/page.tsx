@@ -8,7 +8,6 @@ import FilterGroup from '@/components/ui/FilterGroup'
 import Button from '@/components/ui/Button';
 import Item from '@/components/ui/Item';
 import TaskForm from '@/components/form/TaskForm';
-import { ItemProps } from '@/types/item';
 
 import { createTask, getTasks } from '@/services/task.service';
 import { TaskFormData, TaskResponse } from '@/types/task';
@@ -98,9 +97,6 @@ export default function Tasks() {
   }
 
   const handleAddTask = async (data: TaskFormData) => {
-    // TODO: POST /api/task.
-    console.log('TODO: Handle add task.');
-
     try {
       const newTask = await createTask(data);
 
@@ -168,7 +164,8 @@ export default function Tasks() {
               category='Task'
               title={task.title}
               isChecked={task.isCompleted}
-              deadline=''
+              // TODO: Add `deadline` field for a task.
+              deadline={task.createdAt}
               canEdit={true}
               canDelete={true}
               onCheckedChange={(checked) =>
