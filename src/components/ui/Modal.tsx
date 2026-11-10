@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useId } from 'react'
-import { X } from 'lucide-react';
+import { X, LoaderCircle } from 'lucide-react';
 import type { ModalProps } from '@/types/modal';
 
 export default function Modal({
@@ -103,6 +103,7 @@ export default function Modal({
             type={primaryAction.type || 'button'}
             form={primaryAction.form}
             onClick={primaryAction.onClick}
+            disabled={primaryAction.isLoading}
             className={`
                 bg-linear-to-br ${
                 variant === "success" ? "from-green-600 to-green-700 hover:from-green-700 hover:to-green-800" :
@@ -115,7 +116,16 @@ export default function Modal({
               rounded-md
               cursor-pointer
               transition-colors duration-300
-          `}>{primaryAction.label}</button>
+          `}>
+            {primaryAction.isLoading ? (
+              <div className='flex justify-center items-center gap-x-1'>
+                <LoaderCircle className="animate-spin" size={16} />
+                <span>Saving...</span>
+              </div>
+            ) : (
+              primaryAction.label
+            )}
+          </button>
         </div>
       </div>
     </dialog>

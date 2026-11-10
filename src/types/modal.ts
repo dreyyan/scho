@@ -13,6 +13,7 @@ export interface ModalAction {
   onClick?: () => void;
   type?: "button" | "submit";
   form?: string;
+  isLoading?: boolean;
 }
 
 /**

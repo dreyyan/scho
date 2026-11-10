@@ -17,6 +17,7 @@ export interface ModalContextType {
    */
   openModal: (options: ModalOptions) => void;
   closeModal: () => void;
+  updateModal: (options: Partial<ModalOptions>) => void;
 }
 
 export const ModalContext = 
@@ -40,8 +41,14 @@ export function ModalProvider({
     setIsOpen(false) ;
   };
 
+  const updateModal = (options: Partial<ModalOptions>) => {
+    setModalOptions((prev) =>
+      prev ? { ...prev, ...options } : null
+    );
+  };
+
   return (
-    <ModalContext.Provider value={{ openModal, closeModal }}>
+    <ModalContext.Provider value={{ openModal, closeModal, updateModal }}>
       {children}
 
       {modalOptions && (
