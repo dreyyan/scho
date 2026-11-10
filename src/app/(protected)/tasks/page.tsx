@@ -56,9 +56,34 @@ export default function Tasks() {
         ...newTask,
       }]);
 
-      closeModal();
+      openModal({
+        variant: "success",
+        title: "Task Created",
+        description: "The task has been successfully created!",
+        primaryAction: {
+          label: "Got it",
+          type: "button",
+          onClick: () => closeModal(),
+        },
+      });
     } catch (err: unknown) {
       console.error("Failed to add task: ", err);
+
+      openModal({
+        variant: "error",
+        title: "Failed Task Creation",
+        description: `Failed to add task. ${err}`,
+        primaryAction: {
+          label: "Got it",
+          type: "button",
+          onClick: () => closeModal(),
+        },
+        secondaryAction: {
+          label: "Retry",
+          type: "button",
+          onClick: () => handleAddTask(data), 
+        },
+      });
     }
   };
 
@@ -73,9 +98,34 @@ export default function Tasks() {
       // Update the local state of task items.
       setItems((prevItems) => prevItems.filter((task) => task.id !== id));
 
-      closeModal();
+      openModal({
+        variant: "success",
+        title: "Task Deleted",
+        description: "The task has been successfully deleted.",
+        primaryAction: {
+          label: "Got it",
+          type: "button",
+          onClick: () => closeModal(),
+        },
+      });
     } catch (err: unknown) {
       console.error("Failed to delete task: ", err);
+
+      openModal({
+        variant: "error",
+        title: "Failed Task Deletion",
+        description: `Failed to delete task. ${err}`,
+        primaryAction: {
+          label: "Got it",
+          type: "button",
+          onClick: () => closeModal(),
+        },
+        secondaryAction: {
+          label: "Retry",
+          type: "button",
+          onClick: () => handleDeleteTask(id), 
+        },
+      });
     }
   };
 
