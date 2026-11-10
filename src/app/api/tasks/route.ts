@@ -45,6 +45,7 @@ export async function GET() {
         id: true,
         title: true,
         isCompleted: true,
+        deadline: true,
         createdAt: true,
       },
     });

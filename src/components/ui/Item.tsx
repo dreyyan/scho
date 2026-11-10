@@ -1,5 +1,6 @@
 import { File, Link, X, Check, SquarePen } from 'lucide-react';
 import { ItemProps } from '@/types/item';
+import { formatDeadline } from '@/lib/utils/date';
 
 export default function Item(props: ItemProps) {
   return (
@@ -61,7 +62,7 @@ export default function Item(props: ItemProps) {
           <span className='text-sm font-semibold text-gray-800 hover:underline hover:cursor-pointer'>{props.title}</span>
           <span className='text-xs'>{props.category}&nbsp;·&nbsp;
             <span className='text-gray-500'>
-              { props.category === "Link" || props.category === "Item" ? props.createdAt : props.deadline }
+              { props.category === "Link" || props.category === "Item" ? props.createdAt : formatDeadline(props.deadline) }
             </span>
           </span>
         </span>

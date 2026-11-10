@@ -13,7 +13,6 @@ function formatDeadline(deadline: string | null | undefined): string {
     return "Invalid deadline."
   }
 
-  // Calculate base times in milliseconds.
   const minute = 60 * 1000;
   const hour = 60 * minute;
   const day = 24 * hour;
