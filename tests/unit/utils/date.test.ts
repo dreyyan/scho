@@ -1,6 +1,6 @@
-import { formatDeadline } from "@/lib/utils/date";
+import { formatDeadline, toDateTimeLocal } from "@/lib/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { invalidDeadline } from "../../fixtures/date";
+import { invalidDeadline, ISODateCST, ISODateCDT, prevDayISODate, ISODate } from "../../fixtures/date";
 import { MINUTE, HOUR, DAY, SECOND } from "@/lib/constants/date";
 
 describe("formatDeadline()", () => {
@@ -106,6 +106,33 @@ describe("formatDeadline()", () => {
         hour12: true,
       });
       expect(formatDeadline(deadline)).toBe(expected);
+    });
+  });
+});
+
+describe("toDateTimeLocal()", () => {
+  describe("UTC to local time conversion", () => {
+    it("converts UTC to CST (UTC-6)", () => {
+        const result = toDateTimeLocal(ISODateCST);
+        expect(result).toBe("2026-11-10T12:00");
+    });
+    it("converts UTC to CDT (UTC-5)", () => {
+        const result = toDateTimeLocal(ISODateCDT);
+        expect(result).toBe("2026-07-10T13:00");
+    });
+  });
+
+  describe("Date Boundaries", () => {
+    it("handles conversion to the previous day", () => {
+        const result = toDateTimeLocal(prevDayISODate);
+        expect(result).toBe("2026-11-09T20:00");
+    });
+  });
+
+  describe("Output Format", () => {
+    it("returns YYYY-MM-DDTHH:mm", () => {
+        const result = toDateTimeLocal(ISODate);
+        expect(result).toBe("2026-11-09T20:00");
     });
   });
 });
