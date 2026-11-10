@@ -1,3 +1,5 @@
+import { MINUTE, HOUR, DAY } from "../constants/date";
+
 /**
  * Formats a deadline into a user-friendly date or relative time.
  * 
@@ -13,10 +15,6 @@ function formatDeadline(deadline: string | null | undefined): string {
     return "Invalid deadline."
   }
 
-  const minute = 60 * 1000;
-  const hour = 60 * minute;
-  const day = 24 * hour;
-
   // Calculate the time left until the deadline.
   const timeDiff = date.getTime() - Date.now();
 
@@ -25,32 +23,32 @@ function formatDeadline(deadline: string | null | undefined): string {
 
   // If deadline has passed, display in overdue format.
   if (timeDiff <= 0) {
-    if (absTimeDiff < minute) return `Just overdue`;
-    if (absTimeDiff < hour) {
-      const minOverdue = Math.ceil(absTimeDiff / minute);
+    if (absTimeDiff < MINUTE) return `Just overdue`;
+    if (absTimeDiff < HOUR) {
+      const minOverdue = Math.ceil(absTimeDiff / MINUTE);
       return `Overdue by ${minOverdue} min${minOverdue === 1 ? '' : 's'}`;
     }
-    if (absTimeDiff < day) {
-      const hoursOverdue = Math.ceil(absTimeDiff / hour);
+    if (absTimeDiff < DAY) {
+      const hoursOverdue = Math.ceil(absTimeDiff / HOUR);
       return `Overdue by ${hoursOverdue} hour${hoursOverdue === 1 ? '' : 's'}`;
     }
       
-    const daysOverdue = Math.ceil(absTimeDiff / day);
+    const daysOverdue = Math.ceil(absTimeDiff / DAY);
     return `Overdue by ${daysOverdue} day${daysOverdue === 1 ? '' : 's'}`;
   }
   
   // If time left is 3 days or less, display in phrase format.
-  if (timeDiff < minute) return 'Due now';
-  if (timeDiff < hour) {
-    const minLeft = Math.ceil(timeDiff / minute);
+  if (timeDiff < MINUTE) return 'Due now';
+  if (timeDiff < HOUR) {
+    const minLeft = Math.ceil(timeDiff / MINUTE);
     return `${minLeft} min${minLeft === 1 ? '' : 's'} left`;
   } 
-  if (timeDiff < day) {
-    const hoursLeft = Math.ceil(timeDiff / hour);
+  if (timeDiff < DAY) {
+    const hoursLeft = Math.ceil(timeDiff / HOUR);
     return `${hoursLeft} hour${hoursLeft === 1 ? '' : 's'} left`;
   } 
-  if (timeDiff <= day * 3) {
-    const daysLeft = Math.ceil(timeDiff / day);
+  if (timeDiff <= DAY * 3) {
+    const daysLeft = Math.ceil(timeDiff / DAY);
     return `${daysLeft} day${daysLeft === 1 ? '' : 's'} left`;
   }
 
