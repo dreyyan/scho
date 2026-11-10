@@ -33,11 +33,14 @@ export default function InputField({
 
   return (
     <div className='flex flex-col'>
-      <label htmlFor={id} className='
-        mb-1
-        text-sm font-semibold
-        text-gray-700
-      '>{label}</label>
+      <span className='space-x-0.5'>
+        <label htmlFor={id} className='
+          mb-1
+          text-sm font-semibold
+          text-gray-700
+        '>{label}</label>
+        <span className='text-red-700'>{required && '*'}</span>
+      </span>
 
       <div className='relative'>
         <input
