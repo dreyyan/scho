@@ -63,4 +63,20 @@ function formatDeadline(deadline: string | null | undefined): string {
   });
 }
 
-export { formatDeadline };
+/**
+ * Convert deadline to local DateTime.
+ * 
+ * @param deadline The deadline in string format.
+ * @returns The deadline in local DateTime.
+ */
+const toDateTimeLocal = (deadline: string): string => {
+  const date = new Date(deadline);
+
+  const localDate = new Date(
+    date.getTime() - date.getTimezoneOffset() * 60_000
+  );
+
+  return localDate.toISOString().slice(0, 16);
+};
+
+export { formatDeadline, toDateTimeLocal };

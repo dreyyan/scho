@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import InputField from '../ui/InputField'
 import { TaskFormData, TaskFormErrors } from '@/types/task';
+import { toDateTimeLocal } from '@/lib/utils/date';
 
 interface TaskFormProps {
   initialValues?: TaskFormData;
@@ -14,7 +15,9 @@ export default function TaskForm({
   const [data, setData] = useState<TaskFormData>({
     title: initialValues?.title || "",
     // extract date portion of an ISO DateTime string.
-    deadline: initialValues?.deadline?.slice(0, 10) ?? "",
+    deadline: initialValues?.deadline
+    ? toDateTimeLocal(initialValues.deadline)
+    : "",
   });
 
   const [errors, setErrors] = useState<TaskFormErrors>({

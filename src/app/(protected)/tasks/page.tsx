@@ -152,12 +152,17 @@ export default function Tasks() {
   };
 
   const openEditTaskForm = (id: string) => {
+    const task = items.find((item) => item.id === id);
+
+    if (!task) return;
+
     openModal({
       variant: "confirm",
       title: "Edit Task",
       description: "Edit the current task.",
       children: (
         <TaskForm
+          initialValues={task}
           onSubmit={() => handleEditTask(id)}
         />
       ),
