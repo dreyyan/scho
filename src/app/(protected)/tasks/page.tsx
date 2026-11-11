@@ -222,23 +222,16 @@ export default function Tasks() {
       // Update the local state of task items.
       setItems((prevItems) => prevItems.filter((task) => task.id !== id));
 
-      openModal({
-        variant: "success",
-        title: "Task Deleted",
-        description: "The task has been successfully deleted.",
-        primaryAction: {
-          label: "Got it",
-          type: "button",
-          onClick: () => closeModal(),
-        },
-      });
+      closeModal();
     } catch (err: unknown) {
       console.error("Failed to delete task: ", err);
+
+      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred.";
 
       openModal({
         variant: "error",
         title: "Failed Task Deletion",
-        description: `Failed to delete task. ${err}`,
+        description: errMsg,
         primaryAction: {
           label: "Got it",
           type: "button",
