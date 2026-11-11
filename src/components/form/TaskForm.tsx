@@ -52,7 +52,7 @@ export default function TaskForm({
   };
 
   return (
-    <form id='task-form' onSubmit={handleSubmit}>
+    <form id='task-form' onSubmit={handleSubmit} className='space-y-2'>
       <InputField
         id='title'
         name='title'
