@@ -32,7 +32,7 @@ export default function Button({
         text-white
         bg-linear-to-r
         ${Icon ? 'pl-3 pr-4' : 'px-4' }
-        py-3
+        py-2
         rounded-md
         cursor-pointer
         transition-colors duration-300

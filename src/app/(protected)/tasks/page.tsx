@@ -335,9 +335,9 @@ export default function Tasks() {
         <div className='flex justify-center items-center gap-x-3 mb-4'>
           {/* TODO: Search bar, filter, and sort. */}
           <div className='
-          flex-2
+            flex-2
             flex justify-center items-center
-            px-3 py-3
+            px-3 py-2
             text-sm
             bg-gray-50 border border-gray-300 rounded-md
           '>Search bar, filter, and sort.
