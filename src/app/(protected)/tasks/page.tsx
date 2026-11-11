@@ -151,7 +151,7 @@ export default function Tasks() {
     }
   };
 
-  // Immediately update the task's `isCompleted` state before sending a PATCH request to the backender server.
+  // Immediately update the task's `isCompleted` state before sending a PATCH request to the backend server.
   const handleCheckedChange = async (id: string, checked: boolean) => {
     const prevTask = items.find((task) => task.id === id);
 
@@ -171,6 +171,8 @@ export default function Tasks() {
     } catch (err: unknown) {
       console.error("Failed to update task completion: ", err);
 
+      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred.";
+
       // Revert the UI update if the request fails.
       setItems((prevItems) => 
         prevItems.map((item) =>
@@ -179,6 +181,25 @@ export default function Tasks() {
           : item
         )
       )
+
+      openModal({
+        variant: "error",
+        title: "Failed to Update Task",
+        description: errMsg,
+        primaryAction: {
+          label: "Got it",
+          type: "button",
+          onClick: () => closeModal(),
+        },
+        secondaryAction: {
+          label: "Retry",
+          type: "button",
+          onClick: () => {
+            closeModal();
+            handleCheckedChange(id, checked);
+          }, 
+        },
+      });
     }
   };
 
