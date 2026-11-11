@@ -24,7 +24,7 @@ export default function Tasks() {
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const { openModal, closeModal, updateModal } = useModal(); 
+  const { openModal, closeModal, updateModal } = useModal();
 
   // Retrieve the user's tasks from the backend.
   useEffect(() => {

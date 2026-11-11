@@ -37,7 +37,7 @@ export default function Modal({
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       className='
-      m-auto w-md max-w-md
+      m-auto w-sm max-w-md
       rounded-lg
       shadow-xl
       '
