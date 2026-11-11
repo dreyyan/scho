@@ -13,7 +13,8 @@
     "test:e2e": "playwright test",
     "test:e2e:verbose": "playwright test --reporter=list",
     "test:e2e:ui": "playwright test --ui",
-    "db:test": "tsx --env-file=.env scripts/db/test-connection.ts"
+    "db:test": "tsx --env-file=.env scripts/db/test-connection.ts",
+    "db:seed:tasks": "npx tsx --env-file=.env scripts/db/seed-tasks.ts"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.1",
