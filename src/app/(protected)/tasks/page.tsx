@@ -22,7 +22,9 @@ export default function Tasks() {
   const [activeFilter, setActiveFilter] = useState<string>(TASK_FILTER_OPTIONS[0].value);
   const [items, setItems] = useState<TaskResponse[]>([]);
 
-  const { openModal, closeModal } = useModal(); 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
+  const { openModal, closeModal, updateModal } = useModal(); 
 
   // Retrieve the user's tasks from the backend.
   useEffect(() => {
@@ -49,6 +51,19 @@ export default function Tasks() {
   };
 
   const handleAddTask = async (data: TaskFormData) => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    updateModal({
+      primaryAction: {
+        label: "Adding...",
+        type: "submit",
+        form: "task-form",
+        isLoading: true,
+      },
+    });
+
     try {
       const newTask = await createTask(data);
 
@@ -84,6 +99,8 @@ export default function Tasks() {
           onClick: () => handleAddTask(data), 
         },
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -143,6 +160,7 @@ export default function Tasks() {
         label: "Add",
         type: "submit",
         form: "task-form",
+        isLoading: isSubmitting,
       },
       secondaryAction: {
         label: "Cancel",
