@@ -9,8 +9,8 @@ import Button from '@/components/ui/Button';
 import Item from '@/components/ui/Item';
 import TaskForm from '@/components/form/TaskForm';
 
-import { createTask, deleteTask, getTasks } from '@/services/task.service';
-import { TaskFormData, TaskResponse } from '@/types/task';
+import { createTask, deleteTask, editTask, getTasks } from '@/services/task.service';
+import { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
 
 const TASK_FILTER_OPTIONS = [
   { label: "Active", value: "active" },
@@ -39,16 +39,6 @@ export default function Tasks() {
   
     fetchTasks();
   }, []);
-
-  const handleCheckedChange = (id: string, checked: boolean) => {
-    setItems((prevItems) => 
-      prevItems.map((item) =>
-        item.id === id
-        ? { ...item, isCompleted: checked }
-        : item
-      )
-    )
-  };
 
   const handleAddTask = async (data: TaskFormData) => {
     if (isSubmitting) return;
@@ -157,6 +147,37 @@ export default function Tasks() {
     }
   };
 
+  // Immediately update the task's `isCompleted` state before sending a PATCH request to the backender server.
+  const handleCheckedChange = async (id: string, checked: boolean) => {
+    const prevTask = items.find((task) => task.id === id);
+
+    if (!prevTask) return;
+
+    // Update the UI immediately.
+    setItems((prevItems) => 
+      prevItems.map((item) =>
+        item.id === id
+        ? { ...item, isCompleted: checked }
+        : item
+      )
+    )
+
+    try {
+      await editTask(id, { isCompleted: checked });
+    } catch (err: unknown) {
+      console.error("Failed to update task completion: ", err);
+
+      // Revert the UI update if the request fails.
+      setItems((prevItems) => 
+        prevItems.map((item) =>
+          item.id === id
+          ? { ...item, isCompleted: prevTask.isCompleted }
+          : item
+        )
+      )
+    }
+  };
+
   const handleDeleteTask = async (id: string) => {
     if (isSubmitting) return;
 
@@ -165,8 +186,7 @@ export default function Tasks() {
     updateModal({
       primaryAction: {
         label: "Deleting...",
-        type: "submit",
-        form: "task-form",
+        type: "button",
         isLoading: true,
       },
     });
@@ -245,7 +265,7 @@ export default function Tasks() {
       children: (
         <TaskForm
           initialValues={task}
-          onSubmit={() => handleEditTask(id)}
+          onSubmit={(data) => handleEditTask(id, data)}
         />
       ),
       primaryAction: {

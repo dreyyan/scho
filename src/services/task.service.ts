@@ -3,7 +3,9 @@ import type {
   GetTasksResponse,
   CreateTaskResponse,
   TaskFormData,
-  TaskResponse
+  TaskResponse,
+  UpdateTaskFormData,
+  UpdateTaskResponse
 } from "@/types/task";
 
 const TASK_API_URL = `/api/tasks`;
@@ -56,6 +58,34 @@ export async function createTask(data: TaskFormData): Promise<TaskResponse> {
   }
 
   const result: CreateTaskResponse = await response.json();
+
+  return result.data.task;
+}
+
+/**
+ ** Sends a PATCH request to edit an existing task.
+ * 
+ * @param id - The ID of the task to edit.
+ * @param data - The task data from the form.
+ * @returns The response in JSON.
+ * @throws Error if the request fails.
+ */
+export async function editTask(id: string, data: UpdateTaskFormData) {
+  const response = await fetch(`${TASK_API_URL}/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errMsg = 'Failed to edit task.';
+    logger.error(errMsg);
+    throw new Error(errMsg);
+  }
+
+  const result: UpdateTaskResponse = await response.json();
 
   return result.data.task;
 }
