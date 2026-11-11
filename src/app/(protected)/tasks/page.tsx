@@ -74,10 +74,12 @@ export default function Tasks() {
     } catch (err: unknown) {
       console.error("Failed to add task: ", err);
 
+      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred.";
+
       openModal({
         variant: "error",
         title: "Failed Task Creation",
-        description: `Failed to add task. ${err}`,
+        description: errMsg,
         primaryAction: {
           label: "Got it",
           type: "button",
@@ -125,12 +127,14 @@ export default function Tasks() {
         },
       });
     } catch (err: unknown) {
-      console.error("Failed to delete task: ", err);
+      console.error("Failed to edit task: ", err);
+
+      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred.";
 
       openModal({
         variant: "error",
         title: "Updated Task Failed",
-        description: `Failed to update task. ${err}`,
+        description: errMsg,
         primaryAction: {
           label: "Got it",
           type: "button",
@@ -139,7 +143,7 @@ export default function Tasks() {
         secondaryAction: {
           label: "Retry",
           type: "button",
-          onClick: () => handleDeleteTask(id), 
+          onClick: () => handleEditTask(id, data), 
         },
       });
     } finally {
