@@ -12,7 +12,7 @@ export default function Item(props: ItemProps) {
       border border-gray-300
       shadow
     '>
-      <div className='flex justify-center items-center space-x-3'>
+      <div className='flex justify-center items-center space-x-3 min-w-0'>
         { props.category === "Task" && (
           <label className="relative flex size-6 cursor-pointer items-center justify-center">
             <input
@@ -58,8 +58,8 @@ export default function Item(props: ItemProps) {
           /> : ""
         }
 
-        <span className='flex flex-col'>
-          <span className='text-sm font-semibold text-gray-800 hover:underline hover:cursor-pointer'>{props.title}</span>
+        <span className='flex flex-col min-w-0'>
+          <span className='text-sm font-semibold text-gray-800 hover:underline hover:cursor-pointer truncate'>{props.title}</span>
           <span className='text-xs'>{props.category}&nbsp;·&nbsp;
             <span className='text-gray-500'>
               { props.category === "Link" || props.category === "Item" ? props.createdAt : formatDeadline(props.deadline) }
@@ -68,7 +68,7 @@ export default function Item(props: ItemProps) {
         </span>
       </div>
 
-      <div className='space-x-1'>
+      <div className='flex shrink-0 items-center gap-1'>
         { props.canEdit && (
           <button
             onClick={props.onEdit}
