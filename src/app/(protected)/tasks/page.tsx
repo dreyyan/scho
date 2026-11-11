@@ -109,6 +109,19 @@ export default function Tasks() {
   };
 
   const handleDeleteTask = async (id: string) => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    updateModal({
+      primaryAction: {
+        label: "Deleting...",
+        type: "submit",
+        form: "task-form",
+        isLoading: true,
+      },
+    });
+
     try {
       await deleteTask(id);
 
@@ -143,6 +156,8 @@ export default function Tasks() {
           onClick: () => handleDeleteTask(id), 
         },
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
