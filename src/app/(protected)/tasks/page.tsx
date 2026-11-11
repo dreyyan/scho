@@ -104,8 +104,57 @@ export default function Tasks() {
     }
   };
 
-  const handleEditTask = (id: string) => {
-    console.log(`TODO: Handle edit for ${id}.`);
+  const handleEditTask = async (id: string, data: UpdateTaskFormData) => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    updateModal({
+      primaryAction: {
+        label: "Editing...",
+        type: "submit",
+        form: "task-form",
+        isLoading: true,
+      },
+    });
+
+    try {
+      const updatedTask = await editTask(id, data);
+
+      // Update the local state of task items.
+      setItems((prevItems) => prevItems.map((task) => task.id === id ? updatedTask : task));
+
+      openModal({
+        variant: "success",
+        title: "Task Updated",
+        description: "Task updated successfully!",
+        primaryAction: {
+          label: "Got it",
+          type: "button",
+          onClick: () => closeModal(),
+        },
+      });
+    } catch (err: unknown) {
+      console.error("Failed to delete task: ", err);
+
+      openModal({
+        variant: "error",
+        title: "Updated Task Failed",
+        description: `Failed to update task. ${err}`,
+        primaryAction: {
+          label: "Got it",
+          type: "button",
+          onClick: () => closeModal(),
+        },
+        secondaryAction: {
+          label: "Retry",
+          type: "button",
+          onClick: () => handleDeleteTask(id), 
+        },
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleDeleteTask = async (id: string) => {
