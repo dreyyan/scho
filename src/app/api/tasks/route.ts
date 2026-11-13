@@ -6,7 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { logger } from "@/lib/logger";
 import { Prisma } from "@/generated/prisma/client";
-import { TaskSelect } from "@/lib/selects/task";
+import { TASK_SELECT } from "@/lib/selects/task";
 
 /**
  ** GET — Retrieve the user's tasks.
@@ -42,7 +42,7 @@ export async function GET() {
       where: {
         userId,
       },
-      select: TaskSelect,
+      select: TASK_SELECT,
     });
 
     return NextResponse.json(
@@ -129,7 +129,7 @@ export async function POST(request: Request) {
         title,
         deadline,
       },
-      select: TaskSelect,
+      select: TASK_SELECT,
     });
 
     return NextResponse.json(
