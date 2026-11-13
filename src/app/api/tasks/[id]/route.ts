@@ -7,7 +7,7 @@ import { logger } from "@/lib/logger";
 import { auth } from "@/auth";
 
 import { updateTaskSchema } from "@/validations/task";
-import { TaskSelect } from "@/lib/selects/task";
+import { TASK_SELECT } from "@/lib/selects/task";
 
 /**
  ** PATCH — Update an existing task.
@@ -90,7 +90,7 @@ export async function PATCH(
         isCompleted,
         deadline,
       },
-      select: TaskSelect,
+      select: TASK_SELECT,
     });
 
     return NextResponse.json(
