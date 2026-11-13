@@ -66,6 +66,7 @@ describe("POST /api/tasks", () => {
 
     expect(response.status).toBe(201);
     expect(result.message).toBe("Task created successfully.");
+    expect(result.data.task).toHaveProperty("createdAt");
   });
 
   it("rejects an unauthorized user", async () => {
@@ -193,6 +194,7 @@ describe("PATCH /api/tasks/:id", () => {
 
     expect(response.status).toBe(200);
     expect(result.message).toBe("Task updated successfully.");
+    expect(result.data.task).toHaveProperty("createdAt");
   });
 
   it.each([
