@@ -9,6 +9,9 @@ if (!process.env.TEST_DATABASE_URL) {
   throw new Error("TEST_DATABASE_URL is not defined");
 }
 
+// Pin the timezone so date tests behave the same on every machine.
+process.env.TZ = "America/Chicago";
+
 export default defineConfig({
   resolve: {
     alias: {
