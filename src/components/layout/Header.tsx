@@ -10,11 +10,6 @@ export default function Header() {
     // TODO: Navigate to the user's profile.
   };
 
-  const handleSettings = () => {
-    // TODO: Navigate to the settings.
-    
-  };
-
   return (
     <div className='
       flex justify-between min-h-16
