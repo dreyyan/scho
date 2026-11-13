@@ -12,7 +12,7 @@ if (!connectionString) {
 
 // Configure the PostgreSQL driver adapter using the database connection string.
 const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
+  connectionString,
 });
 
 /**
