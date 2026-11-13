@@ -1,4 +1,5 @@
 import { logger } from "@/lib/logger";
+import { throwApiError } from "@/lib/utils/api";
 import type {
   GetTasksResponse,
   CreateTaskResponse,
@@ -52,9 +53,7 @@ export async function createTask(data: TaskFormData): Promise<TaskResponse> {
   });
 
   if (!response.ok) {
-    const errMsg = 'Failed to create task.';
-    logger.error(errMsg);
-    throw new Error(errMsg);
+    await throwApiError(response, 'Failed to create task.');
   }
 
   const result: CreateTaskResponse = await response.json();
@@ -80,9 +79,7 @@ export async function editTask(id: string, data: UpdateTaskFormData) {
   });
 
   if (!response.ok) {
-    const errMsg = 'Failed to edit task.';
-    logger.error(errMsg);
-    throw new Error(errMsg);
+    await throwApiError(response, 'Failed to edit task.');
   }
 
   const result: UpdateTaskResponse = await response.json();
@@ -102,8 +99,6 @@ export async function deleteTask(id: string) {
   });
 
   if (!response.ok) {
-    const errMsg = 'Failed to delete task.';
-    logger.error(errMsg);
-    throw new Error(errMsg);
+    await throwApiError(response, 'Failed to delete task.');
   }
 }
