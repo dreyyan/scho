@@ -27,7 +27,7 @@ export default function Button({
       onClick={onClick}
       className={`
         flex justify-center items-center
-        w-full
+        h-full w-full
         text-sm font-bold
         text-white
         bg-linear-to-r
