@@ -11,16 +11,19 @@ import TaskForm from '@/components/form/TaskForm';
 
 import { createTask, deleteTask, editTask, getTasks } from '@/services/task.service';
 import { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
-
-const TASK_FILTER_OPTIONS = [
-  { label: "Active", value: "active" },
-  { label: "Completed", value: "completed" },
-  { label: "All", value: "all" },
-];
+import SearchBar from '@/components/ui/SearchBar';
+import Filter from '@/components/ui/Filter';
+import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS } from '@/lib/constants/task';
+import Sort from '@/components/ui/Sort';
 
 export default function Tasks() {
-  const [activeFilter, setActiveFilter] = useState<string>(TASK_FILTER_OPTIONS[0].value);
+  const [activeFilter, setActiveFilter] = useState<string>(STATUS_OPTIONS[0].value);
   const [items, setItems] = useState<TaskResponse[]>([]);
+  
+  const [search, setSearch] = useState<string>('');
+  const [status, setStatus] = useState<string>(STATUS_OPTIONS[0].value);
+  const [sort, setSort] = useState<string>(SORT_OPTIONS[0].value);
+  const [filter, setFilter] = useState<string>(FILTER_OPTIONS[0].value);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -320,7 +323,7 @@ export default function Tasks() {
       <header className='flex justify-between items-center'>
         <h1 className='text-gray-700 font-bold'>Tasks</h1>
         <FilterGroup
-          options={TASK_FILTER_OPTIONS}
+          options={STATUS_OPTIONS}
           value={activeFilter}
           onChange={setActiveFilter}
         />
@@ -332,17 +335,31 @@ export default function Tasks() {
         p-6
         bg-gray-100 border-2 border-gray-300
       '>
-        <div className='flex justify-center items-center gap-x-3 mb-4'>
-          {/* TODO: Search bar, filter, and sort. */}
-          <div className='
-            flex-2
-            flex justify-center items-center
-            px-3 py-2
-            text-sm
-            bg-gray-50 border border-gray-300 rounded-md
-          '>Search bar, filter, and sort.
+        <div className='
+          flex justify-between items-center
+          h-10 gap-x-3 mb-4
+        '>
+          {/* Left: Search, Filter, and Sort */}
+          <div className='flex items-center h-10 gap-x-2'>
+            <SearchBar
+              value={search}
+              onChange={setSearch}
+              placeholder='Search for tasks...'
+            />
+            <Filter
+              value={filter}
+              onChange={setFilter}
+              options={FILTER_OPTIONS}
+            />
+            <Sort
+              value={sort}
+              onChange={setSort}
+              options={SORT_OPTIONS}
+            />
           </div>
-          <div>
+
+          {/* Right: Primary Action Button */}
+          <div className='h-full'>
             <Button
               label='Add Task'
               variant='primary'
