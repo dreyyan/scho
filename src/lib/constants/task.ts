@@ -16,8 +16,9 @@ const SORT_OPTIONS = [
 
 const FILTER_OPTIONS = [
   { label: "All Tasks", value: "all" },
-  { label: "Pending", value: "pending" },
-  { label: "Completed", value: "completed" },
+  { label: "With Deadline", value: "with-deadline" },
+  { label: "No Deadline", value: "no-deadline" },
+  { label: "Overdue", value: "overdue" },
 ];
 
 export {

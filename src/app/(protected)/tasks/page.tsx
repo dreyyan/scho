@@ -7,17 +7,18 @@ import { Plus } from 'lucide-react';
 import FilterGroup from '@/components/ui/FilterGroup'
 import Button from '@/components/ui/Button';
 import Item from '@/components/ui/Item';
+import SearchBar from '@/components/ui/SearchBar';
+import Filter from '@/components/ui/Filter';
+import Sort from '@/components/ui/Sort';
 import TaskForm from '@/components/form/TaskForm';
 
 import { createTask, deleteTask, editTask, getTasks } from '@/services/task.service';
 import { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
-import SearchBar from '@/components/ui/SearchBar';
-import Filter from '@/components/ui/Filter';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS } from '@/lib/constants/task';
-import Sort from '@/components/ui/Sort';
 
 export default function Tasks() {
-  const [activeFilter, setActiveFilter] = useState<string>(STATUS_OPTIONS[0].value);
+  const { openModal, closeModal, updateModal } = useModal();
+  
   const [items, setItems] = useState<TaskResponse[]>([]);
   
   const [search, setSearch] = useState<string>('');
@@ -27,7 +28,77 @@ export default function Tasks() {
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const { openModal, closeModal, updateModal } = useModal();
+  const [currentTime, setCurrentTime] = useState<number | null>(null);
+
+  // Update time every 60 seconds.
+  useEffect(() => {
+    const updateTime = () => {
+      setCurrentTime(Date.now());
+    };
+
+    const interval = setInterval(updateTime, 60_000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const searchedTasks = items.filter((task) => task.title.toLowerCase().includes(search.trim().toLowerCase()));
+  const statusFilteredTasks = searchedTasks.filter((task) => {
+    switch (status) {
+      case "active":
+        return !task.isCompleted;
+      case "completed":
+        return task.isCompleted;
+      case "all":
+        return true;
+      default:
+        return true;
+    }
+  });
+  const filteredTasks = statusFilteredTasks.filter((task) => {
+    switch (filter) {
+      case "with-deadline":
+        return !!task.deadline;
+
+      case "no-deadline":
+        return !task.deadline;
+
+      case "overdue":
+        return (
+          !!task.deadline &&
+          !task.isCompleted &&
+          currentTime !== null &&
+          new Date(task.deadline).getTime() < currentTime
+        );
+
+      default:
+        return true;
+    }
+  });
+  const sortedTasks = [...filteredTasks].sort((a, b) => {
+    switch (sort) {
+      case "newest":
+        return new Date(b.createdAt).getTime()
+        - new Date(a.createdAt).getTime();
+      case "oldest":
+        return new Date(a.createdAt).getTime()
+        - new Date(b.createdAt).getTime();
+      case "due-asc":
+        case "due-desc": {
+          if (!a.deadline && !b.deadline) return 0;
+          if (!a.deadline) return 1;
+          if (!b.deadline) return -1;
+
+          const aTime = new Date(a.deadline).getTime();
+          const bTime = new Date(b.deadline).getTime();
+
+          return sort === "due-asc" ? aTime - bTime : bTime - aTime;
+      };
+      case "title-asc":
+        return a.title.localeCompare(b.title);
+      default:
+        return 0;
+    }
+  });
 
   // Retrieve the user's tasks from the backend.
   useEffect(() => {
@@ -324,8 +395,8 @@ export default function Tasks() {
         <h1 className='text-gray-700 font-bold'>Tasks</h1>
         <FilterGroup
           options={STATUS_OPTIONS}
-          value={activeFilter}
-          onChange={setActiveFilter}
+          value={status}
+          onChange={setStatus}
         />
       </header>
 
@@ -371,7 +442,7 @@ export default function Tasks() {
         </div>
 
         <div className='space-y-2'>
-          { items.map((task) => (
+          { sortedTasks.map((task) => (
             <Item
               key={task.id}
               id={task.id}
