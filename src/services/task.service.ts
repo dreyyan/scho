@@ -1,4 +1,3 @@
-import { logger } from "@/lib/logger";
 import { throwApiError } from "@/lib/utils/api";
 import type {
   GetTasksResponse,
@@ -26,9 +25,7 @@ export async function getTasks(): Promise<TaskResponse[]> {
   });
 
   if (!response.ok) {
-    const errMsg = 'Failed to retrieve tasks.';
-    logger.error(errMsg);
-    throw new Error(errMsg);
+    await throwApiError(response, 'Failed to retrieve tasks.');
   }
 
   const result: GetTasksResponse = await response.json();
