@@ -18,7 +18,7 @@ export default function Sort({
   return (
     <Select.Root value={value} onValueChange={onChange}>
       <Select.Trigger
-        aria-label="Filter tasks"
+        aria-label="Sort tasks"
         className="
           flex items-center justify-between gap-2
           text-xs
@@ -32,7 +32,7 @@ export default function Sort({
           whitespace-nowrap
         "
       >
-        <Select.Value placeholder="Filter" />
+        <Select.Value placeholder="Sort" />
         <Select.Icon>
           <ChevronDown size={14} />
         </Select.Icon>
