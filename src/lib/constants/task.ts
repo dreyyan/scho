@@ -11,10 +11,7 @@ const SORT_OPTIONS = [
   { label: 'Oldest First', value: 'oldest' },
   { label: 'Due Date (Earliest)', value: 'due-asc' },
   { label: 'Due Date (Latest)', value: 'due-desc' },
-  { label: 'Priority (High to Low)', value: 'priority-desc' },
-  { label: 'Priority (Low to High)', value: 'priority-asc' },
   { label: 'Title (A–Z)', value: 'title-asc' },
-  { label: 'Title (Z–A)', value: 'title-desc' },
 ];
 
 const FILTER_OPTIONS = [
