@@ -28,7 +28,7 @@ export default function Tasks() {
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const [currentTime, setCurrentTime] = useState<number | null>(null);
+  const [currentTime, setCurrentTime] = useState(() => Date.now());
 
   // Update time every 60 seconds.
   useEffect(() => {
@@ -66,7 +66,6 @@ export default function Tasks() {
         return (
           !!task.deadline &&
           !task.isCompleted &&
-          currentTime !== null &&
           new Date(task.deadline).getTime() < currentTime
         );
 
