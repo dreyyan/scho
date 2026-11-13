@@ -10,10 +10,8 @@ export async function throwApiError(
   response: Response,
   fallbackMessage: string,
 ) {
-  if (!response.ok) {
-    const body = await response.json().catch(() => null);
-    const errMsg = body?.error ?? fallbackMessage;
-    logger.error(errMsg);
-    throw new Error(errMsg);
-  }
+  const body = await response.json().catch(() => null);
+  const errMsg = body?.error ?? fallbackMessage;
+  logger.error(errMsg);
+  throw new Error(errMsg);
 };
