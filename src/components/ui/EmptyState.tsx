@@ -19,7 +19,7 @@ const TEXT_VARIANTS = {
 export default function EmptyState({
   title,
   description,
-  variant,
+  variant = 'default',
   action,
 }: EmptyStateProps) {
   return (

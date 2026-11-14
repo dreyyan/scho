@@ -112,6 +112,7 @@ export default function Tasks() {
     if (error) {
       return <EmptyState title='Failed to load tasks'
       description={error}
+      variant='error'
       action={{
         label: 'Try again',
         onClick: handleRetry,
@@ -121,7 +122,12 @@ export default function Tasks() {
 
     if (items.length === 0) {
       return <EmptyState title='No tasks yet'
-      description='Create your first task to get started.' />
+      description='Create your first task to get started.'
+      action={{
+        label: 'Add Task',
+        onClick: openAddTaskForm,
+      }}
+      />
     }
 
     if (sortedTasks.length === 0) {
