@@ -56,7 +56,7 @@ export default function Tasks() {
   const currentPage = Math.min(page, Math.max(totalPages, 1));
 
   // Retrieve the tasks after pagination.
-  const paginatedTasks = paginate(sortedTasks, page, TASKS_PER_PAGE);
+  const paginatedTasks = paginate(sortedTasks, currentPage, TASKS_PER_PAGE);
 
   const handleSearchChange = (value: string) => {
     setSearch(value);
@@ -502,13 +502,11 @@ export default function Tasks() {
         mb-4 px-3 py-3
         text-sm
       '>
-        { totalPages > 1 && (
-          <Pagination
-            page={currentPage}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
-        )}
+        <Pagination
+          page={currentPage}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   )
