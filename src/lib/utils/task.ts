@@ -85,8 +85,8 @@ export function getVisibleTasks (
  * @returns The items on that page.
  */
 export function paginate<T>(items: T[], page: number, perPage: number): T[] {
-  const end = page * perPage;
-  const start =  end - (perPage - 1);
+  const start = (page - 1) * perPage;
+  const end = (page * perPage);
 
   return items.slice(start, end);
 }
