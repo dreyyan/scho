@@ -55,6 +55,24 @@ export default function Tasks() {
   const paginatedTasks = paginate(sortedTasks, page, TASKS_PER_PAGE);
   const totalPages = Math.ceil(sortedTasks.length / TASKS_PER_PAGE);
 
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleStatusChange = (value: string) => {
+    setStatus(value);
+    setPage(1);
+  };
+  const handleFilterChange = (value: string) => {
+    setFilter(value);
+    setPage(1);
+  };
+  const handleSortChange = (value: string) => {
+    setSort(value);
+    setPage(1);
+  };
+
   const renderTaskList = () => {
     if (isLoading) {
       return <EmptyState
@@ -419,7 +437,7 @@ export default function Tasks() {
         <FilterGroup
           options={STATUS_OPTIONS}
           value={status}
-          onChange={setStatus}
+          onChange={handleStatusChange}
         />
       </header>
 
@@ -438,17 +456,17 @@ export default function Tasks() {
           <div className='flex items-center h-10 gap-x-2'>
             <SearchBar
               value={search}
-              onChange={setSearch}
+              onChange={handleSearchChange}
               placeholder='Search for tasks...'
             />
             <Filter
               value={filter}
-              onChange={setFilter}
+              onChange={handleFilterChange}
               options={FILTER_OPTIONS}
             />
             <Sort
               value={sort}
-              onChange={setSort}
+              onChange={handleSortChange}
               options={SORT_OPTIONS}
             />
           </div>
