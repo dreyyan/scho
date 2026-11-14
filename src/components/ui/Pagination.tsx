@@ -18,6 +18,7 @@ export default function Pagination({
         label='<'
         variant='primary'
         type='button'
+        disabled={page === 1}
         onClick={() => onPageChange(page - 1)}
       />
       <div className='flex justify-center items-center gap-x-1'>
@@ -30,6 +31,7 @@ export default function Pagination({
         label='>'
         variant='primary'
         type='button'
+        disabled={page === totalPage}
         onClick={() => onPageChange(page + 1)}
       />
     </div>

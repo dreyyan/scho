@@ -41,8 +41,8 @@ export default function Button({
         cursor-pointer
         transition-colors duration-300
         whitespace-nowrap
-        ${BUTTON_STYLES[variant]
-        }`}
+        ${disabled ? 'bg-gray-300' : BUTTON_STYLES[variant]}
+      `}
     >
       { Icon && <Icon size={16} className='mr-1' /> }
       {label}
