@@ -41,6 +41,8 @@ model InboxItem {
 
   user User  @relation(fields: [userId], references: [id])
   task Task?
+
+  @@index([userId])
 }
 
 model Task {
@@ -55,4 +57,6 @@ model Task {
 
   user       User       @relation(fields: [userId], references: [id])
   sourceItem InboxItem? @relation(fields: [sourceItemId], references: [id])
+
+  @@index([userId])
 }
