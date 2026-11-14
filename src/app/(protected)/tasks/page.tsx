@@ -30,8 +30,10 @@ export default function Tasks() {
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   const [currentTime, setCurrentTime] = useState(() => Date.now());
+
 
   // Update time every 60 seconds.
   useEffect(() => {
@@ -109,7 +111,12 @@ export default function Tasks() {
 
     if (error) {
       return <EmptyState title='Failed to load tasks'
-      description={error} />
+      description={error}
+      action={{
+        label: 'Try again',
+        onClick: handleRetry,
+      }}
+      />
     }
 
     if (items.length === 0) {
@@ -149,13 +156,20 @@ export default function Tasks() {
         setItems(items);
       } catch (err: unknown) {
         console.error("Failed to retrieve tasks: ", err);
+        setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
       } finally {
         setIsLoading(false);
       }
     };
   
     fetchTasks();
-  }, []);
+  }, [reloadKey]);
+
+  const handleRetry = () => {
+    setError(null);
+    setIsLoading(true);
+    setReloadKey((prev) => prev + 1);
+  };
 
   const handleAddTask = async (data: TaskFormData) => {
     if (isSubmitting) return;
