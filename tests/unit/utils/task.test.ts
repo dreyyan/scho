@@ -8,7 +8,7 @@ const defaultTaskViewOptions: TaskViewOptions = {
   status: 'all',
   filter: 'all',
   sort: 'newest',
-  currentTime: new Date(NOW).getTime(),
+  currentTime: NOW.getTime(),
 }
 
 const makeTask = (overrides: Partial<TaskResponse>): TaskResponse => ({
