@@ -40,6 +40,7 @@ export default function Button({
         rounded-md
         cursor-pointer
         transition-colors duration-300
+        whitespace-nowrap
         ${BUTTON_STYLES[variant]
         }`}
     >
