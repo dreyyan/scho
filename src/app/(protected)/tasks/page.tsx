@@ -17,6 +17,7 @@ import { createTask, deleteTask, editTask, getTasks } from '@/services/task.serv
 import { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
 import { getVisibleTasks, paginate } from '@/lib/utils/task';
+import Pagination from '@/components/ui/Pagination';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
@@ -52,6 +53,7 @@ export default function Tasks() {
 
   // Retrieve the tasks after pagination.
   const paginatedTasks = paginate(items, page, TASKS_PER_PAGE);
+  const totalPages = Math.ceil(sortedTasks.length / TASKS_PER_PAGE);
 
   const renderTaskList = () => {
     if (isLoading) {
@@ -476,8 +478,15 @@ export default function Tasks() {
         flex justify-center items-center
         mb-4 px-3 py-3
         text-sm
-        bg-gray-50 border border-gray-300 rounded-md
-      '>Pagination.
+      '>
+        <Pagination
+          page={page}
+          totalPage={totalPages}
+          onPageChange={() => {
+            if (page > totalPages) return;
+            setPage
+          }}
+        />
       </div>
     </div>
   )
