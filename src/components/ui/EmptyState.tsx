@@ -8,6 +8,7 @@ interface EmptyStateProps {
   action?: {
     label: string;
     onClick: () => void;
+    variant?: 'primary' | 'secondary';
   }
 }
 
@@ -27,17 +28,14 @@ export default function EmptyState({
         flex flex-1 flex-col justify-center items-center
       '>
         <div className='flex flex-col justify-center items-center'>
-          { title && <span className={`${
-            variant === 'default' ? TEXT_VARIANTS.default :
-            variant === 'error' ? TEXT_VARIANTS.error : ''
-            } text-xl font-bold`}>{title}</span> }
+          { title && <span className={`${TEXT_VARIANTS[variant]} text-xl font-bold`}>{title}</span> }
           <span className='text-sm'>{description}</span>
         </div>
         { action && (
           <div className='mt-3'>
             <Button
               label={action.label}
-              variant='secondary'
+              variant={action.variant}
               onClick={action.onClick}
             />
           </div>

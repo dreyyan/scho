@@ -37,11 +37,7 @@ export default function Button({
         rounded-md
         cursor-pointer
         transition-colors duration-300
-        ${
-          variant === "primary" ? BUTTON_STYLES.primary :
-          variant === "secondary" ? BUTTON_STYLES.secondary :
-          variant === "destructive" ? BUTTON_STYLES.destructive :
-          ""
+        ${BUTTON_STYLES[variant]
         }`}
     >
       { Icon && <Icon size={16} className='mr-1' /> }
