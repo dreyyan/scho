@@ -15,8 +15,8 @@ import TaskForm from '@/components/form/TaskForm';
 
 import { createTask, deleteTask, editTask, getTasks } from '@/services/task.service';
 import { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
-import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS } from '@/lib/constants/task';
-import { getVisibleTasks } from '@/lib/utils/task';
+import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
+import { getVisibleTasks, paginate } from '@/lib/utils/task';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
@@ -24,6 +24,7 @@ export default function Tasks() {
   const [items, setItems] = useState<TaskResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
   
+  const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
   const [status, setStatus] = useState<string>(STATUS_OPTIONS[0].value);
   const [sort, setSort] = useState<string>(SORT_OPTIONS[0].value);
@@ -34,7 +35,6 @@ export default function Tasks() {
   const [reloadKey, setReloadKey] = useState(0);
 
   const [currentTime, setCurrentTime] = useState(() => Date.now());
-
 
   // Update time every 60 seconds.
   useEffect(() => {
@@ -49,6 +49,9 @@ export default function Tasks() {
 
   // Retrieve the filtered and sorted tasks.
   const sortedTasks = getVisibleTasks(items, { search, status, sort, filter, currentTime });
+
+  // Retrieve the tasks after pagination.
+  const paginatedTasks = paginate(items, page, TASKS_PER_PAGE);
 
   const renderTaskList = () => {
     if (isLoading) {
@@ -90,7 +93,7 @@ export default function Tasks() {
       />
     }
 
-    return sortedTasks.map((task) => (
+    return paginatedTasks.map((task) => (
       <Item
         key={task.id}
         id={task.id}
@@ -245,7 +248,7 @@ export default function Tasks() {
 
   // Immediately update the task's `isCompleted` state before sending a PATCH request to the backend server.
   const handleCheckedChange = async (id: string, checked: boolean) => {
-    const prevTask = items.find((task) => task.id === id);
+    const prevTask = paginatedTasks.find((task) => task.id === id);
 
     if (!prevTask) return;
 
@@ -364,7 +367,7 @@ export default function Tasks() {
   };
 
   const openEditTaskForm = (id: string) => {
-    const task = items.find((item) => item.id === id);
+    const task = paginatedTasks.find((item) => item.id === id);
 
     if (!task) return;
 
