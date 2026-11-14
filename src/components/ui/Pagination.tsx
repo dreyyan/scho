@@ -31,7 +31,7 @@ export default function Pagination({
         label='>'
         variant='primary'
         type='button'
-        disabled={page === totalPage}
+        disabled={page >= totalPage}
         onClick={() => onPageChange(page + 1)}
       />
     </div>
