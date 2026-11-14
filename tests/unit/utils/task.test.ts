@@ -83,7 +83,7 @@ describe("getVisibleTasks()", () => {
     });
     it("Selecting 'With Deadline' only displays tasks with deadlines", () => {
       const tasks = [
-        makeTask({ title: "Buy Milk", deadline: NOW.toLocaleString() }),
+        makeTask({ title: "Buy Milk", deadline: NOW.toISOString() }),
         makeTask({ title: "Wash dishes" }),
       ];
 
@@ -94,7 +94,7 @@ describe("getVisibleTasks()", () => {
     });
     it("Selecting 'No Deadline' only displays tasks without deadlines", () => {
       const tasks = [
-        makeTask({ title: "Buy Milk", deadline: NOW.toLocaleString() }),
+        makeTask({ title: "Buy Milk", deadline: NOW.toISOString() }),
         makeTask({ title: "Wash dishes" }),
       ];
 
@@ -103,9 +103,12 @@ describe("getVisibleTasks()", () => {
 
       expect(result.map((task) => task.title)).toEqual(["Wash dishes"]);
     });
-    it("Selecting 'Overdue' only displays tasks past the current time", () => {
+    it("Selecting 'Overdue' only displays incomplete tasks past their deadline", () => {
+      const pastDeadline = new Date(NOW.getTime() - 1000).toISOString();
+
       const tasks = [
-        makeTask({ title: "Buy Milk", deadline: (NOW.getTime() - 1000).toLocaleString() }),
+        makeTask({ title: "Buy Milk", deadline: pastDeadline }),
+        makeTask({ title: "Pay bills", deadline: pastDeadline, isCompleted: true }),
         makeTask({ title: "Wash dishes" }),
       ];
 
