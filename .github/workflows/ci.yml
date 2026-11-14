@@ -1,0 +1,43 @@
+name: CI
+
+# When to run: on every Pull Request, and on pushes to main.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  checks:
+    name: Lint, typecheck, and unit tests
+    runs-on: ubuntu-latest
+
+    env:
+      TEST_DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+    
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test:run tests/unit
