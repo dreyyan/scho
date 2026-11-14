@@ -3,13 +3,13 @@ import Button from './Button';
 
 interface PaginationProps {
   page: number;
-  totalPage: number;
+  totalPages: number;
   onPageChange: (page: number) => void;
 }
 
 export default function Pagination({
   page,
-  totalPage,
+  totalPages,
   onPageChange,
 }: PaginationProps) {
   return (
@@ -25,13 +25,13 @@ export default function Pagination({
         <span>Page</span>
         <span className='font-bold w-4 text-center'>{page}</span>
         <span>of</span>
-        <span className='font-bold w-4 text-center'>{totalPage}</span>
+        <span className='font-bold w-4 text-center'>{totalPages}</span>
       </div>
       <Button
         label='>'
         variant='primary'
         type='button'
-        disabled={page >= totalPage}
+        disabled={page >= totalPages}
         onClick={() => onPageChange(page + 1)}
       />
     </div>
