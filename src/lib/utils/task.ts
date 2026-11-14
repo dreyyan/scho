@@ -74,3 +74,19 @@ export function getVisibleTasks (
 
   return sortedTasks;
 }
+
+/**
+ * Return `n` items on a specific page number.
+ * 
+ * @param items - The list of items.
+ * @param page - The page number.
+ * @param perPage - The number of items to display per page.
+ * 
+ * @returns The items on that page.
+ */
+export function paginate<T>(items: T[], page: number, perPage: number): T[] {
+  const end = page * perPage;
+  const start =  end - (perPage - 1);
+
+  return items.slice(start, end);
+}
