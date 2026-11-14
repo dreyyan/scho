@@ -11,7 +11,7 @@ const defaultTaskViewOptions: TaskViewOptions = {
   currentTime: NOW.getTime(),
 }
 
-const makeTask = (overrides: Partial<TaskResponse>): TaskResponse => ({
+const makeTask = (overrides: Partial<TaskResponse> = {}): TaskResponse => ({
   id: crypto.randomUUID(),
   title: "Title",
   isCompleted: false,
