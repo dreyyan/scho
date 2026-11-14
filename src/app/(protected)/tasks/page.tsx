@@ -52,7 +52,7 @@ export default function Tasks() {
   const sortedTasks = getVisibleTasks(items, { search, status, sort, filter, currentTime });
 
   // Retrieve the tasks after pagination.
-  const paginatedTasks = paginate(items, page, TASKS_PER_PAGE);
+  const paginatedTasks = paginate(sortedTasks, page, TASKS_PER_PAGE);
   const totalPages = Math.ceil(sortedTasks.length / TASKS_PER_PAGE);
 
   const renderTaskList = () => {
@@ -250,7 +250,7 @@ export default function Tasks() {
 
   // Immediately update the task's `isCompleted` state before sending a PATCH request to the backend server.
   const handleCheckedChange = async (id: string, checked: boolean) => {
-    const prevTask = paginatedTasks.find((task) => task.id === id);
+    const prevTask = items.find((task) => task.id === id);
 
     if (!prevTask) return;
 
@@ -369,7 +369,7 @@ export default function Tasks() {
   };
 
   const openEditTaskForm = (id: string) => {
-    const task = paginatedTasks.find((item) => item.id === id);
+    const task = items.find((item) => item.id === id);
 
     if (!task) return;
 
@@ -482,10 +482,7 @@ export default function Tasks() {
         <Pagination
           page={page}
           totalPage={totalPages}
-          onPageChange={() => {
-            if (page > totalPages) return;
-            setPage
-          }}
+          onPageChange={setPage}
         />
       </div>
     </div>
