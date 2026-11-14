@@ -118,7 +118,66 @@ describe("getVisibleTasks()", () => {
       expect(result.map((task) => task.title)).toEqual(["Buy Milk"]);
     });
   });
-  // describe("sort", () => {
-    
-  // });
+  describe("sort", () => {
+    it("Selecting 'Newest First' sorts the tasks from newest to oldest", () => {
+      const tasks = [
+        makeTask({ title: "A", createdAt: "2026-11-13T02:00:00Z" }),
+        makeTask({ title: "C", createdAt: "2026-11-11T02:00:00Z" }),
+        makeTask({ title: "B", createdAt: "2026-11-12T02:00:00Z" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, sort: "newest" });
+
+      expect(result.map((task) => task.title)).toEqual(["A", "B", "C"]);
+    });
+    it("Selecting 'Oldest First' sorts the tasks from oldest to newest", () => {
+      const tasks = [
+        makeTask({ title: "A", createdAt: "2026-11-11T02:00:00Z" }),
+        makeTask({ title: "C", createdAt: "2026-11-13T02:00:00Z" }),
+        makeTask({ title: "B", createdAt: "2026-11-12T02:00:00Z" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, sort: "oldest" });
+
+      expect(result.map((task) => task.title)).toEqual(["A", "B", "C"]);
+    });
+    it("Selecting 'Due Date(Earliest)' sorts the tasks from earliest to latest", () => {
+      const tasks = [
+        makeTask({ title: "A", deadline: "2026-11-11T02:00:00Z" }),
+        makeTask({ title: "C", deadline: "2026-11-13T02:00:00Z" }),
+        makeTask({ title: "B", deadline: "2026-11-12T02:00:00Z" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, sort: "due-asc" });
+
+      expect(result.map((task) => task.title)).toEqual(["A", "B", "C"]);
+    });
+    it("Selecting 'Due Date(Latest)' sorts the tasks from earliest to latest", () => {
+      const tasks = [
+        makeTask({ title: "A", deadline: "2026-11-13T02:00:00Z" }),
+        makeTask({ title: "C", deadline: "2026-11-11T02:00:00Z" }),
+        makeTask({ title: "B", deadline: "2026-11-12T02:00:00Z" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, sort: "due-desc" });
+
+      expect(result.map((task) => task.title)).toEqual(["A", "B", "C"]);
+    });
+    it("Selecting 'Title (A-Z)' sorts the tasks alphabetically", () => {
+      const tasks = [
+        makeTask({ title: "A" }),
+        makeTask({ title: "C" }),
+        makeTask({ title: "B" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, sort: "title-asc" });
+
+      expect(result.map((task) => task.title)).toEqual(["A", "B", "C"]);
+    });
+  });
 });
