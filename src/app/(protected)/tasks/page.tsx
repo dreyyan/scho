@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import useModal from '@/hooks/useModal';
-import { CircleQuestionMark, CircleX, Loader2, Plus } from 'lucide-react';
+import { CircleQuestionMark, CircleX, Loader2, Plus, ClipboardList, SearchX } from 'lucide-react';
 
 import FilterGroup from '@/components/ui/FilterGroup'
 import Button from '@/components/ui/Button';
@@ -109,6 +109,7 @@ export default function Tasks() {
       return <EmptyState
       description='Loading tasks...'
       icon={Loader2}
+      iconClassName='animate-spin'
       />
     }
 
@@ -131,14 +132,15 @@ export default function Tasks() {
         label: 'Add Task',
         onClick: openAddTaskForm,
       }}
-      icon={CircleQuestionMark}
+      icon={ClipboardList}
       />
     }
 
     if (sortedTasks.length === 0) {
       return <EmptyState title='No matching tasks'
       description='No tasks match your current filters.'
-      icon={CircleQuestionMark}
+      icon={CircleX}
+      variant='error'
       />
     }
 
