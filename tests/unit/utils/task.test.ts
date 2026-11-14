@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { TaskResponse, TaskViewOptions } from "@/types/task";
-import { ISODate, NOW } from "../../fixtures/date";
+import { NOW } from "../../fixtures/date";
 import { getVisibleTasks } from "@/lib/utils/task";
 
 const defaultTaskViewOptions: TaskViewOptions = {
@@ -16,7 +16,7 @@ const makeTask = (overrides: Partial<TaskResponse>): TaskResponse => ({
   title: "Title",
   isCompleted: false,
   deadline: null,
-  createdAt: ISODate,
+  createdAt: NOW.toISOString(),
   ...overrides,
 });
 
