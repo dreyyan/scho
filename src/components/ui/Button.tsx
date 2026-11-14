@@ -11,7 +11,7 @@ interface ButtonProps {
 
 const BUTTON_STYLES = {
   "primary": "from-green-600 to-green-700 hover:from-green-700 hover:to-green-800",
-  "secondary": "from-gray-300 to-gray-400",
+  "secondary": "bg-gray-400 hover:bg-gray-500",
   "destructive": "from-red-600 to-red-700 hover:from-red-700 hover:to-red-800",
 };
 
