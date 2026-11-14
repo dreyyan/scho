@@ -20,14 +20,14 @@ export default function EmptyState({
         flex flex-1 flex-col justify-center items-center
       '>
         <div className='flex flex-col justify-center items-center'>
-          { title && <span className='text-xl font-bold'>{title}</span> }
+          { title && <span className={`${action && 'text-red-700'} text-xl font-bold`}>{title}</span> }
           <span className='text-sm'>{description}</span>
         </div>
         { action && (
           <div className='mt-3'>
             <Button
               label={action.label}
-              variant='destructive'
+              variant='secondary'
               onClick={action.onClick}
             />
           </div>
