@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import useModal from '@/hooks/useModal';
-import { CircleQuestionMark, CircleX, Loader2, Plus, ClipboardList, SearchX } from 'lucide-react';
+import { CircleX, Loader2, Plus, ClipboardList, SearchX } from 'lucide-react';
 
 import FilterGroup from '@/components/ui/FilterGroup'
 import Button from '@/components/ui/Button';
@@ -121,7 +121,7 @@ export default function Tasks() {
         label: 'Try again',
         onClick: handleRetry,
       }}
-      icon={CircleX}
+      icon={SearchX}
       />
     }
 
