@@ -16,6 +16,7 @@ import TaskForm from '@/components/form/TaskForm';
 import { createTask, deleteTask, editTask, getTasks } from '@/services/task.service';
 import { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS } from '@/lib/constants/task';
+import { getVisibleTasks } from '@/lib/utils/task';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
@@ -46,63 +47,8 @@ export default function Tasks() {
     return () => clearInterval(interval);
   }, []);
 
-  const searchedTasks = items.filter((task) => task.title.toLowerCase().includes(search.trim().toLowerCase()));
-  const statusFilteredTasks = searchedTasks.filter((task) => {
-    switch (status) {
-      case "active":
-        return !task.isCompleted;
-      case "completed":
-        return task.isCompleted;
-      case "all":
-        return true;
-      default:
-        return true;
-    }
-  });
-  const filteredTasks = statusFilteredTasks.filter((task) => {
-    switch (filter) {
-      case "with-deadline":
-        return !!task.deadline;
-
-      case "no-deadline":
-        return !task.deadline;
-
-      case "overdue":
-        return (
-          !!task.deadline &&
-          !task.isCompleted &&
-          new Date(task.deadline).getTime() < currentTime
-        );
-
-      default:
-        return true;
-    }
-  });
-  const sortedTasks = [...filteredTasks].sort((a, b) => {
-    switch (sort) {
-      case "newest":
-        return new Date(b.createdAt).getTime()
-        - new Date(a.createdAt).getTime();
-      case "oldest":
-        return new Date(a.createdAt).getTime()
-        - new Date(b.createdAt).getTime();
-      case "due-asc":
-        case "due-desc": {
-          if (!a.deadline && !b.deadline) return 0;
-          if (!a.deadline) return 1;
-          if (!b.deadline) return -1;
-
-          const aTime = new Date(a.deadline).getTime();
-          const bTime = new Date(b.deadline).getTime();
-
-          return sort === "due-asc" ? aTime - bTime : bTime - aTime;
-      };
-      case "title-asc":
-        return a.title.localeCompare(b.title);
-      default:
-        return 0;
-    }
-  });
+  // Retrieve the filtered and sorted tasks.
+  const sortedTasks = getVisibleTasks(items, { search, status, sort, filter, currentTime });
 
   const renderTaskList = () => {
     if (isLoading) {
