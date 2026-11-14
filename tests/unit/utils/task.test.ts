@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { TaskResponse, TaskViewOptions } from "@/types/task";
 import { NOW } from "../../fixtures/date";
-import { getVisibleTasks } from "@/lib/utils/task";
+import { getVisibleTasks, paginate } from "@/lib/utils/task";
 
 const defaultTaskViewOptions: TaskViewOptions = {
   search: '',
@@ -181,5 +181,18 @@ describe("getVisibleTasks()", () => {
 
       expect(result.map((task) => task.title)).toEqual(["A", "B", "C"]);
     });
+  });
+});
+
+describe("paginate()", () => {
+  const items = Array.from({ length: 25 }, (_, i) => i);
+
+  it("returns the items for a middle page", () => {
+    const result = paginate(items, 2, 10);
+    expect(result).toEqual([10, 11, 12, 13, 14, 15, 16, 17, 18, 19]);
+  });
+  it("returns only the remaining items on the last, partial page", () => {
+    const result = paginate(items, 3, 10);
+    expect(result).toEqual([20, 21, 22, 23, 24])
   });
 });
