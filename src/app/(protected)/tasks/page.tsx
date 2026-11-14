@@ -121,7 +121,7 @@ export default function Tasks() {
         label: 'Try again',
         onClick: handleRetry,
       }}
-      icon={SearchX}
+      icon={CircleX}
       />
     }
 
@@ -139,7 +139,7 @@ export default function Tasks() {
     if (sortedTasks.length === 0) {
       return <EmptyState title='No matching tasks'
       description='No tasks match your current filters.'
-      icon={CircleX}
+      icon={SearchX}
       variant='error'
       />
     }
