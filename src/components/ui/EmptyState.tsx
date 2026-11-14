@@ -4,15 +4,22 @@ import Button from './Button';
 interface EmptyStateProps {
   title?: string;
   description: string;
+  variant?: 'default' | 'error';
   action?: {
     label: string;
     onClick: () => void;
   }
 }
 
+const TEXT_VARIANTS = {
+  "default": "text-gray-700",
+  "error": "text-red-700",
+}
+
 export default function EmptyState({
   title,
   description,
+  variant,
   action,
 }: EmptyStateProps) {
   return (
@@ -20,7 +27,10 @@ export default function EmptyState({
         flex flex-1 flex-col justify-center items-center
       '>
         <div className='flex flex-col justify-center items-center'>
-          { title && <span className={`${action && 'text-red-700'} text-xl font-bold`}>{title}</span> }
+          { title && <span className={`${
+            variant === 'default' ? TEXT_VARIANTS.default :
+            variant === 'error' ? TEXT_VARIANTS.error : ''
+            } text-xl font-bold`}>{title}</span> }
           <span className='text-sm'>{description}</span>
         </div>
         { action && (
