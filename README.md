@@ -79,19 +79,17 @@ Ensure the following are installed:
 | `pnpm lint` | Run ESLint |
 | `pnpm exec tsc --noEmit` | Check TypeScript types without generating files |
 
-## Project Status
-
-**Current Phase:** Project Initialization
-
-Scho is currently in the early stages of development.
-
 ### Development Milestones
 
 - [x] Software Project Planning
-- [ ] Project Initialization
-- [ ] Application Foundation
-- [ ] MVP Feature Implementation
-- [ ] Testing & Quality Assurance
+- [x] Project Setup
+- [x] Wireframe
+- [x] Authentication
+- [x] Page Navigation & Task Management
+- [ ] Quick Capture & Inbox
+- [ ] Settings
+- [ ] Dashboard & Polishing
+- [ ] Finalize Software Project Plan
 - [ ] Deployment
 
 ## Links
