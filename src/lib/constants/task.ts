@@ -1,4 +1,4 @@
-const TASKS_PER_PAGE = 3;
+const TASKS_PER_PAGE = 10;
 
 const STATUS_OPTIONS = [
   { label: 'Active', value: 'active' },
