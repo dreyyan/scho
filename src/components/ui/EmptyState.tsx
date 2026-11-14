@@ -1,5 +1,5 @@
-import React from 'react'
 import Button from './Button';
+import { LucideIcon } from 'lucide-react';
 
 interface EmptyStateProps {
   title?: string;
@@ -10,6 +10,7 @@ interface EmptyStateProps {
     onClick: () => void;
     variant?: 'primary' | 'secondary';
   }
+  icon?: LucideIcon;
 }
 
 const TEXT_VARIANTS = {
@@ -22,12 +23,14 @@ export default function EmptyState({
   description,
   variant = 'default',
   action,
+  icon: Icon,
 }: EmptyStateProps) {
   return (
     <div className='
         flex flex-1 flex-col justify-center items-center
       '>
         <div className='flex flex-col justify-center items-center'>
+          { Icon && <Icon size={72} className={`${TEXT_VARIANTS[variant]} mb-4`} /> }
           { title && <span className={`${TEXT_VARIANTS[variant]} text-xl font-bold`}>{title}</span> }
           <span className='text-sm'>{description}</span>
         </div>

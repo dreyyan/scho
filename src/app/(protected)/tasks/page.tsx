@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import useModal from '@/hooks/useModal';
-import { Plus } from 'lucide-react';
+import { CircleQuestionMark, CircleX, Loader2, Plus } from 'lucide-react';
 
 import FilterGroup from '@/components/ui/FilterGroup'
 import Button from '@/components/ui/Button';
@@ -106,7 +106,10 @@ export default function Tasks() {
 
   const renderTaskList = () => {
     if (isLoading) {
-      return <EmptyState description='Loading tasks...' />
+      return <EmptyState
+      description='Loading tasks...'
+      icon={Loader2}
+      />
     }
 
     if (error) {
@@ -117,6 +120,7 @@ export default function Tasks() {
         label: 'Try again',
         onClick: handleRetry,
       }}
+      icon={CircleX}
       />
     }
 
@@ -127,12 +131,15 @@ export default function Tasks() {
         label: 'Add Task',
         onClick: openAddTaskForm,
       }}
+      icon={CircleQuestionMark}
       />
     }
 
     if (sortedTasks.length === 0) {
       return <EmptyState title='No matching tasks'
-      description='No tasks match your current filters.' />
+      description='No tasks match your current filters.'
+      icon={CircleQuestionMark}
+      />
     }
 
     return sortedTasks.map((task) => (
