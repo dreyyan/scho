@@ -104,8 +104,7 @@ export default function Tasks() {
 
   const renderTaskList = () => {
     if (isLoading) {
-      return <EmptyState title=''
-      description='Loading tasks...' />
+      return <EmptyState description='Loading tasks...' />
     }
 
     if (error) {
@@ -488,7 +487,7 @@ export default function Tasks() {
 
         <div className='
           flex flex-1 flex-col
-          space-y-2
+          gap-y-2
         '>
           {renderTaskList()}
         </div>

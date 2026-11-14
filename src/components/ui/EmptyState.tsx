@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface EmptyStateProps {
-  title: string;
+  title?: string;
   description: string;
 }
 
@@ -13,7 +13,7 @@ export default function EmptyState({
     <div className='
         flex flex-1 flex-col justify-center items-center
       '>
-        <span className='text-xl font-bold'>{title}</span>
+        { title && <span className='text-xl font-bold'>{title}</span> }
         <span>{description}</span>
     </div>
   )
