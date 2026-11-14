@@ -34,12 +34,87 @@ describe("getVisibleTasks()", () => {
       expect(result.map((task) => task.title)).toEqual(["Buy Milk"]);
     });
   });
-  // describe("status", () => {
-    
-  // });
-  // describe("filter", () => {
-    
-  // });
+  describe("status", () => {
+    it("Selecting 'All' displays all tasks", () => {
+      const tasks = [
+        makeTask({ title: "Buy Milk", isCompleted: true }),
+        makeTask({ title: "Wash dishes" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, status: "all" });
+
+      expect(result.map((task) => task.title)).toEqual(["Buy Milk", "Wash dishes"]);
+    });
+    it("Selecting 'Active' hides completed tasks", () => {
+      const tasks = [
+        makeTask({ title: "Buy Milk", isCompleted: true }),
+        makeTask({ title: "Wash dishes" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, status: "active" });
+
+      expect(result.map((task) => task.title)).toEqual(["Wash dishes"]);
+    });
+    it("Selecting 'Completed' hides active tasks", () => {
+      const tasks = [
+        makeTask({ title: "Buy Milk", isCompleted: true }),
+        makeTask({ title: "Wash dishes" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, status: "completed" });
+
+      expect(result.map((task) => task.title)).toEqual(["Buy Milk"]);
+    });
+  });
+  describe("filter", () => {
+    it("Selecting 'All Tasks' displays all tasks", () => {
+      const tasks = [
+        makeTask({ title: "Buy Milk", }),
+        makeTask({ title: "Wash dishes" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, filter: "all" });
+
+      expect(result.map((task) => task.title)).toEqual(["Buy Milk", "Wash dishes"]);
+    });
+    it("Selecting 'With Deadline' only displays tasks with deadlines", () => {
+      const tasks = [
+        makeTask({ title: "Buy Milk", deadline: NOW.toLocaleString() }),
+        makeTask({ title: "Wash dishes" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, filter: "with-deadline" });
+
+      expect(result.map((task) => task.title)).toEqual(["Buy Milk"]);
+    });
+    it("Selecting 'No Deadline' only displays tasks without deadlines", () => {
+      const tasks = [
+        makeTask({ title: "Buy Milk", deadline: NOW.toLocaleString() }),
+        makeTask({ title: "Wash dishes" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, filter: "no-deadline" });
+
+      expect(result.map((task) => task.title)).toEqual(["Wash dishes"]);
+    });
+    it("Selecting 'Overdue' only displays tasks past the current time", () => {
+      const tasks = [
+        makeTask({ title: "Buy Milk", deadline: (NOW.getTime() - 1000).toLocaleString() }),
+        makeTask({ title: "Wash dishes" }),
+      ];
+
+      const result = getVisibleTasks(tasks,
+        { ...defaultTaskViewOptions, filter: "overdue" });
+
+      expect(result.map((task) => task.title)).toEqual(["Buy Milk"]);
+    });
+  });
   // describe("sort", () => {
     
   // });
