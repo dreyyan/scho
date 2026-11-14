@@ -10,6 +10,7 @@ import Item from '@/components/ui/Item';
 import SearchBar from '@/components/ui/SearchBar';
 import Filter from '@/components/ui/Filter';
 import Sort from '@/components/ui/Sort';
+import EmptyState from '@/components/ui/EmptyState';
 import TaskForm from '@/components/form/TaskForm';
 
 import { createTask, deleteTask, editTask, getTasks } from '@/services/task.service';
@@ -20,12 +21,14 @@ export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
   
   const [items, setItems] = useState<TaskResponse[]>([]);
+  const [error, setError] = useState<string | null>(null);
   
   const [search, setSearch] = useState<string>('');
   const [status, setStatus] = useState<string>(STATUS_OPTIONS[0].value);
   const [sort, setSort] = useState<string>(SORT_OPTIONS[0].value);
   const [filter, setFilter] = useState<string>(FILTER_OPTIONS[0].value);
 
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   const [currentTime, setCurrentTime] = useState(() => Date.now());
@@ -99,6 +102,45 @@ export default function Tasks() {
     }
   });
 
+  const renderTaskList = () => {
+    if (isLoading) {
+      return <p>Loading tasks...</p>
+    }
+
+    if (error) {
+      return <EmptyState title='Failed to load tasks'
+      description={error} />
+    }
+
+    if (items.length === 0) {
+      return <EmptyState title='No tasks yet'
+      description='Create your first task to get started.' />
+    }
+
+    if (sortedTasks.length === 0) {
+      return <EmptyState title='No matching tasks'
+      description='No tasks match your current filters.' />
+    }
+
+    return sortedTasks.map((task) => (
+      <Item
+        key={task.id}
+        id={task.id}
+        category='Task'
+        title={task.title}
+        isChecked={task.isCompleted}
+        deadline={task.deadline ?? ''}
+        canEdit={true}
+        canDelete={true}
+        onCheckedChange={(checked) =>
+          handleCheckedChange(task.id, checked)
+        }
+        onEdit={() => openEditTaskForm(task.id)}
+        onDelete={() => openDeleteTaskModal(task.id)}
+      />
+    ))
+  };
+
   // Retrieve the user's tasks from the backend.
   useEffect(() => {
     const fetchTasks = async () => {
@@ -107,6 +149,8 @@ export default function Tasks() {
         setItems(items);
       } catch (err: unknown) {
         console.error("Failed to retrieve tasks: ", err);
+      } finally {
+        setIsLoading(false);
       }
     };
   
@@ -440,24 +484,8 @@ export default function Tasks() {
           </div>
         </div>
 
-        <div className='space-y-2'>
-          { sortedTasks.map((task) => (
-            <Item
-              key={task.id}
-              id={task.id}
-              category='Task'
-              title={task.title}
-              isChecked={task.isCompleted}
-              deadline={task.deadline ?? ''}
-              canEdit={true}
-              canDelete={true}
-              onCheckedChange={(checked) =>
-                handleCheckedChange(task.id, checked)
-              }
-              onEdit={() => openEditTaskForm(task.id)}
-              onDelete={() => openDeleteTaskModal(task.id)}
-            />
-          )) }
+        <div className='h-full space-y-2'>
+          {renderTaskList()}
         </div>
       </main>
 
