@@ -7,6 +7,7 @@ interface ButtonProps {
   type?: "button" | "submit" | "reset";
   onClick?: () => void;
   icon?: LucideIcon;
+  disabled?: boolean;
 };
 
 const BUTTON_STYLES = {
@@ -21,10 +22,12 @@ export default function Button({
   type = "button",
   onClick,
   icon: Icon,
+  disabled = false,
 }: ButtonProps) {
   return (
     <button
-    type={type}
+      type={type}
+      disabled={disabled}
       onClick={onClick}
       className={`
         flex justify-center items-center
