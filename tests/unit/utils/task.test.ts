@@ -145,6 +145,7 @@ describe("getVisibleTasks()", () => {
     });
     it("Selecting 'Due Date(Earliest)' sorts the tasks from earliest to latest", () => {
       const tasks = [
+        makeTask({ title: "D" }),
         makeTask({ title: "A", deadline: "2026-11-11T02:00:00Z" }),
         makeTask({ title: "C", deadline: "2026-11-13T02:00:00Z" }),
         makeTask({ title: "B", deadline: "2026-11-12T02:00:00Z" }),
@@ -153,10 +154,11 @@ describe("getVisibleTasks()", () => {
       const result = getVisibleTasks(tasks,
         { ...defaultTaskViewOptions, sort: "due-asc" });
 
-      expect(result.map((task) => task.title)).toEqual(["A", "B", "C"]);
+      expect(result.map((task) => task.title)).toEqual(["A", "B", "C", "D"]);
     });
-    it("Selecting 'Due Date(Latest)' sorts the tasks from earliest to latest", () => {
+    it("Selecting 'Due Date(Latest)' sorts the tasks from latest to earliest", () => {
       const tasks = [
+        makeTask({ title: "D" }),
         makeTask({ title: "A", deadline: "2026-11-13T02:00:00Z" }),
         makeTask({ title: "C", deadline: "2026-11-11T02:00:00Z" }),
         makeTask({ title: "B", deadline: "2026-11-12T02:00:00Z" }),
@@ -165,7 +167,7 @@ describe("getVisibleTasks()", () => {
       const result = getVisibleTasks(tasks,
         { ...defaultTaskViewOptions, sort: "due-desc" });
 
-      expect(result.map((task) => task.title)).toEqual(["A", "B", "C"]);
+      expect(result.map((task) => task.title)).toEqual(["A", "B", "C", "D"]);
     });
     it("Selecting 'Title (A-Z)' sorts the tasks alphabetically", () => {
       const tasks = [
