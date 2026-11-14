@@ -11,8 +11,7 @@ export default function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className='
-        flex flex-col justify-center items-center
-
+        flex flex-1 flex-col justify-center items-center
       '>
         <span className='text-xl font-bold'>{title}</span>
         <span>{description}</span>
