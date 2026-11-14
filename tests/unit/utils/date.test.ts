@@ -1,12 +1,9 @@
 import { formatDeadline, toDateTimeLocal } from "@/lib/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { invalidDeadline, ISODateCST, ISODateCDT, prevDayISODate, ISODate } from "../../fixtures/date";
+import { invalidDeadline, ISODateCST, ISODateCDT, prevDayISODate, ISODate, NOW } from "../../fixtures/date";
 import { MINUTE, HOUR, DAY, SECOND } from "@/lib/constants/date";
 
 describe("formatDeadline()", () => {
-  // Set a fixed current time: November 9, 2026, 12:00 PM UTC.
-  const NOW = new Date("2026-11-09T12:00:00.000Z");
-
   // Create deadlines based on the date.
   const deadlineIn = (ms: number): string => new Date(NOW.getTime() + ms).toISOString();
 
