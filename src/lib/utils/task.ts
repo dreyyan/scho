@@ -1,12 +1,5 @@
 import type { TaskResponse } from "@/types/task";
-
-interface TaskViewOptions {
-  search: string;
-  status: string;
-  filter: string;
-  sort: string;
-  currentTime: number;
-}
+import type { TaskViewOptions } from "@/types/task";
 
 /**
  * Retrieves the tasks matching the search, filter, and sort.

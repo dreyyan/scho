@@ -56,3 +56,14 @@ export interface UpdateTaskResponse {
     task: TaskResponse;
   }
 }
+
+/**
+ * Represents the options for a Task view.
+ */
+export interface TaskViewOptions {
+  search: string;
+  status: string;
+  filter: string;
+  sort: string;
+  currentTime: number;
+}
