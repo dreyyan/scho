@@ -11,13 +11,14 @@ import SearchBar from '@/components/ui/SearchBar';
 import Filter from '@/components/ui/Filter';
 import Sort from '@/components/ui/Sort';
 import EmptyState from '@/components/ui/EmptyState';
+import Pagination from '@/components/ui/Pagination';
 import TaskForm from '@/components/form/TaskForm';
 
 import { createTask, deleteTask, editTask, getTasks } from '@/lib/api-client/task';
 import { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
 import { getVisibleTasks, paginate } from '@/lib/utils/task';
-import Pagination from '@/components/ui/Pagination';
+import { getErrorMessage } from '@/lib/utils/error';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
@@ -154,7 +155,7 @@ export default function Tasks() {
         setItems(items);
       } catch (err: unknown) {
         console.error('Failed to retrieve tasks: ', err);
-        setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
+        setError(getErrorMessage(err));
       } finally {
         setIsLoading(false);
       }
@@ -206,7 +207,7 @@ export default function Tasks() {
     } catch (err: unknown) {
       console.error('Failed to add task: ', err);
 
-      const errMsg = err instanceof Error ? err.message : 'An unexpected error occurred.';
+      const errMsg = getErrorMessage(err);
 
       openModal({
         variant: 'error',
@@ -261,7 +262,7 @@ export default function Tasks() {
     } catch (err: unknown) {
       console.error('Failed to edit task: ', err);
 
-      const errMsg = err instanceof Error ? err.message : 'An unexpected error occurred.';
+      const errMsg = getErrorMessage(err);
 
       openModal({
         variant: 'error',
@@ -299,7 +300,7 @@ export default function Tasks() {
     } catch (err: unknown) {
       console.error('Failed to update task completion: ', err);
 
-      const errMsg = err instanceof Error ? err.message : 'An unexpected error occurred.';
+      const errMsg = getErrorMessage(err);
 
       // Revert the UI update if the request fails.
       setItems((prevItems) =>
@@ -352,7 +353,7 @@ export default function Tasks() {
     } catch (err: unknown) {
       console.error('Failed to delete task: ', err);
 
-      const errMsg = err instanceof Error ? err.message : 'An unexpected error occurred.';
+      const errMsg = getErrorMessage(err);
 
       openModal({
         variant: 'error',
