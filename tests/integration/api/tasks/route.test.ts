@@ -12,7 +12,7 @@ import {
 import { validLoginData } from '../../../fixtures/auth';
 import { malformedJSON } from '../../../fixtures/common';
 
-import { POST } from '@/app/api/tasks/route';
+import { GET, POST } from '@/app/api/tasks/route';
 import { PATCH, DELETE } from '@/app/api/tasks/[id]/route';
 import { generateRandomEmail } from '../../../helpers/generateRandomEmail';
 
@@ -27,6 +27,103 @@ let testUserId: string;
 
 vi.mock('@/auth', () => ({ auth: vi.fn() }));
 const mockAuth = vi.mocked(auth as () => Promise<Session | null>);
+
+describe('GET /api/tasks', () => {
+  let testUserId: string;
+  let otherUserId: string;
+  let testTaskId: string;
+
+  beforeAll(async () => {
+    const user = await prisma.user.create({
+      data: {
+        email: testLoginData.email,
+        passwordHash: await argon2.hash(testLoginData.password, {
+          type: argon2.argon2id,
+        }),
+      },
+    });
+
+    testUserId = user.id;
+
+    const otherUser = await prisma.user.create({
+      data: {
+        email: generateRandomEmail('other'),
+        passwordHash: 'x',
+      },
+    });
+
+    otherUserId = otherUser.id;
+
+    await prisma.task.create({
+      data: {
+        userId: otherUserId,
+        title: 'Not yours',
+      },
+    });
+
+    const task = await prisma.task.create({
+      data: {
+        userId: testUserId,
+        title: 'Original task title',
+      },
+    });
+
+    testTaskId = task.id;
+  });
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+
+    mockAuth.mockResolvedValue({
+      user: {
+        id: testUserId,
+      },
+      expires: '2026-12-31T00:00:00.000Z',
+    });
+  });
+
+  afterAll(async () => {
+    if (!testUserId) return;
+
+    await prisma.task.deleteMany({
+      where: { userId: testUserId },
+    });
+
+    await prisma.task.deleteMany({
+      where: { userId: otherUserId },
+    });
+
+    await prisma.user.delete({
+      where: { id: testUserId },
+    });
+
+    await prisma.user.delete({
+      where: { id: otherUserId },
+    });
+  });
+
+  it("returns the user's tasks successfully", async () => {
+    const response = await GET();
+    const result = await response.json();
+    const taskTitles = result.data.tasks.map((task: { title: string }) => task.title);
+
+    expect(response.status).toBe(200);
+    expect(result.message).toBe('Tasks retrieved successfully.');
+    expect(result.data.tasks).toHaveLength(1);
+    expect(result.data.tasks[0].id).toBe(testTaskId);
+    expect(taskTitles).not.toContain('Not yours');
+  });
+
+  it('rejects an unauthorized user', async () => {
+    mockAuth.mockResolvedValue(null);
+
+    const response = await GET();
+    const result = await response.json();
+
+    expect(response.status).toBe(401);
+    expect(result.error).toBe('Unauthorized.');
+  });
+});
 
 describe('POST /api/tasks', () => {
   beforeAll(async () => {
@@ -50,6 +147,18 @@ describe('POST /api/tasks', () => {
         id: testUserId,
       },
       expires: '2026-12-31T00:00:00.000Z',
+    });
+  });
+
+  afterAll(async () => {
+    if (!testUserId) return;
+
+    await prisma.task.deleteMany({
+      where: { userId: testUserId },
+    });
+
+    await prisma.user.delete({
+      where: { id: testUserId },
     });
   });
 
@@ -126,18 +235,6 @@ describe('POST /api/tasks', () => {
   it('rejects a task referencing an already linked inbox item', () => {
     // TODO: Rejects a task referencing an already linked inbox item.
   });
-
-  afterAll(async () => {
-    if (!testUserId) return;
-
-    await prisma.task.deleteMany({
-      where: { userId: testUserId },
-    });
-
-    await prisma.user.delete({
-      where: { id: testUserId },
-    });
-  });
 });
 
 describe('PATCH /api/tasks/:id', () => {
@@ -174,6 +271,18 @@ describe('PATCH /api/tasks/:id', () => {
         id: testUserId,
       },
       expires: '2026-12-31T00:00:00.000Z',
+    });
+  });
+
+  afterAll(async () => {
+    if (!testUserId) return;
+
+    await prisma.task.deleteMany({
+      where: { userId: testUserId },
+    });
+
+    await prisma.user.delete({
+      where: { id: testUserId },
     });
   });
 
@@ -216,18 +325,6 @@ describe('PATCH /api/tasks/:id', () => {
     expect(response.status).toBe(200);
     expect(result.data.task.isCompleted).toBe(isCompleted);
   });
-
-  afterAll(async () => {
-    if (!testUserId) return;
-
-    await prisma.task.deleteMany({
-      where: { userId: testUserId },
-    });
-
-    await prisma.user.delete({
-      where: { id: testUserId },
-    });
-  });
 });
 
 describe('DELETE /api/tasks/:id', () => {
@@ -265,6 +362,18 @@ describe('DELETE /api/tasks/:id', () => {
     });
 
     testTaskId = task.id;
+  });
+
+  afterAll(async () => {
+    if (!testUserId) return;
+
+    await prisma.task.deleteMany({
+      where: { userId: testUserId },
+    });
+
+    await prisma.user.delete({
+      where: { id: testUserId },
+    });
   });
 
   it('accepts valid task deletion data', async () => {
@@ -339,17 +448,5 @@ describe('DELETE /api/tasks/:id', () => {
 
     expect(response.status).toBe(404);
     expect(result.error).toBe('Task not found.');
-  });
-
-  afterAll(async () => {
-    if (!testUserId) return;
-
-    await prisma.task.deleteMany({
-      where: { userId: testUserId },
-    });
-
-    await prisma.user.delete({
-      where: { id: testUserId },
-    });
   });
 });

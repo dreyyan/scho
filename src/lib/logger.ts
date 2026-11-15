@@ -6,9 +6,9 @@ export const logger = {
     console.info(`[INFO] ${message}`, ...args);
   },
   warn: (message: string, ...args: unknown[]) => {
-    console.info(`[WARN] ${message}`, ...args);
+    console.warn(`[WARN] ${message}`, ...args);
   },
   error: (message: string, ...args: unknown[]) => {
-    console.info(`[ERROR] ${message}`, ...args);
+    console.error(`[ERROR] ${message}`, ...args);
   },
 };

@@ -2,11 +2,9 @@ import { z } from 'zod';
 import { NextResponse } from 'next/server';
 
 import { createTaskSchema } from '@/validations/task';
-import { prisma } from '@/lib/prisma';
-import { auth } from '@/auth';
 import { logger } from '@/lib/logger';
-import { Prisma } from '@/generated/prisma/client';
-import { TASK_SELECT } from '@/lib/selects/task';
+import { requireUserId } from '@/lib/auth/require-user-id';
+import { createTask, DuplicateSourceItemError, listTasks } from '@/server/task';
 
 /**
  ** GET — Retrieve the user's tasks.
@@ -14,30 +12,13 @@ import { TASK_SELECT } from '@/lib/selects/task';
  * @returns a JSON response of the user's tasks.
  */
 export async function GET() {
-  let userId: string;
+  const authResult = await requireUserId();
 
-  // Validate user authorization.
-  try {
-    const session = await auth();
-
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-    }
-
-    userId = session.user.id;
-  } catch (err: unknown) {
-    logger.error('Authentication failed: ', err);
-
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
-  }
+  if (authResult instanceof NextResponse) return authResult;
+  const userId = authResult;
 
   try {
-    const tasks = await prisma.task.findMany({
-      where: {
-        userId,
-      },
-      select: TASK_SELECT,
-    });
+    const tasks = await listTasks(userId);
 
     return NextResponse.json(
       {
@@ -62,22 +43,11 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   let body: unknown;
-  let userId: string;
 
-  // Validate user authorization.
-  try {
-    const session = await auth();
+  const authResult = await requireUserId();
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-    }
-
-    userId = session.user.id;
-  } catch (err: unknown) {
-    logger.error('Authentication failed: ', err);
-
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
-  }
+  if (authResult instanceof NextResponse) return authResult;
+  const userId = authResult;
 
   try {
     body = await request.json();
@@ -99,20 +69,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const { title, sourceItemId, deadline } = result.data;
-
   try {
     // TODO: Validate whether InboxItem belongs to the user.
-
-    const task = await prisma.task.create({
-      data: {
-        userId,
-        ...(sourceItemId !== undefined && { sourceItemId }),
-        title,
-        deadline,
-      },
-      select: TASK_SELECT,
-    });
+    const task = await createTask(userId, result.data);
 
     return NextResponse.json(
       {
@@ -122,7 +81,7 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (err: unknown) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
+    if (err instanceof DuplicateSourceItemError) {
       return NextResponse.json(
         { error: 'Task with the same inbox item already exists.' },
         { status: 409 },

@@ -1,13 +1,11 @@
 import { z } from 'zod';
 import { NextResponse } from 'next/server';
 
-import { Prisma } from '@/generated/prisma/client';
-import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
-import { auth } from '@/auth';
 
 import { updateTaskSchema } from '@/validations/task';
-import { TASK_SELECT } from '@/lib/selects/task';
+import { requireUserId } from '@/lib/auth/require-user-id';
+import { deleteTask, updateTask } from '@/server/task';
 
 /**
  ** PATCH — Update an existing task.
@@ -18,23 +16,12 @@ import { TASK_SELECT } from '@/lib/selects/task';
  */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   let body: unknown;
-  let userId: string;
   const { id: taskId } = await params;
 
-  // Validate user authorization.
-  try {
-    const session = await auth();
+  const authResult = await requireUserId();
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-    }
-
-    userId = session.user.id;
-  } catch (err: unknown) {
-    logger.error('Authentication failed: ', err);
-
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
-  }
+  if (authResult instanceof NextResponse) return authResult;
+  const userId = authResult;
 
   const taskIdResult = z.uuid().safeParse(taskId);
 
@@ -62,21 +49,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
     );
   }
 
-  const { title, isCompleted, deadline } = result.data;
-
   try {
-    const task = await prisma.task.update({
-      where: {
-        id: taskId,
-        userId,
-      },
-      data: {
-        title,
-        isCompleted,
-        deadline,
-      },
-      select: TASK_SELECT,
-    });
+    const task = await updateTask(userId, taskId, result.data);
+
+    if (!task) {
+      return NextResponse.json({ error: 'Task not found.' }, { status: 404 });
+    }
 
     return NextResponse.json(
       {
@@ -86,10 +64,6 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       { status: 200 },
     );
   } catch (err: unknown) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
-      return NextResponse.json({ error: 'Task not found.' }, { status: 404 });
-    }
-
     // Log unexpected task update errors.
     logger.error('Task update failed: ', err);
 
@@ -105,23 +79,12 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
  * @returns a JSON response indicating success or failure.
  */
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  let userId: string;
   const { id: taskId } = await params;
 
-  // Validate user authorization.
-  try {
-    const session = await auth();
+  const authResult = await requireUserId();
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-    }
-
-    userId = session.user.id;
-  } catch (err: unknown) {
-    logger.error('Authentication failed: ', err);
-
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
-  }
+  if (authResult instanceof NextResponse) return authResult;
+  const userId = authResult;
 
   const taskIdResult = z.uuid().safeParse(taskId);
 
@@ -131,19 +94,14 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
 
   try {
     // TODO: Delete InboxItem linked with the task.
-    await prisma.task.delete({
-      where: {
-        id: taskId,
-        userId,
-      },
-    });
+    const deleted = await deleteTask(userId, taskId);
 
-    return NextResponse.json({ message: 'Task deleted successfully.' }, { status: 200 });
-  } catch (err: unknown) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
+    if (!deleted) {
       return NextResponse.json({ error: 'Task not found.' }, { status: 404 });
     }
 
+    return NextResponse.json({ message: 'Task deleted successfully.' }, { status: 200 });
+  } catch (err: unknown) {
     // Log unexpected task deletion errors.
     logger.error('Task deletion failed: ', err);
 
