@@ -109,6 +109,8 @@ describe('GET /api/tasks', () => {
 
     expect(response.status).toBe(200);
     expect(result.message).toBe('Tasks retrieved successfully.');
+    expect(result.data.tasks).toHaveLength(1);
+    expect(result.data.tasks[0].id).toBe(testTaskId);
     expect(taskTitles).not.toContain('Not yours');
   });
 
