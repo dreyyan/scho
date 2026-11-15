@@ -14,7 +14,7 @@ export class DuplicateSourceItemError extends Error {
 
 /**
  * Retrieve the user's tasks from the databsae.
- * 
+ *
  * @param userId - The user's ID.
  * @returns The user's tasks.
  */
@@ -29,10 +29,10 @@ export async function listTasks(userId: string) {
 
 /**
  * Create a task for the user in the database.
- * 
+ *
  * @param userId - The user's ID.
  * @param data - The form data for the new task.
- * @returns The new task or a NextResponse JSON containing the error message and status code. 
+ * @returns The new task or a NextResponse JSON containing the error message and status code.
  */
 export async function createTask(userId: string, data: TaskFormData) {
   const { title, sourceItemId, deadline } = data;
@@ -58,11 +58,11 @@ export async function createTask(userId: string, data: TaskFormData) {
 
 /**
  * Update a user's task in the database.
- * 
+ *
  * @param userId - The user's ID.
  * @param taskId - The task's ID.
  * @param data - THe form data for the updated task.
- * @returns The updated task or a NextResponse JSON containing the error message and status code. 
+ * @returns The updated task or a NextResponse JSON containing the error message and status code.
  */
 export async function updateTask(userId: string, taskId: string, data: UpdateTaskFormData) {
   const { title, isCompleted, deadline } = data;
@@ -91,10 +91,10 @@ export async function updateTask(userId: string, taskId: string, data: UpdateTas
 
 /**
  * Delete a user's task from the database.
- * 
+ *
  * @param userId - THe user's ID;
  * @param taskId - The task's ID.
- * @returns Nothing or a NextResponse JSON containing the error message and status code. 
+ * @returns Nothing or a NextResponse JSON containing the error message and status code.
  */
 export async function deleteTask(userId: string, taskId: string): Promise<boolean> {
   try {

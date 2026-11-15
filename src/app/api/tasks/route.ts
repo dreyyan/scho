@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 
 import { createTaskSchema } from '@/validations/task';
 import { logger } from '@/lib/logger';
-import { Prisma } from '@/generated/prisma/client';
 import { requireUserId } from '@/lib/auth/require-user-id';
 import { createTask, DuplicateSourceItemError, listTasks } from '@/server/tasks';
 
