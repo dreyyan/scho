@@ -54,18 +54,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { title, isCompleted, deadline } = result.data;
 
   try {
-    const task = await prisma.task.update({
-      where: {
-        id: taskId,
-        userId,
-      },
-      data: {
-        title,
-        isCompleted,
-        deadline,
-      },
-      select: TASK_SELECT,
-    });
+    const task = await updateTask(userId, taskId, result.data);
 
     return NextResponse.json(
       {
