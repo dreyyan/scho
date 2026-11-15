@@ -26,7 +26,7 @@ export async function listTasks(userId: string) {
  * 
  * @param userId - The user's ID.
  * @param data - The form data for the new task.
- * @returns The new task.
+ * @returns The new task or a NextResponse JSON containing the error message and status code. 
  */
 export async function createTask(userId: string, data: TaskFormData) {
   const { title, sourceItemId, deadline } = data;
@@ -57,7 +57,7 @@ export async function createTask(userId: string, data: TaskFormData) {
  * @param userId - The user's ID.
  * @param taskId - The task's ID.
  * @param data - THe form data for the updated task.
- * @returns The updated task.
+ * @returns The updated task or a NextResponse JSON containing the error message and status code. 
  */
 export async function updateTask(userId: string, taskId: string, data: UpdateTaskFormData) {
   const { title, isCompleted, deadline } = data;
