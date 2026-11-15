@@ -1,5 +1,5 @@
-import { createTaskSchema, updateTaskSchema } from "@/validations/task";
-import z from "zod";
+import { createTaskSchema, updateTaskSchema } from '@/validations/task';
+import z from 'zod';
 
 /**
  * Represents the task form's input data.

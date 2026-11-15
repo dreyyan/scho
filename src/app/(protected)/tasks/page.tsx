@@ -1,33 +1,23 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import useModal from "@/hooks/useModal";
-import { CircleX, Loader2, Plus, ClipboardList, SearchX } from "lucide-react";
+import React, { useEffect, useState } from 'react';
+import useModal from '@/hooks/useModal';
+import { CircleX, Loader2, Plus, ClipboardList, SearchX } from 'lucide-react';
 
-import FilterGroup from "@/components/ui/FilterGroup";
-import Button from "@/components/ui/Button";
-import Item from "@/components/ui/Item";
-import SearchBar from "@/components/ui/SearchBar";
-import Filter from "@/components/ui/Filter";
-import Sort from "@/components/ui/Sort";
-import EmptyState from "@/components/ui/EmptyState";
-import TaskForm from "@/components/form/TaskForm";
+import FilterGroup from '@/components/ui/FilterGroup';
+import Button from '@/components/ui/Button';
+import Item from '@/components/ui/Item';
+import SearchBar from '@/components/ui/SearchBar';
+import Filter from '@/components/ui/Filter';
+import Sort from '@/components/ui/Sort';
+import EmptyState from '@/components/ui/EmptyState';
+import TaskForm from '@/components/form/TaskForm';
 
-import {
-  createTask,
-  deleteTask,
-  editTask,
-  getTasks,
-} from "@/services/task.service";
-import { TaskFormData, TaskResponse, UpdateTaskFormData } from "@/types/task";
-import {
-  FILTER_OPTIONS,
-  SORT_OPTIONS,
-  STATUS_OPTIONS,
-  TASKS_PER_PAGE,
-} from "@/lib/constants/task";
-import { getVisibleTasks, paginate } from "@/lib/utils/task";
-import Pagination from "@/components/ui/Pagination";
+import { createTask, deleteTask, editTask, getTasks } from '@/services/task.service';
+import { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
+import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
+import { getVisibleTasks, paginate } from '@/lib/utils/task';
+import Pagination from '@/components/ui/Pagination';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
@@ -36,7 +26,7 @@ export default function Tasks() {
   const [error, setError] = useState<string | null>(null);
 
   const [page, setPage] = useState<number>(1);
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState<string>('');
   const [status, setStatus] = useState<string>(STATUS_OPTIONS[0].value);
   const [sort, setSort] = useState<string>(SORT_OPTIONS[0].value);
   const [filter, setFilter] = useState<string>(FILTER_OPTIONS[0].value);
@@ -95,22 +85,18 @@ export default function Tasks() {
   const renderTaskList = () => {
     if (isLoading) {
       return (
-        <EmptyState
-          description="Loading tasks..."
-          icon={Loader2}
-          iconClassName="animate-spin"
-        />
+        <EmptyState description='Loading tasks...' icon={Loader2} iconClassName='animate-spin' />
       );
     }
 
     if (error) {
       return (
         <EmptyState
-          title="Failed to load tasks"
+          title='Failed to load tasks'
           description={error}
-          variant="error"
+          variant='error'
           action={{
-            label: "Try again",
+            label: 'Try again',
             onClick: handleRetry,
           }}
           icon={CircleX}
@@ -121,10 +107,10 @@ export default function Tasks() {
     if (items.length === 0) {
       return (
         <EmptyState
-          title="No tasks yet"
-          description="Create your first task to get started."
+          title='No tasks yet'
+          description='Create your first task to get started.'
           action={{
-            label: "Add Task",
+            label: 'Add Task',
             onClick: openAddTaskForm,
           }}
           icon={ClipboardList}
@@ -135,10 +121,10 @@ export default function Tasks() {
     if (sortedTasks.length === 0) {
       return (
         <EmptyState
-          title="No matching tasks"
-          description="No tasks match your current filters."
+          title='No matching tasks'
+          description='No tasks match your current filters.'
           icon={SearchX}
-          variant="error"
+          variant='error'
         />
       );
     }
@@ -147,10 +133,10 @@ export default function Tasks() {
       <Item
         key={task.id}
         id={task.id}
-        category="Task"
+        category='Task'
         title={task.title}
         isChecked={task.isCompleted}
-        deadline={task.deadline ?? ""}
+        deadline={task.deadline ?? ''}
         canEdit={true}
         canDelete={true}
         onCheckedChange={(checked) => handleCheckedChange(task.id, checked)}
@@ -167,10 +153,8 @@ export default function Tasks() {
         const items = await getTasks();
         setItems(items);
       } catch (err: unknown) {
-        console.error("Failed to retrieve tasks: ", err);
-        setError(
-          err instanceof Error ? err.message : "An unexpected error occurred.",
-        );
+        console.error('Failed to retrieve tasks: ', err);
+        setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
       } finally {
         setIsLoading(false);
       }
@@ -192,9 +176,9 @@ export default function Tasks() {
 
     updateModal({
       primaryAction: {
-        label: "Adding...",
-        type: "submit",
-        form: "task-form",
+        label: 'Adding...',
+        type: 'submit',
+        form: 'task-form',
         isLoading: true,
       },
     });
@@ -210,33 +194,32 @@ export default function Tasks() {
       ]);
 
       openModal({
-        variant: "success",
-        title: "Task Created",
-        description: "The task has been successfully created!",
+        variant: 'success',
+        title: 'Task Created',
+        description: 'The task has been successfully created!',
         primaryAction: {
-          label: "Got it",
-          type: "button",
+          label: 'Got it',
+          type: 'button',
           onClick: () => closeModal(),
         },
       });
     } catch (err: unknown) {
-      console.error("Failed to add task: ", err);
+      console.error('Failed to add task: ', err);
 
-      const errMsg =
-        err instanceof Error ? err.message : "An unexpected error occurred.";
+      const errMsg = err instanceof Error ? err.message : 'An unexpected error occurred.';
 
       openModal({
-        variant: "error",
-        title: "Failed Task Creation",
+        variant: 'error',
+        title: 'Failed Task Creation',
         description: errMsg,
         primaryAction: {
-          label: "Got it",
-          type: "button",
+          label: 'Got it',
+          type: 'button',
           onClick: () => closeModal(),
         },
         secondaryAction: {
-          label: "Retry",
-          type: "button",
+          label: 'Retry',
+          type: 'button',
           onClick: () => handleAddTask(data),
         },
       });
@@ -252,9 +235,9 @@ export default function Tasks() {
 
     updateModal({
       primaryAction: {
-        label: "Editing...",
-        type: "submit",
-        form: "task-form",
+        label: 'Editing...',
+        type: 'submit',
+        form: 'task-form',
         isLoading: true,
       },
     });
@@ -263,38 +246,35 @@ export default function Tasks() {
       const updatedTask = await editTask(id, data);
 
       // Update the local state of task items.
-      setItems((prevItems) =>
-        prevItems.map((task) => (task.id === id ? updatedTask : task)),
-      );
+      setItems((prevItems) => prevItems.map((task) => (task.id === id ? updatedTask : task)));
 
       openModal({
-        variant: "success",
-        title: "Task Updated",
-        description: "Task updated successfully!",
+        variant: 'success',
+        title: 'Task Updated',
+        description: 'Task updated successfully!',
         primaryAction: {
-          label: "Got it",
-          type: "button",
+          label: 'Got it',
+          type: 'button',
           onClick: () => closeModal(),
         },
       });
     } catch (err: unknown) {
-      console.error("Failed to edit task: ", err);
+      console.error('Failed to edit task: ', err);
 
-      const errMsg =
-        err instanceof Error ? err.message : "An unexpected error occurred.";
+      const errMsg = err instanceof Error ? err.message : 'An unexpected error occurred.';
 
       openModal({
-        variant: "error",
-        title: "Updated Task Failed",
+        variant: 'error',
+        title: 'Updated Task Failed',
         description: errMsg,
         primaryAction: {
-          label: "Got it",
-          type: "button",
+          label: 'Got it',
+          type: 'button',
           onClick: () => closeModal(),
         },
         secondaryAction: {
-          label: "Retry",
-          type: "button",
+          label: 'Retry',
+          type: 'button',
           onClick: () => handleEditTask(id, data),
         },
       });
@@ -311,40 +291,35 @@ export default function Tasks() {
 
     // Update the UI immediately.
     setItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === id ? { ...item, isCompleted: checked } : item,
-      ),
+      prevItems.map((item) => (item.id === id ? { ...item, isCompleted: checked } : item)),
     );
 
     try {
       await editTask(id, { isCompleted: checked });
     } catch (err: unknown) {
-      console.error("Failed to update task completion: ", err);
+      console.error('Failed to update task completion: ', err);
 
-      const errMsg =
-        err instanceof Error ? err.message : "An unexpected error occurred.";
+      const errMsg = err instanceof Error ? err.message : 'An unexpected error occurred.';
 
       // Revert the UI update if the request fails.
       setItems((prevItems) =>
         prevItems.map((item) =>
-          item.id === id
-            ? { ...item, isCompleted: prevTask.isCompleted }
-            : item,
+          item.id === id ? { ...item, isCompleted: prevTask.isCompleted } : item,
         ),
       );
 
       openModal({
-        variant: "error",
-        title: "Failed to Update Task",
+        variant: 'error',
+        title: 'Failed to Update Task',
         description: errMsg,
         primaryAction: {
-          label: "Got it",
-          type: "button",
+          label: 'Got it',
+          type: 'button',
           onClick: () => closeModal(),
         },
         secondaryAction: {
-          label: "Retry",
-          type: "button",
+          label: 'Retry',
+          type: 'button',
           onClick: () => {
             closeModal();
             handleCheckedChange(id, checked);
@@ -361,8 +336,8 @@ export default function Tasks() {
 
     updateModal({
       primaryAction: {
-        label: "Deleting...",
-        type: "button",
+        label: 'Deleting...',
+        type: 'button',
         isLoading: true,
       },
     });
@@ -375,23 +350,22 @@ export default function Tasks() {
 
       closeModal();
     } catch (err: unknown) {
-      console.error("Failed to delete task: ", err);
+      console.error('Failed to delete task: ', err);
 
-      const errMsg =
-        err instanceof Error ? err.message : "An unexpected error occurred.";
+      const errMsg = err instanceof Error ? err.message : 'An unexpected error occurred.';
 
       openModal({
-        variant: "error",
-        title: "Failed Task Deletion",
+        variant: 'error',
+        title: 'Failed Task Deletion',
         description: errMsg,
         primaryAction: {
-          label: "Got it",
-          type: "button",
+          label: 'Got it',
+          type: 'button',
           onClick: () => closeModal(),
         },
         secondaryAction: {
-          label: "Retry",
-          type: "button",
+          label: 'Retry',
+          type: 'button',
           onClick: () => handleDeleteTask(id),
         },
       });
@@ -404,18 +378,18 @@ export default function Tasks() {
 
   const openAddTaskForm = () => {
     openModal({
-      variant: "confirm",
-      title: "Add Task",
-      description: "Add a new task to your list.",
+      variant: 'confirm',
+      title: 'Add Task',
+      description: 'Add a new task to your list.',
       children: <TaskForm onSubmit={handleAddTask} />,
       primaryAction: {
-        label: "Add",
-        type: "submit",
-        form: "task-form",
+        label: 'Add',
+        type: 'submit',
+        form: 'task-form',
         isLoading: isSubmitting,
       },
       secondaryAction: {
-        label: "Cancel",
+        label: 'Cancel',
         onClick: closeModal,
       },
     });
@@ -427,22 +401,17 @@ export default function Tasks() {
     if (!task) return;
 
     openModal({
-      variant: "confirm",
-      title: "Edit Task",
-      description: "Edit the current task.",
-      children: (
-        <TaskForm
-          initialValues={task}
-          onSubmit={(data) => handleEditTask(id, data)}
-        />
-      ),
+      variant: 'confirm',
+      title: 'Edit Task',
+      description: 'Edit the current task.',
+      children: <TaskForm initialValues={task} onSubmit={(data) => handleEditTask(id, data)} />,
       primaryAction: {
-        label: "Edit",
-        type: "submit",
-        form: "task-form",
+        label: 'Edit',
+        type: 'submit',
+        form: 'task-form',
       },
       secondaryAction: {
-        label: "Cancel",
+        label: 'Cancel',
         onClick: closeModal,
       },
     });
@@ -450,72 +419,60 @@ export default function Tasks() {
 
   const openDeleteTaskModal = (id: string) => {
     openModal({
-      variant: "error",
-      title: "Delete Task",
-      description: "Are you sure you want to delete this task?",
+      variant: 'error',
+      title: 'Delete Task',
+      description: 'Are you sure you want to delete this task?',
       primaryAction: {
-        label: "Delete",
-        type: "button",
+        label: 'Delete',
+        type: 'button',
         onClick: () => handleDeleteTask(id),
       },
       secondaryAction: {
-        label: "Cancel",
+        label: 'Cancel',
         onClick: closeModal,
       },
     });
   };
 
   return (
-    <div className="space-y-1">
-      <header className="flex justify-between items-center">
-        <h1 className="text-gray-700 font-bold">Tasks</h1>
-        <FilterGroup
-          options={STATUS_OPTIONS}
-          value={status}
-          onChange={handleStatusChange}
-        />
+    <div className='space-y-1'>
+      <header className='flex justify-between items-center'>
+        <h1 className='text-gray-700 font-bold'>Tasks</h1>
+        <FilterGroup options={STATUS_OPTIONS} value={status} onChange={handleStatusChange} />
       </header>
 
       <main
-        className="
+        className='
         flex flex-col
         min-h-109
         rounded-lg
         p-6
         bg-gray-100 border-2 border-gray-300
-      "
+      '
       >
         <div
-          className="
+          className='
           flex justify-between items-center
           h-10 gap-x-3 mb-4
-        "
+        '
         >
           {/* Left: Search, Filter, and Sort */}
-          <div className="flex items-center h-10 gap-x-2">
+          <div className='flex items-center h-10 gap-x-2'>
             <SearchBar
               value={search}
               onChange={handleSearchChange}
-              placeholder="Search for tasks..."
+              placeholder='Search for tasks...'
             />
-            <Filter
-              value={filter}
-              onChange={handleFilterChange}
-              options={FILTER_OPTIONS}
-            />
-            <Sort
-              value={sort}
-              onChange={handleSortChange}
-              options={SORT_OPTIONS}
-            />
+            <Filter value={filter} onChange={handleFilterChange} options={FILTER_OPTIONS} />
+            <Sort value={sort} onChange={handleSortChange} options={SORT_OPTIONS} />
           </div>
 
           {/* Right: Primary Action Button */}
-          <div className="h-full">
+          <div className='h-full'>
             <Button
-              label="Add Task"
-              variant="primary"
-              type="button"
+              label='Add Task'
+              variant='primary'
+              type='button'
               onClick={openAddTaskForm}
               icon={Plus}
             />
@@ -523,10 +480,10 @@ export default function Tasks() {
         </div>
 
         <div
-          className="
+          className='
           flex flex-1 flex-col
           gap-y-2
-        "
+        '
         >
           {renderTaskList()}
         </div>
@@ -534,17 +491,13 @@ export default function Tasks() {
 
       {/* TODO: Pagination. */}
       <div
-        className="
+        className='
         flex justify-center items-center
         mb-4 px-3 py-3
         text-sm
-      "
+      '
       >
-        <Pagination
-          page={currentPage}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
+        <Pagination page={currentPage} totalPages={totalPages} onPageChange={setPage} />
       </div>
     </div>
   );

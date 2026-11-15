@@ -1,5 +1,5 @@
-import { prisma } from "../prisma";
-import * as argon2 from "argon2";
+import { prisma } from '../prisma';
+import * as argon2 from 'argon2';
 
 /**
  * Verify whether the user's provided credentials exist in the database records.

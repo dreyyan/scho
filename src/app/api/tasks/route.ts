@@ -1,12 +1,12 @@
-import { z } from "zod";
-import { NextResponse } from "next/server";
+import { z } from 'zod';
+import { NextResponse } from 'next/server';
 
-import { createTaskSchema } from "@/validations/task";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
-import { logger } from "@/lib/logger";
-import { Prisma } from "@/generated/prisma/client";
-import { TASK_SELECT } from "@/lib/selects/task";
+import { createTaskSchema } from '@/validations/task';
+import { prisma } from '@/lib/prisma';
+import { auth } from '@/auth';
+import { logger } from '@/lib/logger';
+import { Prisma } from '@/generated/prisma/client';
+import { TASK_SELECT } from '@/lib/selects/task';
 
 /**
  ** GET — Retrieve the user's tasks.
@@ -21,17 +21,14 @@ export async function GET() {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
     }
 
     userId = session.user.id;
   } catch (err: unknown) {
-    logger.error("Authentication failed: ", err);
+    logger.error('Authentication failed: ', err);
 
-    return NextResponse.json(
-      { error: "Internal server error." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 
   try {
@@ -44,19 +41,16 @@ export async function GET() {
 
     return NextResponse.json(
       {
-        message: "Tasks retrieved successfully.",
+        message: 'Tasks retrieved successfully.',
         data: { tasks },
       },
       { status: 200 },
     );
   } catch (err: unknown) {
     // Log unexpected task retrieving errors.
-    logger.error("Retrieving tasks failed: ", err);
+    logger.error('Retrieving tasks failed: ', err);
 
-    return NextResponse.json(
-      { error: "Internal server error." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 }
 
@@ -75,26 +69,20 @@ export async function POST(request: Request) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
     }
 
     userId = session.user.id;
   } catch (err: unknown) {
-    logger.error("Authentication failed: ", err);
+    logger.error('Authentication failed: ', err);
 
-    return NextResponse.json(
-      { error: "Internal server error." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json(
-      { error: "Malformed JSON request body." },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: 'Malformed JSON request body.' }, { status: 400 });
   }
 
   // Validate the incoming task creation data.
@@ -104,7 +92,7 @@ export async function POST(request: Request) {
     // Return field-specific validation errors.
     return NextResponse.json(
       {
-        error: "Invalid task creation data.",
+        error: 'Invalid task creation data.',
         details: z.flattenError(result.error).fieldErrors,
       },
       { status: 400 },
@@ -128,28 +116,22 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       {
-        message: "Task created successfully.",
+        message: 'Task created successfully.',
         data: { task },
       },
       { status: 201 },
     );
   } catch (err: unknown) {
-    if (
-      err instanceof Prisma.PrismaClientKnownRequestError &&
-      err.code === "P2002"
-    ) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
       return NextResponse.json(
-        { error: "Task with the same inbox item already exists." },
+        { error: 'Task with the same inbox item already exists.' },
         { status: 409 },
       );
     }
 
     // Log unexpected task creation errors.
-    logger.error("Task creation failed: ", err);
+    logger.error('Task creation failed: ', err);
 
-    return NextResponse.json(
-      { error: "Internal server error." },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 }

@@ -1,4 +1,4 @@
-import { Prisma } from "@/generated/prisma/client";
+import { Prisma } from '@/generated/prisma/client';
 
 /**
  * Represents the fields returned to the client for a task.

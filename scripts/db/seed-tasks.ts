@@ -1,24 +1,24 @@
-import { logger } from "@/lib/logger";
-import { prisma } from "@/lib/prisma";
-import { TaskFormData } from "@/types/task";
-import { createTaskSchema } from "@/validations/task";
+import { logger } from '@/lib/logger';
+import { prisma } from '@/lib/prisma';
+import { TaskFormData } from '@/types/task';
+import { createTaskSchema } from '@/validations/task';
 
 const sampleTasks: TaskFormData[] = [
   {
-    title: "Study for Calculus exam",
-    deadline: "2026-11-15T18:00:00Z",
+    title: 'Study for Calculus exam',
+    deadline: '2026-11-15T18:00:00Z',
   },
   {
-    title: "Finish Software Engineering assignment",
+    title: 'Finish Software Engineering assignment',
     deadline: null,
   },
   {
-    title: "Buy groceries",
+    title: 'Buy groceries',
     deadline: null,
   },
   {
-    title: "Review React hooks",
-    deadline: "2026-11-20T20:00:00Z",
+    title: 'Review React hooks',
+    deadline: '2026-11-20T20:00:00Z',
   },
 ];
 
@@ -26,8 +26,8 @@ const sampleTasks: TaskFormData[] = [
  * Populates the development database with sample tasks.
  */
 async function seedTasks() {
-  if (process.env.NODE_ENV === "production") {
-    throw new Error("Task seeding is disabled in production.");
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Task seeding is disabled in production.');
   }
 
   // Find a development user to own the tasks.
@@ -38,7 +38,7 @@ async function seedTasks() {
   });
 
   if (!user) {
-    throw new Error("No user found. Create a user before seeding tasks.");
+    throw new Error('No user found. Create a user before seeding tasks.');
   }
 
   for (const task of sampleTasks) {
@@ -64,12 +64,12 @@ async function seedTasks() {
     }
   }
 
-  logger.info("Task seeding completed.");
+  logger.info('Task seeding completed.');
 }
 
 seedTasks()
   .catch((err: string) => {
-    logger.error("Task seeding failed: ", err);
+    logger.error('Task seeding failed: ', err);
     process.exitCode = 1;
   })
   .finally(async () => {

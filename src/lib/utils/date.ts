@@ -1,4 +1,4 @@
-import { MINUTE, HOUR, DAY } from "../constants/date";
+import { MINUTE, HOUR, DAY } from '../constants/date';
 
 /**
  * Formats a deadline into a user-friendly date or relative time.
@@ -7,12 +7,12 @@ import { MINUTE, HOUR, DAY } from "../constants/date";
  * @returns The user-appropriate formatted deadline.
  */
 function formatDeadline(deadline: string | null | undefined): string {
-  if (!deadline) return "No deadline.";
+  if (!deadline) return 'No deadline.';
 
   const date = new Date(deadline);
 
   if (Number.isNaN(date.getTime())) {
-    return "Invalid deadline.";
+    return 'Invalid deadline.';
   }
 
   // Calculate the time left until the deadline.
@@ -26,39 +26,39 @@ function formatDeadline(deadline: string | null | undefined): string {
     if (absTimeDiff < MINUTE) return `Just overdue`;
     if (absTimeDiff < HOUR) {
       const minOverdue = Math.ceil(absTimeDiff / MINUTE);
-      return `Overdue by ${minOverdue} min${minOverdue === 1 ? "" : "s"}`;
+      return `Overdue by ${minOverdue} min${minOverdue === 1 ? '' : 's'}`;
     }
     if (absTimeDiff < DAY) {
       const hoursOverdue = Math.ceil(absTimeDiff / HOUR);
-      return `Overdue by ${hoursOverdue} hour${hoursOverdue === 1 ? "" : "s"}`;
+      return `Overdue by ${hoursOverdue} hour${hoursOverdue === 1 ? '' : 's'}`;
     }
 
     const daysOverdue = Math.ceil(absTimeDiff / DAY);
-    return `Overdue by ${daysOverdue} day${daysOverdue === 1 ? "" : "s"}`;
+    return `Overdue by ${daysOverdue} day${daysOverdue === 1 ? '' : 's'}`;
   }
 
   // If time left is 3 days or less, display in phrase format.
-  if (timeDiff < MINUTE) return "Due now";
+  if (timeDiff < MINUTE) return 'Due now';
   if (timeDiff < HOUR) {
     const minLeft = Math.ceil(timeDiff / MINUTE);
-    return `${minLeft} min${minLeft === 1 ? "" : "s"} left`;
+    return `${minLeft} min${minLeft === 1 ? '' : 's'} left`;
   }
   if (timeDiff < DAY) {
     const hoursLeft = Math.ceil(timeDiff / HOUR);
-    return `${hoursLeft} hour${hoursLeft === 1 ? "" : "s"} left`;
+    return `${hoursLeft} hour${hoursLeft === 1 ? '' : 's'} left`;
   }
   if (timeDiff <= DAY * 3) {
     const daysLeft = Math.ceil(timeDiff / DAY);
-    return `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`;
+    return `${daysLeft} day${daysLeft === 1 ? '' : 's'} left`;
   }
 
   // Else, display in full date and time format.
-  return date.toLocaleString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
+  return date.toLocaleString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
     hour12: true,
   });
 }
@@ -72,9 +72,7 @@ function formatDeadline(deadline: string | null | undefined): string {
 const toDateTimeLocal = (deadline: string): string => {
   const date = new Date(deadline);
 
-  const localDate = new Date(
-    date.getTime() - date.getTimezoneOffset() * 60_000,
-  );
+  const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
 
   return localDate.toISOString().slice(0, 16);
 };

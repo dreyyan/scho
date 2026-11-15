@@ -1,13 +1,13 @@
 const validTaskCreationData = {
-  title: "Example Task Title",
+  title: 'Example Task Title',
 };
 
 const invalidTaskCreationData = {
   emptyTitle: {
-    title: "",
+    title: '',
   },
   overlongTitle: {
-    title: "a".repeat(151),
+    title: 'a'.repeat(151),
   },
 };
 

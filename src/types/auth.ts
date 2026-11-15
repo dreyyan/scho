@@ -1,5 +1,5 @@
-import { loginSchema, registerSchema } from "@/validations/auth";
-import z from "zod";
+import { loginSchema, registerSchema } from '@/validations/auth';
+import z from 'zod';
 
 /**
  * Represents the registration form's input data.
@@ -9,9 +9,7 @@ export type RegisterFormData = z.input<typeof registerSchema>;
 /**
  * Represents field-specific registration errors.
  */
-export type RegisterFormErrors = Partial<
-  Record<keyof RegisterFormData, string>
->;
+export type RegisterFormErrors = Partial<Record<keyof RegisterFormData, string>>;
 
 /**
  * Represents the login form's input data.

@@ -1,9 +1,9 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 /**
  * Represents the different modal variants.
  */
-export type ModalVariant = "success" | "error" | "confirm";
+export type ModalVariant = 'success' | 'error' | 'confirm';
 
 /**
  * Defines a button action within a modal.
@@ -11,7 +11,7 @@ export type ModalVariant = "success" | "error" | "confirm";
 export interface ModalAction {
   label: string;
   onClick?: () => void;
-  type?: "button" | "submit";
+  type?: 'button' | 'submit';
   form?: string;
   isLoading?: boolean;
 }

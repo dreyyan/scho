@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import React from "react";
-import Logo from "../ui/Logo";
-import { CircleUserRound, Settings } from "lucide-react";
-import Link from "next/link";
+import React from 'react';
+import Logo from '../ui/Logo';
+import { CircleUserRound, Settings } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Header() {
   const handleProfile = () => {
@@ -12,21 +12,21 @@ export default function Header() {
 
   return (
     <div
-      className="
+      className='
       flex justify-between min-h-16
       px-10 py-6
       bg-gray-50
-    "
+    '
     >
-      <Link href="/dashboard">
+      <Link href='/dashboard'>
         <Logo />
       </Link>
 
-      <div className="flex justify-center items-center space-x-4">
+      <div className='flex justify-center items-center space-x-4'>
         <button onClick={handleProfile}>
           <CircleUserRound />
         </button>
-        <Link href="/settings">
+        <Link href='/settings'>
           <Settings />
         </Link>
       </div>

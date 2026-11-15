@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import * as Select from "@radix-ui/react-select";
-import { Check, ChevronDown } from "lucide-react";
+import * as Select from '@radix-ui/react-select';
+import { Check, ChevronDown } from 'lucide-react';
 
 interface SortProps {
   value: string;
@@ -13,8 +13,8 @@ export default function Sort({ value, onChange, options }: SortProps) {
   return (
     <Select.Root value={value} onValueChange={onChange}>
       <Select.Trigger
-        aria-label="Sort tasks"
-        className="
+        aria-label='Sort tasks'
+        className='
           flex items-center justify-between gap-2
           text-xs
           w-auto h-10
@@ -25,9 +25,9 @@ export default function Sort({ value, onChange, options }: SortProps) {
           focus:outline-none
           focus:ring focus:ring-green-500
           whitespace-nowrap
-        "
+        '
       >
-        <Select.Value placeholder="Sort" />
+        <Select.Value placeholder='Sort' />
         <Select.Icon>
           <ChevronDown size={14} />
         </Select.Icon>
@@ -35,9 +35,9 @@ export default function Sort({ value, onChange, options }: SortProps) {
 
       <Select.Portal>
         <Select.Content
-          position="popper"
+          position='popper'
           sideOffset={4}
-          className="
+          className='
             z-50
             min-w-(--radix-select-trigger-width)
             rounded-md
@@ -45,14 +45,14 @@ export default function Sort({ value, onChange, options }: SortProps) {
             border border-gray-300
             shadow-md
             p-1
-          "
+          '
         >
           <Select.Viewport>
             {options.map((option) => (
               <Select.Item
                 key={option.value}
                 value={option.value}
-                className="
+                className='
                   relative
                   flex items-center
                   px-3 py-2 pr-8
@@ -62,11 +62,11 @@ export default function Sort({ value, onChange, options }: SortProps) {
                   outline-none
                   data-highlighted:bg-green-50
                   data-highlighted:text-green-700
-                "
+                '
               >
                 <Select.ItemText>{option.label}</Select.ItemText>
 
-                <Select.ItemIndicator className="absolute right-2">
+                <Select.ItemIndicator className='absolute right-2'>
                   <Check size={14} />
                 </Select.ItemIndicator>
               </Select.Item>

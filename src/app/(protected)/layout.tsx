@@ -1,24 +1,20 @@
-import { auth } from "@/auth";
-import Header from "@/components/layout/Header";
-import Sidebar from "@/components/layout/Sidebar";
-import { redirect } from "next/navigation";
+import { auth } from '@/auth';
+import Header from '@/components/layout/Header';
+import Sidebar from '@/components/layout/Sidebar';
+import { redirect } from 'next/navigation';
 
 export const instant = false;
 
-export default async function ProtectedLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();
 
   if (!session?.user) {
-    redirect("/login");
+    redirect('/login');
   }
 
   return (
-    <div className="grid min-h-screen grid-cols-[12rem_1fr] grid-rows-[4rem_1fr]">
-      <header className="col-span-2">
+    <div className='grid min-h-screen grid-cols-[12rem_1fr] grid-rows-[4rem_1fr]'>
+      <header className='col-span-2'>
         <Header />
       </header>
 
@@ -27,10 +23,10 @@ export default async function ProtectedLayout({
       </aside>
 
       <main
-        className="
+        className='
         min-w-0
         px-20 py-14
-      "
+      '
       >
         {children}
       </main>

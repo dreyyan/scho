@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { createContext, useState, type ReactNode } from "react";
+import { createContext, useState, type ReactNode } from 'react';
 
-import Modal from "@/components/ui/Modal";
-import type { ModalOptions } from "@/types/modal";
+import Modal from '@/components/ui/Modal';
+import type { ModalOptions } from '@/types/modal';
 
 export interface ModalContextType {
   /**
@@ -42,9 +42,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     <ModalContext.Provider value={{ openModal, closeModal, updateModal }}>
       {children}
 
-      {modalOptions && (
-        <Modal {...modalOptions} isOpen={isOpen} onClose={closeModal} />
-      )}
+      {modalOptions && <Modal {...modalOptions} isOpen={isOpen} onClose={closeModal} />}
     </ModalContext.Provider>
   );
 }

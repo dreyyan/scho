@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import InputField from "../ui/InputField";
-import { TaskFormData, TaskFormErrors } from "@/types/task";
-import { toDateTimeLocal } from "@/lib/utils/date";
+import React, { useState } from 'react';
+import InputField from '../ui/InputField';
+import { TaskFormData, TaskFormErrors } from '@/types/task';
+import { toDateTimeLocal } from '@/lib/utils/date';
 
 interface TaskFormProps {
   initialValues?: TaskFormData;
@@ -10,16 +10,14 @@ interface TaskFormProps {
 
 export default function TaskForm({ initialValues, onSubmit }: TaskFormProps) {
   const [data, setData] = useState<TaskFormData>({
-    title: initialValues?.title || "",
+    title: initialValues?.title || '',
     // extract date portion of an ISO DateTime string.
-    deadline: initialValues?.deadline
-      ? toDateTimeLocal(initialValues.deadline)
-      : "",
+    deadline: initialValues?.deadline ? toDateTimeLocal(initialValues.deadline) : '',
   });
 
   const [errors, setErrors] = useState<TaskFormErrors>({
-    title: "",
-    deadline: "",
+    title: '',
+    deadline: '',
   });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,27 +45,27 @@ export default function TaskForm({ initialValues, onSubmit }: TaskFormProps) {
   };
 
   return (
-    <form id="task-form" onSubmit={handleSubmit} className="space-y-2">
+    <form id='task-form' onSubmit={handleSubmit} className='space-y-2'>
       <InputField
-        id="title"
-        name="title"
-        label="Task Name"
-        type="text"
-        placeholder="e.g. Wash the dishes, study for exams..."
+        id='title'
+        name='title'
+        label='Task Name'
+        type='text'
+        placeholder='e.g. Wash the dishes, study for exams...'
         value={data.title}
         onChange={handleChange}
         required
         error={errors.title}
       />
       <InputField
-        id="deadline"
-        name="deadline"
-        label="Deadline"
-        type="datetime-local"
-        value={data.deadline ?? ""}
+        id='deadline'
+        name='deadline'
+        label='Deadline'
+        type='datetime-local'
+        value={data.deadline ?? ''}
         onChange={handleChange}
         required={false}
-        error={errors.deadline ?? ""}
+        error={errors.deadline ?? ''}
       />
     </form>
   );

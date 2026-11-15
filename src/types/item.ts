@@ -1,7 +1,7 @@
 /**
  * Represents the available item categories.
  */
-export type ItemCategory = "Task" | "Link" | "Item";
+export type ItemCategory = 'Task' | 'Link' | 'Item';
 
 /**
  * Represents the shared fields for any Item type.
@@ -20,17 +20,17 @@ export interface BaseItemProps {
  */
 export type ItemProps =
   | (BaseItemProps & {
-      category: "Task";
+      category: 'Task';
       isChecked: boolean;
       onCheckedChange: (checked: boolean) => void;
       deadline: string;
     })
   | (BaseItemProps & {
-      category: "Link";
+      category: 'Link';
       url: string;
       createdAt: string;
     })
   | (BaseItemProps & {
-      category: "Item";
+      category: 'Item';
       createdAt: string;
     });

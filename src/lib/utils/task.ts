@@ -1,5 +1,5 @@
-import type { TaskResponse } from "@/types/task";
-import type { TaskViewOptions } from "@/types/task";
+import type { TaskResponse } from '@/types/task';
+import type { TaskViewOptions } from '@/types/task';
 
 /**
  * Retrieves the tasks matching the search, filter, and sort.
@@ -8,10 +8,7 @@ import type { TaskViewOptions } from "@/types/task";
  * @param options - The view options for the task filtering.
  * @returns The filtered and sorted tasks.
  */
-export function getVisibleTasks(
-  tasks: TaskResponse[],
-  options: TaskViewOptions,
-): TaskResponse[] {
+export function getVisibleTasks(tasks: TaskResponse[], options: TaskViewOptions): TaskResponse[] {
   const { search, status, filter, sort, currentTime } = options;
 
   const searchedTasks = tasks.filter((task) =>
@@ -19,11 +16,11 @@ export function getVisibleTasks(
   );
   const statusFilteredTasks = searchedTasks.filter((task) => {
     switch (status) {
-      case "active":
+      case 'active':
         return !task.isCompleted;
-      case "completed":
+      case 'completed':
         return task.isCompleted;
-      case "all":
+      case 'all':
         return true;
       default:
         return true;
@@ -31,17 +28,15 @@ export function getVisibleTasks(
   });
   const filteredTasks = statusFilteredTasks.filter((task) => {
     switch (filter) {
-      case "with-deadline":
+      case 'with-deadline':
         return !!task.deadline;
 
-      case "no-deadline":
+      case 'no-deadline':
         return !task.deadline;
 
-      case "overdue":
+      case 'overdue':
         return (
-          !!task.deadline &&
-          !task.isCompleted &&
-          new Date(task.deadline).getTime() < currentTime
+          !!task.deadline && !task.isCompleted && new Date(task.deadline).getTime() < currentTime
         );
 
       default:
@@ -50,16 +45,12 @@ export function getVisibleTasks(
   });
   const sortedTasks = [...filteredTasks].sort((a, b) => {
     switch (sort) {
-      case "newest":
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-      case "oldest":
-        return (
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        );
-      case "due-asc":
-      case "due-desc": {
+      case 'newest':
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      case 'oldest':
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      case 'due-asc':
+      case 'due-desc': {
         if (!a.deadline && !b.deadline) return 0;
         if (!a.deadline) return 1;
         if (!b.deadline) return -1;
@@ -67,9 +58,9 @@ export function getVisibleTasks(
         const aTime = new Date(a.deadline).getTime();
         const bTime = new Date(b.deadline).getTime();
 
-        return sort === "due-asc" ? aTime - bTime : bTime - aTime;
+        return sort === 'due-asc' ? aTime - bTime : bTime - aTime;
       }
-      case "title-asc":
+      case 'title-asc':
         return a.title.localeCompare(b.title);
       default:
         return 0;

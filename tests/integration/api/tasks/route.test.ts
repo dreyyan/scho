@@ -1,42 +1,34 @@
-import {
-  afterAll,
-  beforeEach,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  vi,
-} from "vitest";
-import * as argon2 from "argon2";
-import { Session } from "next-auth";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/auth";
+import { afterAll, beforeEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import * as argon2 from 'argon2';
+import { Session } from 'next-auth';
+import { prisma } from '@/lib/prisma';
+import { auth } from '@/auth';
 
 import {
   invalidTaskCreationData,
   validTaskCreationData,
   validTaskUpdateData,
-} from "../../../fixtures/task";
-import { validLoginData } from "../../../fixtures/auth";
-import { malformedJSON } from "../../../fixtures/common";
+} from '../../../fixtures/task';
+import { validLoginData } from '../../../fixtures/auth';
+import { malformedJSON } from '../../../fixtures/common';
 
-import { POST } from "@/app/api/tasks/route";
-import { PATCH, DELETE } from "@/app/api/tasks/[id]/route";
-import { generateRandomEmail } from "../../../helpers/generateRandomEmail";
+import { POST } from '@/app/api/tasks/route';
+import { PATCH, DELETE } from '@/app/api/tasks/[id]/route';
+import { generateRandomEmail } from '../../../helpers/generateRandomEmail';
 
 const PORT = process.env.PORT ?? 3001;
 const TASK_URL = `http://localhost:${PORT}/api/tasks`;
 const testLoginData = {
   ...validLoginData,
-  email: generateRandomEmail("login"),
+  email: generateRandomEmail('login'),
 };
 
 let testUserId: string;
 
-vi.mock("@/auth", () => ({ auth: vi.fn() }));
+vi.mock('@/auth', () => ({ auth: vi.fn() }));
 const mockAuth = vi.mocked(auth as () => Promise<Session | null>);
 
-describe("POST /api/tasks", () => {
+describe('POST /api/tasks', () => {
   beforeAll(async () => {
     const user = await prisma.user.create({
       data: {
@@ -57,15 +49,15 @@ describe("POST /api/tasks", () => {
       user: {
         id: testUserId,
       },
-      expires: "2026-12-31T00:00:00.000Z",
+      expires: '2026-12-31T00:00:00.000Z',
     });
   });
 
-  it("accepts valid task creation data", async () => {
+  it('accepts valid task creation data', async () => {
     const request = new Request(TASK_URL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(validTaskCreationData),
     });
@@ -74,17 +66,17 @@ describe("POST /api/tasks", () => {
     const result = await response.json();
 
     expect(response.status).toBe(201);
-    expect(result.message).toBe("Task created successfully.");
-    expect(result.data.task).toHaveProperty("createdAt");
+    expect(result.message).toBe('Task created successfully.');
+    expect(result.data.task).toHaveProperty('createdAt');
   });
 
-  it("rejects an unauthorized user", async () => {
+  it('rejects an unauthorized user', async () => {
     mockAuth.mockResolvedValue(null);
 
     const request = new Request(TASK_URL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(validTaskCreationData),
     });
@@ -93,14 +85,14 @@ describe("POST /api/tasks", () => {
     const result = await response.json();
 
     expect(response.status).toBe(401);
-    expect(result.error).toBe("Unauthorized.");
+    expect(result.error).toBe('Unauthorized.');
   });
 
-  it("rejects malformed JSON request body.", async () => {
+  it('rejects malformed JSON request body.', async () => {
     const request = new Request(TASK_URL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: malformedJSON,
     });
@@ -109,17 +101,17 @@ describe("POST /api/tasks", () => {
     const result = await response.json();
 
     expect(response.status).toBe(400);
-    expect(result.error).toBe("Malformed JSON request body.");
+    expect(result.error).toBe('Malformed JSON request body.');
   });
 
   it.each([
-    ["empty title", invalidTaskCreationData.emptyTitle],
-    ["overlong title", invalidTaskCreationData.overlongTitle],
-  ])("rejects invalid task creation data with %s", async (_, data) => {
+    ['empty title', invalidTaskCreationData.emptyTitle],
+    ['overlong title', invalidTaskCreationData.overlongTitle],
+  ])('rejects invalid task creation data with %s', async (_, data) => {
     const request = new Request(TASK_URL, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     });
@@ -128,10 +120,10 @@ describe("POST /api/tasks", () => {
     const result = await response.json();
 
     expect(response.status).toBe(400);
-    expect(result.error).toBe("Invalid task creation data.");
+    expect(result.error).toBe('Invalid task creation data.');
   });
 
-  it("rejects a task referencing an already linked inbox item", () => {
+  it('rejects a task referencing an already linked inbox item', () => {
     // TODO: Rejects a task referencing an already linked inbox item.
   });
 
@@ -148,7 +140,7 @@ describe("POST /api/tasks", () => {
   });
 });
 
-describe("PATCH /api/tasks/:id", () => {
+describe('PATCH /api/tasks/:id', () => {
   let testUserId: string;
   let testTaskId: string;
 
@@ -167,7 +159,7 @@ describe("PATCH /api/tasks/:id", () => {
     const task = await prisma.task.create({
       data: {
         userId: testUserId,
-        title: "Original task title",
+        title: 'Original task title',
       },
     });
 
@@ -181,15 +173,15 @@ describe("PATCH /api/tasks/:id", () => {
       user: {
         id: testUserId,
       },
-      expires: "2026-12-31T00:00:00.000Z",
+      expires: '2026-12-31T00:00:00.000Z',
     });
   });
 
-  it("accepts vaild task update data", async () => {
+  it('accepts vaild task update data', async () => {
     const request = new Request(`${TASK_URL}/${testTaskId}`, {
-      method: "PATCH",
+      method: 'PATCH',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(validTaskUpdateData),
     });
@@ -200,18 +192,18 @@ describe("PATCH /api/tasks/:id", () => {
     const result = await response.json();
 
     expect(response.status).toBe(200);
-    expect(result.message).toBe("Task updated successfully.");
-    expect(result.data.task).toHaveProperty("createdAt");
+    expect(result.message).toBe('Task updated successfully.');
+    expect(result.data.task).toHaveProperty('createdAt');
   });
 
   it.each([
-    ["completed", true],
-    ["incomplete", false],
-  ])("marks a task as %s", async (_, isCompleted) => {
+    ['completed', true],
+    ['incomplete', false],
+  ])('marks a task as %s', async (_, isCompleted) => {
     const request = new Request(`${TASK_URL}/${testTaskId}`, {
-      method: "PATCH",
+      method: 'PATCH',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ isCompleted }),
     });
@@ -238,7 +230,7 @@ describe("PATCH /api/tasks/:id", () => {
   });
 });
 
-describe("DELETE /api/tasks/:id", () => {
+describe('DELETE /api/tasks/:id', () => {
   let testUserId: string;
   let testTaskId: string;
 
@@ -262,24 +254,24 @@ describe("DELETE /api/tasks/:id", () => {
       user: {
         id: testUserId,
       },
-      expires: "2026-12-31T00:00:00.000Z",
+      expires: '2026-12-31T00:00:00.000Z',
     });
 
     const task = await prisma.task.create({
       data: {
         userId: testUserId,
-        title: "Original task title",
+        title: 'Original task title',
       },
     });
 
     testTaskId = task.id;
   });
 
-  it("accepts valid task deletion data", async () => {
+  it('accepts valid task deletion data', async () => {
     const request = new Request(`${TASK_URL}/${testTaskId}`, {
-      method: "DELETE",
+      method: 'DELETE',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
 
@@ -289,16 +281,16 @@ describe("DELETE /api/tasks/:id", () => {
     const result = await response.json();
 
     expect(response.status).toBe(200);
-    expect(result.message).toBe("Task deleted successfully.");
+    expect(result.message).toBe('Task deleted successfully.');
   });
 
-  it("rejects an unauthorized user", async () => {
+  it('rejects an unauthorized user', async () => {
     mockAuth.mockResolvedValue(null);
 
     const request = new Request(`${TASK_URL}/${testTaskId}`, {
-      method: "DELETE",
+      method: 'DELETE',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
 
@@ -308,16 +300,16 @@ describe("DELETE /api/tasks/:id", () => {
     const result = await response.json();
 
     expect(response.status).toBe(401);
-    expect(result.error).toBe("Unauthorized.");
+    expect(result.error).toBe('Unauthorized.');
   });
 
-  it("rejects an invalid task ID", async () => {
-    const invalidTaskId = "invalid-task-id";
+  it('rejects an invalid task ID', async () => {
+    const invalidTaskId = 'invalid-task-id';
 
     const request = new Request(`${TASK_URL}/${invalidTaskId}`, {
-      method: "DELETE",
+      method: 'DELETE',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
 
@@ -327,16 +319,16 @@ describe("DELETE /api/tasks/:id", () => {
     const result = await response.json();
 
     expect(response.status).toBe(400);
-    expect(result.error).toBe("Invalid task ID.");
+    expect(result.error).toBe('Invalid task ID.');
   });
 
-  it("rejects a non-existing task", async () => {
+  it('rejects a non-existing task', async () => {
     const nonExistentTaskId = crypto.randomUUID();
 
     const request = new Request(`${TASK_URL}/${nonExistentTaskId}`, {
-      method: "DELETE",
+      method: 'DELETE',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     });
 
@@ -346,7 +338,7 @@ describe("DELETE /api/tasks/:id", () => {
     const result = await response.json();
 
     expect(response.status).toBe(404);
-    expect(result.error).toBe("Task not found.");
+    expect(result.error).toBe('Task not found.');
   });
 
   afterAll(async () => {
