@@ -4,7 +4,8 @@ import { prisma } from '@/lib/prisma';
 import { TASK_SELECT } from '@/lib/selects/task';
 import { TaskFormData, UpdateTaskFormData } from '@/types/task';
 import { Prisma } from '@/generated/prisma/client';
-import { NextResponse } from 'next/server';
+
+export class DuplicateSourceItemError extends Error {}
 
 /**
  * Retrieve the user's tasks from the databsae.
@@ -43,11 +44,10 @@ export async function createTask(userId: string, data: TaskFormData) {
     });
   } catch (err: unknown) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-      return NextResponse.json(
-        { error: 'Task with the same inbox item already exists.' },
-        { status: 409 },
-      );
+      throw new DuplicateSourceItemError();
     }
+
+    throw err;
   }
 }
 

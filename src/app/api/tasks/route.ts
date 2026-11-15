@@ -5,7 +5,7 @@ import { createTaskSchema } from '@/validations/task';
 import { logger } from '@/lib/logger';
 import { Prisma } from '@/generated/prisma/client';
 import { requireUserId } from '@/lib/auth/require-user-id';
-import { createTask, listTasks } from '@/server/tasks';
+import { createTask, DuplicateSourceItemError, listTasks } from '@/server/tasks';
 
 /**
  ** GET — Retrieve the user's tasks.
@@ -70,10 +70,9 @@ export async function POST(request: Request) {
     );
   }
 
-  const task = await createTask(userId, result.data);
-
   try {
     // TODO: Validate whether InboxItem belongs to the user.
+    const task = await createTask(userId, result.data);
 
     return NextResponse.json(
       {
@@ -83,6 +82,13 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (err: unknown) {
+    if (err instanceof DuplicateSourceItemError) {
+      return NextResponse.json(
+        { error: 'Task with the same inbox item already exists.' },
+        { status: 409 },
+      );
+    }
+
     // Log unexpected task creation errors.
     logger.error('Task creation failed: ', err);
 
