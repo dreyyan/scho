@@ -1,13 +1,11 @@
 import { z } from 'zod';
 import { NextResponse } from 'next/server';
 
-import { Prisma } from '@/generated/prisma/client';
-import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
 
 import { updateTaskSchema } from '@/validations/task';
 import { requireUserId } from '@/lib/auth/require-user-id';
-import { updateTask } from '@/server/tasks';
+import { deleteTask, updateTask } from '@/server/tasks';
 
 /**
  ** PATCH — Update an existing task.
@@ -92,19 +90,14 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
 
   try {
     // TODO: Delete InboxItem linked with the task.
-    await prisma.task.delete({
-      where: {
-        id: taskId,
-        userId,
-      },
-    });
+    const deleted = await deleteTask(userId, taskId);
 
-    return NextResponse.json({ message: 'Task deleted successfully.' }, { status: 200 });
-  } catch (err: unknown) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
+    if (!deleted) {
       return NextResponse.json({ error: 'Task not found.' }, { status: 404 });
     }
 
+    return NextResponse.json({ message: 'Task deleted successfully.' }, { status: 200 });
+  } catch (err: unknown) {
     // Log unexpected task deletion errors.
     logger.error('Task deletion failed: ', err);
 

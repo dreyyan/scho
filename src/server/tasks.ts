@@ -81,3 +81,29 @@ export async function updateTask(userId: string, taskId: string, data: UpdateTas
     }
   }
 }
+
+/**
+ * Delete a user's task from the database.
+ * 
+ * @param userId - THe user's ID;
+ * @param taskId - The task's ID.
+ * @returns Nothing or a NextResponse JSON containing the error message and status code. 
+ */
+export async function deleteTask(userId: string, taskId: string): Promise<boolean> {
+  try {
+    await prisma.task.delete({
+      where: {
+        id: taskId,
+        userId,
+      },
+    });
+
+    return true;
+  } catch (err: unknown) {
+    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
+      return false;
+    }
+
+    throw err;
+  }
+}
