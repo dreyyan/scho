@@ -21,15 +21,19 @@ export default async function ProtectedLayout({
       <header className="col-span-2">
         <Header />
       </header>
-      
+
       <aside>
         <Sidebar />
       </aside>
 
-      <main className="
+      <main
+        className="
         min-w-0
         px-20 py-14
-      ">{children}</main>
+      "
+      >
+        {children}
+      </main>
     </div>
-  )
+  );
 }

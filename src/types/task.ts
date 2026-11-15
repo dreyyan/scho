@@ -1,5 +1,5 @@
 import { createTaskSchema, updateTaskSchema } from "@/validations/task";
-import z from 'zod';
+import z from "zod";
 
 /**
  * Represents the task form's input data.
@@ -43,7 +43,7 @@ export interface GetTasksResponse {
 export interface CreateTaskResponse {
   message: string;
   data: {
-    task: TaskResponse
+    task: TaskResponse;
   };
 }
 
@@ -54,7 +54,7 @@ export interface UpdateTaskResponse {
   message: string;
   data: {
     task: TaskResponse;
-  }
+  };
 }
 
 /**

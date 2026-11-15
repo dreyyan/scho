@@ -10,9 +10,11 @@ const createTaskSchema = z.object({
   deadline: z.iso.datetime().nullish(),
 });
 
-const updateTaskSchema = createTaskSchema.extend({
-  isCompleted: z.boolean(),
-  deadline: z.iso.datetime().nullish(),
-}).partial();
+const updateTaskSchema = createTaskSchema
+  .extend({
+    isCompleted: z.boolean(),
+    deadline: z.iso.datetime().nullish(),
+  })
+  .partial();
 
 export { createTaskSchema, updateTaskSchema };

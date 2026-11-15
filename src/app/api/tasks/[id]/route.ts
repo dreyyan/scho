@@ -11,7 +11,7 @@ import { TASK_SELECT } from "@/lib/selects/task";
 
 /**
  ** PATCH — Update an existing task.
- * 
+ *
  * @param request - The HTTP request containing the updated task data.
  * @param context - The route context containing the task ID.
  * @returns a JSON response of the updated task or an error.
@@ -29,10 +29,7 @@ export async function PATCH(
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized." },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
     userId = session.user.id;
@@ -48,10 +45,7 @@ export async function PATCH(
   const taskIdResult = z.uuid().safeParse(taskId);
 
   if (!taskIdResult.success) {
-    return NextResponse.json(
-      { error: "Invalid task ID." },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Invalid task ID." }, { status: 400 });
   }
 
   try {
@@ -74,7 +68,7 @@ export async function PATCH(
         details: z.flattenError(result.error).fieldErrors,
       },
       { status: 400 },
-    ); 
+    );
   }
 
   const { title, isCompleted, deadline } = result.data;
@@ -105,10 +99,7 @@ export async function PATCH(
       err instanceof Prisma.PrismaClientKnownRequestError &&
       err.code === "P2025"
     ) {
-      return NextResponse.json(
-        { error: "Task not found." },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "Task not found." }, { status: 404 });
     }
 
     // Log unexpected task update errors.
@@ -123,7 +114,7 @@ export async function PATCH(
 
 /**
  ** DELETE — Delete an existing task.
- * 
+ *
  * @param _request - The incoming HTTP request.
  * @param context - The route context containing the task ID.
  * @returns a JSON response indicating success or failure.
@@ -140,10 +131,7 @@ export async function DELETE(
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized." },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
     userId = session.user.id;
@@ -159,10 +147,7 @@ export async function DELETE(
   const taskIdResult = z.uuid().safeParse(taskId);
 
   if (!taskIdResult.success) {
-    return NextResponse.json(
-      { error: "Invalid task ID." },
-      { status: 400 },
-    );
+    return NextResponse.json({ error: "Invalid task ID." }, { status: 400 });
   }
 
   try {
@@ -183,10 +168,7 @@ export async function DELETE(
       err instanceof Prisma.PrismaClientKnownRequestError &&
       err.code === "P2025"
     ) {
-      return NextResponse.json(
-        { error: "Task not found." },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "Task not found." }, { status: 404 });
     }
 
     // Log unexpected task deletion errors.

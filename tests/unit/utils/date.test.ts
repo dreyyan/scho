@@ -1,11 +1,19 @@
 import { formatDeadline, toDateTimeLocal } from "@/lib/utils/date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { invalidDeadline, ISODateCST, ISODateCDT, prevDayISODate, ISODate, NOW } from "../../fixtures/date";
+import {
+  invalidDeadline,
+  ISODateCST,
+  ISODateCDT,
+  prevDayISODate,
+  ISODate,
+  NOW,
+} from "../../fixtures/date";
 import { MINUTE, HOUR, DAY, SECOND } from "@/lib/constants/date";
 
 describe("formatDeadline()", () => {
   // Create deadlines based on the date.
-  const deadlineIn = (ms: number): string => new Date(NOW.getTime() + ms).toISOString();
+  const deadlineIn = (ms: number): string =>
+    new Date(NOW.getTime() + ms).toISOString();
 
   // Mock the system clock before each test.
   beforeEach(() => {
@@ -110,26 +118,26 @@ describe("formatDeadline()", () => {
 describe("toDateTimeLocal()", () => {
   describe("UTC to local time conversion", () => {
     it("converts UTC to CST (UTC-6)", () => {
-        const result = toDateTimeLocal(ISODateCST);
-        expect(result).toBe("2026-11-10T12:00");
+      const result = toDateTimeLocal(ISODateCST);
+      expect(result).toBe("2026-11-10T12:00");
     });
     it("converts UTC to CDT (UTC-5)", () => {
-        const result = toDateTimeLocal(ISODateCDT);
-        expect(result).toBe("2026-07-10T13:00");
+      const result = toDateTimeLocal(ISODateCDT);
+      expect(result).toBe("2026-07-10T13:00");
     });
   });
 
   describe("Date Boundaries", () => {
     it("handles conversion to the previous day", () => {
-        const result = toDateTimeLocal(prevDayISODate);
-        expect(result).toBe("2026-11-09T20:00");
+      const result = toDateTimeLocal(prevDayISODate);
+      expect(result).toBe("2026-11-09T20:00");
     });
   });
 
   describe("Output Format", () => {
     it("returns YYYY-MM-DDTHH:mm", () => {
-        const result = toDateTimeLocal(ISODate);
-        expect(result).toBe("2026-11-09T20:00");
+      const result = toDateTimeLocal(ISODate);
+      expect(result).toBe("2026-11-09T20:00");
     });
   });
 });

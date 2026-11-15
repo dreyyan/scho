@@ -17,7 +17,7 @@ const adapter = new PrismaPg({
 
 /**
  * Shared Prisma Client instance for interacting with the PostgreSQL database.
- * 
+ *
  * Provides type-safe database operations for the application's models.
  */
 export const prisma = new PrismaClient({ adapter });

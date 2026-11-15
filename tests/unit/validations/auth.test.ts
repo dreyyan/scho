@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { loginSchema, registerSchema } from "@/validations/auth";
-import { validRegistrationData, validLoginData, invalidAuthData } from "../../fixtures/auth";
+import {
+  validRegistrationData,
+  validLoginData,
+  invalidAuthData,
+} from "../../fixtures/auth";
 
 describe("Registration Validation", () => {
   it("accepts valid registration credentials", () => {
@@ -9,17 +13,23 @@ describe("Registration Validation", () => {
   });
 
   it("rejects invalid email", () => {
-    const result = registerSchema.safeParse(invalidAuthData.registration.invalidEmail);
+    const result = registerSchema.safeParse(
+      invalidAuthData.registration.invalidEmail,
+    );
     expect(result.success).toBe(false);
   });
 
   it("rejects short password", () => {
-    const result = registerSchema.safeParse(invalidAuthData.registration.shortPassword);
+    const result = registerSchema.safeParse(
+      invalidAuthData.registration.shortPassword,
+    );
     expect(result.success).toBe(false);
   });
 
   it("rejects mismatched passwords", () => {
-    const result = registerSchema.safeParse(invalidAuthData.registration.shortPassword);
+    const result = registerSchema.safeParse(
+      invalidAuthData.registration.shortPassword,
+    );
     expect(result.success).toBe(false);
   });
 });

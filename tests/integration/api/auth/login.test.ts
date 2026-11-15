@@ -13,7 +13,7 @@ const LOGIN_URL = `http://localhost:${PORT}/api/auth/login`;
 const testLoginData = {
   ...validLoginData,
   email: generateRandomEmail("login"),
-}
+};
 
 describe("POST /api/auth/login", () => {
   beforeAll(async () => {
@@ -71,16 +71,16 @@ describe("POST /api/auth/login", () => {
       body: JSON.stringify(data),
     });
 
-      const response = await POST(request);
-      const result = await response.json();
+    const response = await POST(request);
+    const result = await response.json();
 
-      expect(response.status).toBe(400);
-      expect(result.error).toBe("Invalid login data.");
+    expect(response.status).toBe(400);
+    expect(result.error).toBe("Invalid login data.");
   });
 
   afterAll(async () => {
     await prisma.user.deleteMany({
       where: { email: testLoginData.email },
     });
-  })
+  });
 });

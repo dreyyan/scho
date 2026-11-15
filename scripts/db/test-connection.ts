@@ -9,9 +9,11 @@ async function main() {
   logger.info(`Users: ${users}`);
 }
 
-main().catch((err: unknown) => {
-  logger.error("Database connection failed", err);
-  process.exitCode = 1;
-}).finally(async () => {
-  await prisma.$disconnect();
-});
+main()
+  .catch((err: unknown) => {
+    logger.error("Database connection failed", err);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

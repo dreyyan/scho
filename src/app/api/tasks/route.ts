@@ -10,7 +10,7 @@ import { TASK_SELECT } from "@/lib/selects/task";
 
 /**
  ** GET — Retrieve the user's tasks.
- * 
+ *
  * @returns a JSON response of the user's tasks.
  */
 export async function GET() {
@@ -21,10 +21,7 @@ export async function GET() {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized." },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
     userId = session.user.id;
@@ -78,10 +75,7 @@ export async function POST(request: Request) {
     const session = await auth();
 
     if (!session?.user?.id) {
-      return NextResponse.json(
-        { error: "Unauthorized." },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
     }
 
     userId = session.user.id;

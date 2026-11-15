@@ -25,7 +25,7 @@ test.describe("Registration", () => {
       emailInputField,
       passwordInputField,
       confirmPasswordInputField,
-      registerButton
+      registerButton,
     } = getRegistrationForm(page);
 
     await expect(emailInputField).toBeVisible();
@@ -38,10 +38,7 @@ test.describe("Registration", () => {
     await page.goto(`/register`);
 
     // Wait for React hydration before interacting with the form.
-    await expect(page.locator("form")).toHaveAttribute(
-      "data-hydrated",
-      "true"
-    );
+    await expect(page.locator("form")).toHaveAttribute("data-hydrated", "true");
 
     // Generate a unique email for each test run.
     const uniqueEmail = `test-${crypto.randomUUID()}@example.com`;
@@ -65,10 +62,7 @@ test.describe("Registration", () => {
   test("display errors for empty required fields", async ({ page }) => {
     await page.goto("/register");
 
-    await expect(page.locator("form")).toHaveAttribute(
-      "data-hydrated",
-      "true"
-    );
+    await expect(page.locator("form")).toHaveAttribute("data-hydrated", "true");
 
     const {
       emailInputField,
@@ -87,7 +81,7 @@ test.describe("Registration", () => {
       await expect(inputField).toHaveJSProperty("required", true);
 
       const valueMissing = await inputField.evaluate(
-        (input: HTMLInputElement) => input.validity.valueMissing
+        (input: HTMLInputElement) => input.validity.valueMissing,
       );
 
       expect(valueMissing).toBe(true);
@@ -98,12 +92,10 @@ test.describe("Registration", () => {
     await page.goto(`/register`);
 
     // Wait for React hydration before interacting with the form.
-    await expect(page.locator("form")).toHaveAttribute(
-      "data-hydrated",
-      "true"
-    );
+    await expect(page.locator("form")).toHaveAttribute("data-hydrated", "true");
 
-    const { email, password, confirmPassword } = invalidAuthData.registration.invalidEmail;
+    const { email, password, confirmPassword } =
+      invalidAuthData.registration.invalidEmail;
 
     const {
       emailInputField,
@@ -118,8 +110,8 @@ test.describe("Registration", () => {
 
     await registerButton.click();
 
-    const isValid = await emailInputField.evaluate(
-      (input: HTMLInputElement) => input.checkValidity()
+    const isValid = await emailInputField.evaluate((input: HTMLInputElement) =>
+      input.checkValidity(),
     );
 
     expect(isValid).toBe(false);
@@ -129,10 +121,7 @@ test.describe("Registration", () => {
     await page.goto(`/register`);
 
     // Wait for React hydration before interacting with the form.
-    await expect(page.locator("form")).toHaveAttribute(
-      "data-hydrated",
-      "true"
-    );
+    await expect(page.locator("form")).toHaveAttribute("data-hydrated", "true");
 
     // Generate a unique email for each test run.
     const uniqueEmail = `test-${crypto.randomUUID()}@example.com`;
@@ -157,10 +146,7 @@ test.describe("Registration", () => {
     await page.reload();
 
     // Wait for React hydration before interacting with the form.
-    await expect(page.locator("form")).toHaveAttribute(
-      "data-hydrated",
-      "true"
-    );
+    await expect(page.locator("form")).toHaveAttribute("data-hydrated", "true");
 
     await emailInputField.fill(uniqueEmail);
     await passwordInputField.fill(password);
@@ -173,13 +159,13 @@ test.describe("Registration", () => {
 
   test("display password requirement errors", async ({ page }) => {
     await page.goto(`/register`);
-
   });
 
   test("display an error when passwords do not match", async ({ page }) => {
     await page.goto(`/register`);
 
-    const { email, password, confirmPassword } = invalidAuthData.registration.mismatchedPasswords;
+    const { email, password, confirmPassword } =
+      invalidAuthData.registration.mismatchedPasswords;
 
     const {
       emailInputField,

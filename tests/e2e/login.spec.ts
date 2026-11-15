@@ -5,12 +5,15 @@ import { generateRandomEmail } from "../helpers/generateRandomEmail";
 const testLoginData = {
   ...validLoginData,
   email: generateRandomEmail("login"),
-}
+};
 
 const getLoginForm = (page: Page) => {
   return {
     emailInputField: page.getByLabel("Email"),
-    passwordInputField: page.getByRole("textbox", { name: "Password", exact: true, }),
+    passwordInputField: page.getByRole("textbox", {
+      name: "Password",
+      exact: true,
+    }),
     loginButton: page.getByRole("button", { name: "Login" }),
   };
 };
@@ -36,7 +39,8 @@ test.describe("Login", () => {
     */
     await expect(page).toHaveURL(/\/login\/?$/);
 
-    const { emailInputField, passwordInputField, loginButton } = getLoginForm(page);
+    const { emailInputField, passwordInputField, loginButton } =
+      getLoginForm(page);
 
     await expect(emailInputField).toBeVisible();
     await expect(passwordInputField).toBeVisible();
@@ -47,16 +51,10 @@ test.describe("Login", () => {
     await page.goto("/login");
 
     // Wait for React hydration before interacting with the form.
-    await expect(page.locator("form")).toHaveAttribute(
-      "data-hydrated",
-      "true"
-    );
+    await expect(page.locator("form")).toHaveAttribute("data-hydrated", "true");
 
-    const {
-      emailInputField,
-      passwordInputField,
-      loginButton,
-    } = getLoginForm(page);
+    const { emailInputField, passwordInputField, loginButton } =
+      getLoginForm(page);
 
     await emailInputField.fill(testLoginData.email);
     await passwordInputField.fill(testLoginData.password);

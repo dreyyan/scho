@@ -1,5 +1,5 @@
-import { LucideIcon } from 'lucide-react';
-import React from 'react'
+import { LucideIcon } from "lucide-react";
+import React from "react";
 
 interface ButtonProps {
   label: string;
@@ -8,12 +8,13 @@ interface ButtonProps {
   onClick?: () => void;
   icon?: LucideIcon;
   disabled?: boolean;
-};
+}
 
 const BUTTON_STYLES = {
-  "primary": "from-green-600 to-green-700 hover:from-green-700 hover:to-green-800",
-  "secondary": "bg-gray-400 hover:bg-gray-500",
-  "destructive": "from-red-600 to-red-700 hover:from-red-700 hover:to-red-800",
+  primary:
+    "from-green-600 to-green-700 hover:from-green-700 hover:to-green-800",
+  secondary: "bg-gray-400 hover:bg-gray-500",
+  destructive: "from-red-600 to-red-700 hover:from-red-700 hover:to-red-800",
 };
 
 export default function Button({
@@ -35,17 +36,17 @@ export default function Button({
         text-sm font-bold
         text-white
         bg-linear-to-r
-        ${Icon ? 'pl-3 pr-4' : 'px-4' }
+        ${Icon ? "pl-3 pr-4" : "px-4"}
         py-2
         rounded-md
         cursor-pointer
         transition-colors duration-300
         whitespace-nowrap
-        ${disabled ? 'bg-gray-300' : BUTTON_STYLES[variant]}
+        ${disabled ? "bg-gray-300" : BUTTON_STYLES[variant]}
       `}
     >
-      { Icon && <Icon size={16} className='mr-1' /> }
+      {Icon && <Icon size={16} className="mr-1" />}
       {label}
     </button>
-  )
+  );
 }

@@ -1,4 +1,3 @@
-
 "use client";
 
 import * as Select from "@radix-ui/react-select";
@@ -10,11 +9,7 @@ interface FilterProps {
   options: { label: string; value: string }[];
 }
 
-export default function Filter({
-  value,
-  onChange,
-  options,
-}: FilterProps) {
+export default function Filter({ value, onChange, options }: FilterProps) {
   return (
     <Select.Root value={value} onValueChange={onChange}>
       <Select.Trigger
@@ -69,13 +64,9 @@ export default function Filter({
                   data-highlighted:text-green-700
                 "
               >
-                <Select.ItemText>
-                  {option.label}
-                </Select.ItemText>
+                <Select.ItemText>{option.label}</Select.ItemText>
 
-                <Select.ItemIndicator
-                  className="absolute right-2"
-                >
+                <Select.ItemIndicator className="absolute right-2">
                   <Check size={14} />
                 </Select.ItemIndicator>
               </Select.Item>

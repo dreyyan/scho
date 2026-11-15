@@ -5,7 +5,7 @@ import { ModalContext } from "@/contexts/ModalContext";
 
 /**
  * Provides access to the global modal context.
- * 
+ *
  * @returns Methods to open and close the global modal.
  */
 export default function useModal() {

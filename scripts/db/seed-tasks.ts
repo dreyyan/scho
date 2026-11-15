@@ -48,7 +48,7 @@ async function seedTasks() {
     const existingTask = await prisma.task.findFirst({
       where: {
         userId: user.id,
-        title
+        title,
       },
     });
 
@@ -60,18 +60,20 @@ async function seedTasks() {
           title,
           deadline,
         },
-      })
+      });
     }
   }
 
   logger.info("Task seeding completed.");
 }
 
-seedTasks().catch((err: string) => {
-  logger.error("Task seeding failed: ", err);
-  process.exitCode = 1;
-}).finally(async () => {
-  await prisma.$disconnect();
-})
+seedTasks()
+  .catch((err: string) => {
+    logger.error("Task seeding failed: ", err);
+    process.exitCode = 1;
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
 
 export { sampleTasks };

@@ -1,7 +1,7 @@
 "use client";
 
-import useModal from '@/hooks/useModal';
-import { signOut } from 'next-auth/react';
+import useModal from "@/hooks/useModal";
+import { signOut } from "next-auth/react";
 
 export default function Dashboard() {
   const { openModal, closeModal } = useModal();
@@ -12,7 +12,10 @@ export default function Dashboard() {
       openModal({
         variant: "error",
         title: "Logout Failed",
-        description: err instanceof Error ? err.message : "An unexpected error occured, please try again.",
+        description:
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occured, please try again.",
         primaryAction: {
           label: "Try again",
           onClick: closeModal,
@@ -26,5 +29,5 @@ export default function Dashboard() {
       Dashboard
       <button onClick={handleLogout}>Logout</button>
     </div>
-  )
+  );
 }

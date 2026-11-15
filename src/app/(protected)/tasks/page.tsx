@@ -1,32 +1,42 @@
 "use client";
 
-import React, { useEffect, useState } from 'react'
-import useModal from '@/hooks/useModal';
-import { CircleX, Loader2, Plus, ClipboardList, SearchX } from 'lucide-react';
+import React, { useEffect, useState } from "react";
+import useModal from "@/hooks/useModal";
+import { CircleX, Loader2, Plus, ClipboardList, SearchX } from "lucide-react";
 
-import FilterGroup from '@/components/ui/FilterGroup'
-import Button from '@/components/ui/Button';
-import Item from '@/components/ui/Item';
-import SearchBar from '@/components/ui/SearchBar';
-import Filter from '@/components/ui/Filter';
-import Sort from '@/components/ui/Sort';
-import EmptyState from '@/components/ui/EmptyState';
-import TaskForm from '@/components/form/TaskForm';
+import FilterGroup from "@/components/ui/FilterGroup";
+import Button from "@/components/ui/Button";
+import Item from "@/components/ui/Item";
+import SearchBar from "@/components/ui/SearchBar";
+import Filter from "@/components/ui/Filter";
+import Sort from "@/components/ui/Sort";
+import EmptyState from "@/components/ui/EmptyState";
+import TaskForm from "@/components/form/TaskForm";
 
-import { createTask, deleteTask, editTask, getTasks } from '@/services/task.service';
-import { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
-import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
-import { getVisibleTasks, paginate } from '@/lib/utils/task';
-import Pagination from '@/components/ui/Pagination';
+import {
+  createTask,
+  deleteTask,
+  editTask,
+  getTasks,
+} from "@/services/task.service";
+import { TaskFormData, TaskResponse, UpdateTaskFormData } from "@/types/task";
+import {
+  FILTER_OPTIONS,
+  SORT_OPTIONS,
+  STATUS_OPTIONS,
+  TASKS_PER_PAGE,
+} from "@/lib/constants/task";
+import { getVisibleTasks, paginate } from "@/lib/utils/task";
+import Pagination from "@/components/ui/Pagination";
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
-  
+
   const [items, setItems] = useState<TaskResponse[]>([]);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [page, setPage] = useState<number>(1);
-  const [search, setSearch] = useState<string>('');
+  const [search, setSearch] = useState<string>("");
   const [status, setStatus] = useState<string>(STATUS_OPTIONS[0].value);
   const [sort, setSort] = useState<string>(SORT_OPTIONS[0].value);
   const [filter, setFilter] = useState<string>(FILTER_OPTIONS[0].value);
@@ -49,7 +59,13 @@ export default function Tasks() {
   }, []);
 
   // Retrieve the filtered and sorted tasks.
-  const sortedTasks = getVisibleTasks(items, { search, status, sort, filter, currentTime });
+  const sortedTasks = getVisibleTasks(items, {
+    search,
+    status,
+    sort,
+    filter,
+    currentTime,
+  });
 
   // Calculate pages information.
   const totalPages = Math.ceil(sortedTasks.length / TASKS_PER_PAGE);
@@ -78,61 +94,70 @@ export default function Tasks() {
 
   const renderTaskList = () => {
     if (isLoading) {
-      return <EmptyState
-      description='Loading tasks...'
-      icon={Loader2}
-      iconClassName='animate-spin'
-      />
+      return (
+        <EmptyState
+          description="Loading tasks..."
+          icon={Loader2}
+          iconClassName="animate-spin"
+        />
+      );
     }
 
     if (error) {
-      return <EmptyState title='Failed to load tasks'
-      description={error}
-      variant='error'
-      action={{
-        label: 'Try again',
-        onClick: handleRetry,
-      }}
-      icon={CircleX}
-      />
+      return (
+        <EmptyState
+          title="Failed to load tasks"
+          description={error}
+          variant="error"
+          action={{
+            label: "Try again",
+            onClick: handleRetry,
+          }}
+          icon={CircleX}
+        />
+      );
     }
 
     if (items.length === 0) {
-      return <EmptyState title='No tasks yet'
-      description='Create your first task to get started.'
-      action={{
-        label: 'Add Task',
-        onClick: openAddTaskForm,
-      }}
-      icon={ClipboardList}
-      />
+      return (
+        <EmptyState
+          title="No tasks yet"
+          description="Create your first task to get started."
+          action={{
+            label: "Add Task",
+            onClick: openAddTaskForm,
+          }}
+          icon={ClipboardList}
+        />
+      );
     }
 
     if (sortedTasks.length === 0) {
-      return <EmptyState title='No matching tasks'
-      description='No tasks match your current filters.'
-      icon={SearchX}
-      variant='error'
-      />
+      return (
+        <EmptyState
+          title="No matching tasks"
+          description="No tasks match your current filters."
+          icon={SearchX}
+          variant="error"
+        />
+      );
     }
 
     return paginatedTasks.map((task) => (
       <Item
         key={task.id}
         id={task.id}
-        category='Task'
+        category="Task"
         title={task.title}
         isChecked={task.isCompleted}
-        deadline={task.deadline ?? ''}
+        deadline={task.deadline ?? ""}
         canEdit={true}
         canDelete={true}
-        onCheckedChange={(checked) =>
-          handleCheckedChange(task.id, checked)
-        }
+        onCheckedChange={(checked) => handleCheckedChange(task.id, checked)}
         onEdit={() => openEditTaskForm(task.id)}
         onDelete={() => openDeleteTaskModal(task.id)}
       />
-    ))
+    ));
   };
 
   // Retrieve the user's tasks from the backend.
@@ -143,12 +168,14 @@ export default function Tasks() {
         setItems(items);
       } catch (err: unknown) {
         console.error("Failed to retrieve tasks: ", err);
-        setError(err instanceof Error ? err.message : 'An unexpected error occurred.');
+        setError(
+          err instanceof Error ? err.message : "An unexpected error occurred.",
+        );
       } finally {
         setIsLoading(false);
       }
     };
-  
+
     fetchTasks();
   }, [reloadKey]);
 
@@ -175,9 +202,12 @@ export default function Tasks() {
     try {
       const newTask = await createTask(data);
 
-      setItems((prev) => [...prev, {
-        ...newTask,
-      }]);
+      setItems((prev) => [
+        ...prev,
+        {
+          ...newTask,
+        },
+      ]);
 
       openModal({
         variant: "success",
@@ -192,7 +222,8 @@ export default function Tasks() {
     } catch (err: unknown) {
       console.error("Failed to add task: ", err);
 
-      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred.";
+      const errMsg =
+        err instanceof Error ? err.message : "An unexpected error occurred.";
 
       openModal({
         variant: "error",
@@ -206,7 +237,7 @@ export default function Tasks() {
         secondaryAction: {
           label: "Retry",
           type: "button",
-          onClick: () => handleAddTask(data), 
+          onClick: () => handleAddTask(data),
         },
       });
     } finally {
@@ -232,7 +263,9 @@ export default function Tasks() {
       const updatedTask = await editTask(id, data);
 
       // Update the local state of task items.
-      setItems((prevItems) => prevItems.map((task) => task.id === id ? updatedTask : task));
+      setItems((prevItems) =>
+        prevItems.map((task) => (task.id === id ? updatedTask : task)),
+      );
 
       openModal({
         variant: "success",
@@ -247,7 +280,8 @@ export default function Tasks() {
     } catch (err: unknown) {
       console.error("Failed to edit task: ", err);
 
-      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred.";
+      const errMsg =
+        err instanceof Error ? err.message : "An unexpected error occurred.";
 
       openModal({
         variant: "error",
@@ -261,7 +295,7 @@ export default function Tasks() {
         secondaryAction: {
           label: "Retry",
           type: "button",
-          onClick: () => handleEditTask(id, data), 
+          onClick: () => handleEditTask(id, data),
         },
       });
     } finally {
@@ -276,29 +310,28 @@ export default function Tasks() {
     if (!prevTask) return;
 
     // Update the UI immediately.
-    setItems((prevItems) => 
+    setItems((prevItems) =>
       prevItems.map((item) =>
-        item.id === id
-        ? { ...item, isCompleted: checked }
-        : item
-      )
-    )
+        item.id === id ? { ...item, isCompleted: checked } : item,
+      ),
+    );
 
     try {
       await editTask(id, { isCompleted: checked });
     } catch (err: unknown) {
       console.error("Failed to update task completion: ", err);
 
-      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred.";
+      const errMsg =
+        err instanceof Error ? err.message : "An unexpected error occurred.";
 
       // Revert the UI update if the request fails.
-      setItems((prevItems) => 
+      setItems((prevItems) =>
         prevItems.map((item) =>
           item.id === id
-          ? { ...item, isCompleted: prevTask.isCompleted }
-          : item
-        )
-      )
+            ? { ...item, isCompleted: prevTask.isCompleted }
+            : item,
+        ),
+      );
 
       openModal({
         variant: "error",
@@ -315,7 +348,7 @@ export default function Tasks() {
           onClick: () => {
             closeModal();
             handleCheckedChange(id, checked);
-          }, 
+          },
         },
       });
     }
@@ -344,7 +377,8 @@ export default function Tasks() {
     } catch (err: unknown) {
       console.error("Failed to delete task: ", err);
 
-      const errMsg = err instanceof Error ? err.message : "An unexpected error occurred.";
+      const errMsg =
+        err instanceof Error ? err.message : "An unexpected error occurred.";
 
       openModal({
         variant: "error",
@@ -358,7 +392,7 @@ export default function Tasks() {
         secondaryAction: {
           label: "Retry",
           type: "button",
-          onClick: () => handleDeleteTask(id), 
+          onClick: () => handleDeleteTask(id),
         },
       });
 
@@ -373,11 +407,7 @@ export default function Tasks() {
       variant: "confirm",
       title: "Add Task",
       description: "Add a new task to your list.",
-      children: (
-        <TaskForm
-          onSubmit={handleAddTask}
-        />
-      ),
+      children: <TaskForm onSubmit={handleAddTask} />,
       primaryAction: {
         label: "Add",
         type: "submit",
@@ -409,7 +439,7 @@ export default function Tasks() {
       primaryAction: {
         label: "Edit",
         type: "submit",
-        form: "task-form"
+        form: "task-form",
       },
       secondaryAction: {
         label: "Cancel",
@@ -433,12 +463,12 @@ export default function Tasks() {
         onClick: closeModal,
       },
     });
-  }
+  };
 
   return (
-    <div className='space-y-1'>
-      <header className='flex justify-between items-center'>
-        <h1 className='text-gray-700 font-bold'>Tasks</h1>
+    <div className="space-y-1">
+      <header className="flex justify-between items-center">
+        <h1 className="text-gray-700 font-bold">Tasks</h1>
         <FilterGroup
           options={STATUS_OPTIONS}
           value={status}
@@ -446,23 +476,27 @@ export default function Tasks() {
         />
       </header>
 
-      <main className='
+      <main
+        className="
         flex flex-col
         min-h-109
         rounded-lg
         p-6
         bg-gray-100 border-2 border-gray-300
-      '>
-        <div className='
+      "
+      >
+        <div
+          className="
           flex justify-between items-center
           h-10 gap-x-3 mb-4
-        '>
+        "
+        >
           {/* Left: Search, Filter, and Sort */}
-          <div className='flex items-center h-10 gap-x-2'>
+          <div className="flex items-center h-10 gap-x-2">
             <SearchBar
               value={search}
               onChange={handleSearchChange}
-              placeholder='Search for tasks...'
+              placeholder="Search for tasks..."
             />
             <Filter
               value={filter}
@@ -477,31 +511,35 @@ export default function Tasks() {
           </div>
 
           {/* Right: Primary Action Button */}
-          <div className='h-full'>
+          <div className="h-full">
             <Button
-              label='Add Task'
-              variant='primary'
-              type='button'
+              label="Add Task"
+              variant="primary"
+              type="button"
               onClick={openAddTaskForm}
               icon={Plus}
             />
           </div>
         </div>
 
-        <div className='
+        <div
+          className="
           flex flex-1 flex-col
           gap-y-2
-        '>
+        "
+        >
           {renderTaskList()}
         </div>
       </main>
 
       {/* TODO: Pagination. */}
-      <div className='
+      <div
+        className="
         flex justify-center items-center
         mb-4 px-3 py-3
         text-sm
-      '>
+      "
+      >
         <Pagination
           page={currentPage}
           totalPages={totalPages}
@@ -509,5 +547,5 @@ export default function Tasks() {
         />
       </div>
     </div>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-import React from 'react'
+import React from "react";
 
 type FilterOption = {
   label: string;
   value: string;
-}
+};
 
 interface FilterGroupProps {
   options: FilterOption[];
@@ -17,8 +17,8 @@ export default function FilterGroup({
   onChange,
 }: FilterGroupProps) {
   return (
-    <div className='flex items-center gap-x-2'>
-      { options.map((option) => (
+    <div className="flex items-center gap-x-2">
+      {options.map((option) => (
         <button
           key={option.value}
           type="button"
@@ -27,14 +27,14 @@ export default function FilterGroup({
           className={`
             rounded-full
             px-4 py-1
-            ${option.value === value ? 'bg-gray-100' : 'bg-transparent'}
+            ${option.value === value ? "bg-gray-100" : "bg-transparent"}
             text-xs
             cursor-pointer
           `}
         >
           {option.label}
         </button>
-      )) }
+      ))}
     </div>
-  )
+  );
 }

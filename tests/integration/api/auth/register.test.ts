@@ -12,7 +12,7 @@ const REGISTER_URL = `http://localhost:${PORT}/api/auth/register`;
 const testRegistrationData = {
   ...validRegistrationData,
   email: generateRandomEmail("register"),
-}
+};
 
 describe("POST /api/auth/register", () => {
   it("accepts valid registration data", async () => {

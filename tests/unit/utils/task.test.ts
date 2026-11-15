@@ -4,12 +4,12 @@ import { NOW } from "../../fixtures/date";
 import { getVisibleTasks, paginate } from "@/lib/utils/task";
 
 const defaultTaskViewOptions: TaskViewOptions = {
-  search: '',
-  status: 'all',
-  filter: 'all',
-  sort: 'newest',
+  search: "",
+  status: "all",
+  filter: "all",
+  sort: "newest",
   currentTime: NOW.getTime(),
-}
+};
 
 const makeTask = (overrides: Partial<TaskResponse> = {}): TaskResponse => ({
   id: crypto.randomUUID(),
@@ -28,8 +28,10 @@ describe("getVisibleTasks()", () => {
         makeTask({ title: "Wash dishes" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, search: "milk" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        search: "milk",
+      });
 
       expect(result.map((task) => task.title)).toEqual(["Buy Milk"]);
     });
@@ -41,10 +43,15 @@ describe("getVisibleTasks()", () => {
         makeTask({ title: "Wash dishes" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, status: "all" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        status: "all",
+      });
 
-      expect(result.map((task) => task.title)).toEqual(["Buy Milk", "Wash dishes"]);
+      expect(result.map((task) => task.title)).toEqual([
+        "Buy Milk",
+        "Wash dishes",
+      ]);
     });
     it("Selecting 'Active' hides completed tasks", () => {
       const tasks = [
@@ -52,8 +59,10 @@ describe("getVisibleTasks()", () => {
         makeTask({ title: "Wash dishes" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, status: "active" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        status: "active",
+      });
 
       expect(result.map((task) => task.title)).toEqual(["Wash dishes"]);
     });
@@ -63,8 +72,10 @@ describe("getVisibleTasks()", () => {
         makeTask({ title: "Wash dishes" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, status: "completed" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        status: "completed",
+      });
 
       expect(result.map((task) => task.title)).toEqual(["Buy Milk"]);
     });
@@ -72,14 +83,19 @@ describe("getVisibleTasks()", () => {
   describe("filter", () => {
     it("Selecting 'All Tasks' displays all tasks", () => {
       const tasks = [
-        makeTask({ title: "Buy Milk", }),
+        makeTask({ title: "Buy Milk" }),
         makeTask({ title: "Wash dishes" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, filter: "all" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        filter: "all",
+      });
 
-      expect(result.map((task) => task.title)).toEqual(["Buy Milk", "Wash dishes"]);
+      expect(result.map((task) => task.title)).toEqual([
+        "Buy Milk",
+        "Wash dishes",
+      ]);
     });
     it("Selecting 'With Deadline' only displays tasks with deadlines", () => {
       const tasks = [
@@ -87,8 +103,10 @@ describe("getVisibleTasks()", () => {
         makeTask({ title: "Wash dishes" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, filter: "with-deadline" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        filter: "with-deadline",
+      });
 
       expect(result.map((task) => task.title)).toEqual(["Buy Milk"]);
     });
@@ -98,8 +116,10 @@ describe("getVisibleTasks()", () => {
         makeTask({ title: "Wash dishes" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, filter: "no-deadline" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        filter: "no-deadline",
+      });
 
       expect(result.map((task) => task.title)).toEqual(["Wash dishes"]);
     });
@@ -108,12 +128,18 @@ describe("getVisibleTasks()", () => {
 
       const tasks = [
         makeTask({ title: "Buy Milk", deadline: pastDeadline }),
-        makeTask({ title: "Pay bills", deadline: pastDeadline, isCompleted: true }),
+        makeTask({
+          title: "Pay bills",
+          deadline: pastDeadline,
+          isCompleted: true,
+        }),
         makeTask({ title: "Wash dishes" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, filter: "overdue" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        filter: "overdue",
+      });
 
       expect(result.map((task) => task.title)).toEqual(["Buy Milk"]);
     });
@@ -126,8 +152,10 @@ describe("getVisibleTasks()", () => {
         makeTask({ title: "B", createdAt: "2026-11-12T02:00:00Z" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, sort: "newest" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        sort: "newest",
+      });
 
       expect(result.map((task) => task.title)).toEqual(["A", "B", "C"]);
     });
@@ -138,8 +166,10 @@ describe("getVisibleTasks()", () => {
         makeTask({ title: "B", createdAt: "2026-11-12T02:00:00Z" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, sort: "oldest" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        sort: "oldest",
+      });
 
       expect(result.map((task) => task.title)).toEqual(["A", "B", "C"]);
     });
@@ -151,8 +181,10 @@ describe("getVisibleTasks()", () => {
         makeTask({ title: "B", deadline: "2026-11-12T02:00:00Z" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, sort: "due-asc" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        sort: "due-asc",
+      });
 
       expect(result.map((task) => task.title)).toEqual(["A", "B", "C", "D"]);
     });
@@ -164,8 +196,10 @@ describe("getVisibleTasks()", () => {
         makeTask({ title: "B", deadline: "2026-11-12T02:00:00Z" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, sort: "due-desc" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        sort: "due-desc",
+      });
 
       expect(result.map((task) => task.title)).toEqual(["A", "B", "C", "D"]);
     });
@@ -176,8 +210,10 @@ describe("getVisibleTasks()", () => {
         makeTask({ title: "B" }),
       ];
 
-      const result = getVisibleTasks(tasks,
-        { ...defaultTaskViewOptions, sort: "title-asc" });
+      const result = getVisibleTasks(tasks, {
+        ...defaultTaskViewOptions,
+        sort: "title-asc",
+      });
 
       expect(result.map((task) => task.title)).toEqual(["A", "B", "C"]);
     });
@@ -193,6 +229,6 @@ describe("paginate()", () => {
   });
   it("returns only the remaining items on the last, partial page", () => {
     const result = paginate(items, 3, 10);
-    expect(result).toEqual([20, 21, 22, 23, 24])
+    expect(result).toEqual([20, 21, 22, 23, 24]);
   });
 });

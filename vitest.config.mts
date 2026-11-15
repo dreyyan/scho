@@ -24,9 +24,6 @@ export default defineConfig({
     env: {
       TEST_DATABASE_URL: process.env.TEST_DATABASE_URL,
     },
-    exclude: [
-      ...configDefaults.exclude,
-      "tests/e2e/**",
-    ],
+    exclude: [...configDefaults.exclude, "tests/e2e/**"],
   },
 });

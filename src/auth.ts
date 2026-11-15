@@ -22,8 +22,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const { email, password } = result.data;
 
         return verifyCredentials(email, password);
-      }
-    })
+      },
+    }),
   ],
   session: {
     strategy: "jwt",
@@ -46,4 +46,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
-})
+});

@@ -1,10 +1,22 @@
-import { afterAll, beforeEach, beforeAll, describe, expect, it, vi } from "vitest";
+import {
+  afterAll,
+  beforeEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from "vitest";
 import * as argon2 from "argon2";
 import { Session } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 
-import { invalidTaskCreationData, validTaskCreationData, validTaskUpdateData } from "../../../fixtures/task";
+import {
+  invalidTaskCreationData,
+  validTaskCreationData,
+  validTaskUpdateData,
+} from "../../../fixtures/task";
 import { validLoginData } from "../../../fixtures/auth";
 import { malformedJSON } from "../../../fixtures/common";
 
@@ -17,14 +29,12 @@ const TASK_URL = `http://localhost:${PORT}/api/tasks`;
 const testLoginData = {
   ...validLoginData,
   email: generateRandomEmail("login"),
-}
+};
 
 let testUserId: string;
 
 vi.mock("@/auth", () => ({ auth: vi.fn() }));
-const mockAuth = vi.mocked(
-  auth as () => Promise<Session | null>
-);
+const mockAuth = vi.mocked(auth as () => Promise<Session | null>);
 
 describe("POST /api/tasks", () => {
   beforeAll(async () => {
@@ -63,7 +73,6 @@ describe("POST /api/tasks", () => {
     const response = await POST(request);
     const result = await response.json();
 
-
     expect(response.status).toBe(201);
     expect(result.message).toBe("Task created successfully.");
     expect(result.data.task).toHaveProperty("createdAt");
@@ -83,7 +92,6 @@ describe("POST /api/tasks", () => {
     const response = await POST(request);
     const result = await response.json();
 
-
     expect(response.status).toBe(401);
     expect(result.error).toBe("Unauthorized.");
   });
@@ -99,7 +107,6 @@ describe("POST /api/tasks", () => {
 
     const response = await POST(request);
     const result = await response.json();
-
 
     expect(response.status).toBe(400);
     expect(result.error).toBe("Malformed JSON request body.");
@@ -138,7 +145,7 @@ describe("POST /api/tasks", () => {
     await prisma.user.delete({
       where: { id: testUserId },
     });
-  })
+  });
 });
 
 describe("PATCH /api/tasks/:id", () => {
@@ -188,7 +195,7 @@ describe("PATCH /api/tasks/:id", () => {
     });
 
     const response = await PATCH(request, {
-      params: Promise.resolve({ id: testTaskId })
+      params: Promise.resolve({ id: testTaskId }),
     });
     const result = await response.json();
 
@@ -210,7 +217,7 @@ describe("PATCH /api/tasks/:id", () => {
     });
 
     const response = await PATCH(request, {
-      params: Promise.resolve({ id: testTaskId })
+      params: Promise.resolve({ id: testTaskId }),
     });
     const result = await response.json();
 
@@ -277,7 +284,7 @@ describe("DELETE /api/tasks/:id", () => {
     });
 
     const response = await DELETE(request, {
-      params: Promise.resolve({ id: testTaskId })
+      params: Promise.resolve({ id: testTaskId }),
     });
     const result = await response.json();
 
@@ -296,7 +303,7 @@ describe("DELETE /api/tasks/:id", () => {
     });
 
     const response = await DELETE(request, {
-      params: Promise.resolve({ id: testTaskId })
+      params: Promise.resolve({ id: testTaskId }),
     });
     const result = await response.json();
 
@@ -315,7 +322,7 @@ describe("DELETE /api/tasks/:id", () => {
     });
 
     const response = await DELETE(request, {
-      params: Promise.resolve({ id: invalidTaskId })
+      params: Promise.resolve({ id: invalidTaskId }),
     });
     const result = await response.json();
 
@@ -334,7 +341,7 @@ describe("DELETE /api/tasks/:id", () => {
     });
 
     const response = await DELETE(request, {
-      params: Promise.resolve({ id: nonExistentTaskId })
+      params: Promise.resolve({ id: nonExistentTaskId }),
     });
     const result = await response.json();
 

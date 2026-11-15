@@ -49,10 +49,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const isPasswordValid = await argon2.verify(
-      user.passwordHash,
-      password,
-    );
+    const isPasswordValid = await argon2.verify(user.passwordHash, password);
 
     if (!isPasswordValid) {
       return NextResponse.json(
@@ -61,10 +58,7 @@ export async function POST(request: Request) {
       );
     }
 
-    return NextResponse.json(
-      { message: "Login successful." },
-      { status: 200 },
-    );
+    return NextResponse.json({ message: "Login successful." }, { status: 200 });
   } catch (err: unknown) {
     // Log unexpected login errors.
     logger.error("Login failed: ", err);

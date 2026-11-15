@@ -9,7 +9,7 @@ const invalidTaskCreationData = {
   overlongTitle: {
     title: "a".repeat(151),
   },
-}
+};
 
 const validTaskUpdateData = {
   title: validTaskCreationData.title,
