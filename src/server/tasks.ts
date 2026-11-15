@@ -24,7 +24,7 @@ export async function listTasks(userId: string) {
  * 
  * @param userId - The user's ID.
  * @param data - The form data for the new task.
- * @returns 
+ * @returns The new task.
  */
 export async function createTask(userId: string, data: TaskFormData) {
   const { title, sourceItemId, deadline } = data;
