@@ -62,10 +62,6 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       { status: 200 },
     );
   } catch (err: unknown) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
-      return NextResponse.json({ error: 'Task not found.' }, { status: 404 });
-    }
-
     // Log unexpected task update errors.
     logger.error('Task update failed: ', err);
 

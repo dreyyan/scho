@@ -83,13 +83,6 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (err: unknown) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-      return NextResponse.json(
-        { error: 'Task with the same inbox item already exists.' },
-        { status: 409 },
-      );
-    }
-
     // Log unexpected task creation errors.
     logger.error('Task creation failed: ', err);
 
