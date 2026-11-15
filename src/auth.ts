@@ -1,7 +1,7 @@
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import { loginSchema } from "./validations/auth";
-import { verifyCredentials } from "./lib/auth/verify-credentials";
+import NextAuth from 'next-auth';
+import Credentials from 'next-auth/providers/credentials';
+import { loginSchema } from './validations/auth';
+import { verifyCredentials } from './lib/auth/verify-credentials';
 
 /**
  * Configure NextAuth to authenticate users using validated credentials and
@@ -22,10 +22,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const { email, password } = result.data;
 
         return verifyCredentials(email, password);
-      }
-    })
+      },
+    }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
-})
+  // Explicitly transfer the authenticated user's ID into the JWT and into the session.
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+      }
+
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user && typeof token.id === 'string') {
+        session.user.id = token.id;
+      }
+
+      return session;
+    },
+  },
+});

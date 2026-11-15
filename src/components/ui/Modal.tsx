@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { useEffect, useRef, useId } from 'react'
-import { X } from 'lucide-react';
+import React, { useEffect, useRef, useId } from 'react';
+import { X, LoaderCircle } from 'lucide-react';
 import type { ModalProps } from '@/types/modal';
 
 export default function Modal({
@@ -9,6 +9,7 @@ export default function Modal({
   variant,
   title,
   description,
+  children,
   primaryAction,
   secondaryAction,
   onClose,
@@ -36,19 +37,24 @@ export default function Modal({
       aria-labelledby={titleId}
       aria-describedby={descriptionId}
       className='
-      m-auto w-md max-w-md
+      m-auto w-sm max-w-md
       rounded-lg
       shadow-xl
       '
     >
       {/* Variant indicator */}
-      <div className={`h-2 bg-linear-to-t ${
-          variant === "success" ? "from-green-500 to-green-700" :
-          variant === "error" ? "from-red-500 to-red-700" :
-          variant === "confirm" ? "from-blue-500 to-blue-700" :
-          ""
+      <div
+        className={`h-2 bg-linear-to-t ${
+          variant === 'success'
+            ? 'from-green-500 to-green-700'
+            : variant === 'error'
+              ? 'from-red-500 to-red-700'
+              : variant === 'confirm'
+                ? 'from-blue-500 to-blue-700'
+                : ''
         }
-      `}/>
+      `}
+      />
 
       <div className='px-4 pt-2 pb-4 space-y-2'>
         <div className='flex justify-between'>
@@ -75,9 +81,12 @@ export default function Modal({
           {description}
         </p>
 
+        {/* Custom content */}
+        {children && <div className='py-2'>{children}</div>}
+
         {/* Actions */}
         <div className='flex justify-end gap-x-2'>
-          { secondaryAction && (
+          {secondaryAction && (
             <button
               type='button'
               onClick={secondaryAction.onClick}
@@ -89,26 +98,43 @@ export default function Modal({
                 transition-colors duration-300
                 hover:text-gray-200
             '
-            >{secondaryAction.label}</button>
-          ) }
+            >
+              {secondaryAction.label}
+            </button>
+          )}
           <button
-            type='button'
+            type={primaryAction.type || 'button'}
+            form={primaryAction.form}
             onClick={primaryAction.onClick}
+            disabled={primaryAction.isLoading}
             className={`
                 bg-linear-to-br ${
-                variant === "success" ? "from-green-600 to-green-700 hover:from-green-700 hover:to-green-800" :
-                variant === "error" ? "from-red-600 to-red-700 hover:from-red-700 hover:to-red-800" :
-                variant === "confirm" ? "from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800" :
-                ""
-              }
+                  variant === 'success'
+                    ? 'from-green-600 to-green-700 hover:from-green-700 hover:to-green-800'
+                    : variant === 'error'
+                      ? 'from-red-600 to-red-700 hover:from-red-700 hover:to-red-800'
+                      : variant === 'confirm'
+                        ? 'from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800'
+                        : ''
+                }
               text-white text-sm font-bold
               px-4 py-2
               rounded-md
               cursor-pointer
               transition-colors duration-300
-          `}>{primaryAction.label}</button>
+          `}
+          >
+            {primaryAction.isLoading ? (
+              <div className='flex justify-center items-center gap-x-1'>
+                <LoaderCircle className='animate-spin' size={16} />
+                <span>Saving...</span>
+              </div>
+            ) : (
+              primaryAction.label
+            )}
+          </button>
         </div>
       </div>
     </dialog>
-  )
+  );
 }

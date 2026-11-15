@@ -1,0 +1,96 @@
+name: CI
+
+# When to run: on every Pull Request, and on pushes to main.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  checks:
+    name: Lint, typecheck, and unit tests
+    runs-on: ubuntu-latest
+
+    env:
+      TEST_DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Unit tests
+        run: pnpm test:run tests/unit
+
+      - name: Check formatting
+        run: pnpm format:check
+
+  integration:
+    name: Integration tests
+    runs-on: ubuntu-latest
+
+    # A temporary Postgres server for this job only.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: scho_test
+        ports:
+          - 5432:5432
+        # Wait until Postgres is ready before running the steps.
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/scho_test
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/scho_test
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm exec prisma generate
+
+      - name: Apply migrations to the test database
+        run: pnpm exec prisma migrate deploy
+
+      - name: Integration tests
+        run: pnpm test:run tests/integration

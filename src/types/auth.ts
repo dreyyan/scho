@@ -1,4 +1,4 @@
-import { loginSchema, registerSchema } from "@/validations/auth";
+import { loginSchema, registerSchema } from '@/validations/auth';
 import z from 'zod';
 
 /**

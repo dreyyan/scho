@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import useModal from '@/hooks/useModal';
 import useIsHydrated from '@/hooks/useIsHydrated';
 
-import Button from '@/components/ui/Button'
-import InputField from '@/components/ui/InputField'
+import Button from '@/components/ui/Button';
+import InputField from '@/components/ui/InputField';
 import Logo from '@/components/ui/Logo';
 import { RegisterFormData, RegisterFormErrors } from '@/types/auth';
 import Link from 'next/link';
@@ -18,9 +18,9 @@ export default function Register() {
   const router = useRouter();
 
   const [registerForm, setRegisterForm] = useState<RegisterFormData>({
-    email: "",
-    password: "",
-    confirmPassword: "",
+    email: '',
+    password: '',
+    confirmPassword: '',
   });
   const [errors, setErrors] = useState<RegisterFormErrors>({});
 
@@ -28,9 +28,7 @@ export default function Register() {
     const { name, value } = event.target;
     const field = name as keyof RegisterFormData;
 
-    setRegisterForm((prev) => (
-      { ...prev, [name]: value, }
-    ));
+    setRegisterForm((prev) => ({ ...prev, [name]: value }));
 
     // Clear errors when the user edits a field.
     setErrors((prev) => ({
@@ -43,10 +41,10 @@ export default function Register() {
     event.preventDefault(); // Prevent browser's default form submission behavior.
 
     try {
-      const res = await fetch("/api/auth/register", {
-        method: "POST",
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(registerForm),
       });
@@ -55,9 +53,7 @@ export default function Register() {
 
       // Handle field-specific validation errors.
       if (!res.ok) {
-        const details = data.details as
-          | Record<string, string[]>
-          | undefined;
+        const details = data.details as Record<string, string[]> | undefined;
 
         if (details) {
           setErrors({
@@ -70,13 +66,11 @@ export default function Register() {
         }
 
         openModal({
-          variant: "error",
-          title: "Registration Failed",
-          description:
-            data.error ??
-            "An unexpected error occurred. Please try again.",
+          variant: 'error',
+          title: 'Registration Failed',
+          description: data.error ?? 'An unexpected error occurred. Please try again.',
           primaryAction: {
-            label: "Try again",
+            label: 'Try again',
             onClick: closeModal,
           },
         });
@@ -85,24 +79,25 @@ export default function Register() {
       }
 
       openModal({
-        variant: "success",
-        title: "Registration Successful",
-        description: "Your account was created successfully!",
+        variant: 'success',
+        title: 'Registration Successful',
+        description: 'Your account was created successfully!',
         primaryAction: {
-          label: "Continue to Login",
+          label: 'Continue to Login',
           onClick: () => {
             closeModal();
-            router.replace("/login");
+            router.replace('/login');
           },
         },
       });
     } catch (err: unknown) {
       openModal({
-        variant: "error",
-        title: "Registration Failed",
-        description: err instanceof Error ? err.message : "An unexpected error occured, please try again.",
+        variant: 'error',
+        title: 'Registration Failed',
+        description:
+          err instanceof Error ? err.message : 'An unexpected error occured, please try again.',
         primaryAction: {
-          label: "Try again",
+          label: 'Try again',
           onClick: closeModal,
         },
       });
@@ -143,7 +138,7 @@ export default function Register() {
                   value={registerForm.password}
                   onChange={handleChange}
                   required
-                error={errors.password}
+                  error={errors.password}
                 />
                 <p id='password-requirements' className='text-xs font-semibold text-gray-400'>
                   At least 8 characters, including uppercase, lowercase, and a symbol.
@@ -156,22 +151,20 @@ export default function Register() {
                 label='Confirm Password'
                 type='password'
                 placeholder='********'
-                aria-describedby="password-requirements"
+                aria-describedby='password-requirements'
                 value={registerForm.confirmPassword}
                 onChange={handleChange}
                 required
                 error={errors.confirmPassword}
               />
             </div>
-            
+
             <div className='space-y-3'>
-              <Button label='Create Account' variant='primary' type="submit" />
+              <Button label='Create Account' variant='primary' type='submit' />
               <span className='flex justify-center items-center gap-x-1 text-sm text-gray-800'>
                 Already have an account?
-                <Link
-                  href="/login"
-                  className="link"
-                  >Login
+                <Link href='/login' className='link'>
+                  Login
                 </Link>
               </span>
             </div>
@@ -179,5 +172,5 @@ export default function Register() {
         </form>
       </section>
     </div>
-  )
+  );
 }
