@@ -14,7 +14,6 @@ import { requireUserId } from '@/lib/auth/require-user-id';
  * @returns a JSON response of the user's tasks.
  */
 export async function GET() {
-  // Validate user authorization.
   const authResult = await requireUserId();
 
   if (authResult instanceof NextResponse) return authResult;
@@ -52,7 +51,6 @@ export async function GET() {
 export async function POST(request: Request) {
   let body: unknown;
 
-  // Validate user authorization.
   const authResult = await requireUserId();
 
   if (authResult instanceof NextResponse) return authResult;
