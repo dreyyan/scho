@@ -5,7 +5,12 @@ import { TASK_SELECT } from '@/lib/selects/task';
 import { TaskFormData, UpdateTaskFormData } from '@/types/task';
 import { Prisma } from '@/generated/prisma/client';
 
-export class DuplicateSourceItemError extends Error {}
+export class DuplicateSourceItemError extends Error {
+  constructor() {
+    super('A task is already linked to this inbox item.');
+    this.name = 'DuplicateSourceItemError';
+  }
+}
 
 /**
  * Retrieve the user's tasks from the databsae.
@@ -63,21 +68,21 @@ export async function updateTask(userId: string, taskId: string, data: UpdateTas
   const { title, isCompleted, deadline } = data;
 
   try {
-      return await prisma.task.update({
-        where: {
-          id: taskId,
-          userId,
-        },
-        data: {
-          title,
-          isCompleted,
-          deadline,
-        },
-        select: TASK_SELECT,
-      });
+    return await prisma.task.update({
+      where: {
+        id: taskId,
+        userId,
+      },
+      data: {
+        title,
+        isCompleted,
+        deadline,
+      },
+      select: TASK_SELECT,
+    });
   } catch (err: unknown) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
-      return NextResponse.json({ error: 'Task not found.' }, { status: 404 });
+      return null;
     }
   }
 }

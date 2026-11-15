@@ -52,6 +52,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   try {
     const task = await updateTask(userId, taskId, result.data);
 
+    if (!task) {
+      return NextResponse.json(
+        { error: 'Task not found.' },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json(
       {
         message: 'Task updated successfully.',
