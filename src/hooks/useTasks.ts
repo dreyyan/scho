@@ -48,11 +48,11 @@ export default function useTasks() {
   };
 
   /**
-   * Updates a task on the server, then update it on the local state.
+   * Updates a task on the server, then updates it in local state.
    *
    * @param id - The task's ID.
    * @param data - The task data from the form.
-   * @throws If the request fails; local state is left unchanged;
+   * @throws If the request fails; local state is left unchanged.
    */
   const editTask = async (id: string, data: UpdateTaskFormData) => {
     const updatedTask = await taskApi.editTask(id, data);
