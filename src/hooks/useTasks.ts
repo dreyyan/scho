@@ -2,7 +2,7 @@
 
 import * as taskApi from '@/lib/api-client/task';
 import { getErrorMessage } from '@/lib/utils/error';
-import type { TaskResponse } from '@/types/task';
+import type { TaskResponse, UpdateTaskFormData } from '@/types/task';
 import { useEffect, useState } from 'react';
 
 /**
@@ -48,6 +48,19 @@ export default function useTasks() {
   };
 
   /**
+   * Updates a task on the server, then update it on the local state.
+   *
+   * @param id - The task's ID.
+   * @param data - The task data from the form.
+   * @throws If the request fails; local state is left unchanged;
+   */
+  const editTask = async (id: string, data: UpdateTaskFormData) => {
+    const updatedTask = await taskApi.editTask(id, data);
+
+    setTasks((prevTasks) => prevTasks.map((task) => (task.id === id ? updatedTask : task)));
+  };
+
+  /**
    * Deletes a task on the server, then removes it from the local state.
    *
    * @param id - The task's ID.
@@ -65,6 +78,7 @@ export default function useTasks() {
     isLoading,
     error,
     retry,
+    editTask,
     deleteTask,
   };
 }

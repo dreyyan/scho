@@ -14,7 +14,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import Pagination from '@/components/ui/Pagination';
 import TaskForm from '@/components/form/TaskForm';
 
-import { createTask, editTask } from '@/lib/api-client/task';
+import { createTask } from '@/lib/api-client/task';
 import { TaskFormData, UpdateTaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
 import { getVisibleTasks, paginate } from '@/lib/utils/task';
@@ -23,7 +23,7 @@ import useTasks from '@/hooks/useTasks';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
-  const { tasks, setTasks, isLoading, error, retry, deleteTask } = useTasks();
+  const { tasks, setTasks, isLoading, error, retry, editTask, deleteTask } = useTasks();
 
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
@@ -218,10 +218,7 @@ export default function Tasks() {
     });
 
     try {
-      const updatedTask = await editTask(id, data);
-
-      // Update the local state of tasks.
-      setTasks((prevTasks) => prevTasks.map((task) => (task.id === id ? updatedTask : task)));
+      await editTask(id, data);
 
       openModal({
         variant: 'success',
