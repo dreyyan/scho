@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 import { Prisma } from '@/generated/prisma/client';
 import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
-import { auth } from '@/auth';
 
 import { updateTaskSchema } from '@/validations/task';
 import { TASK_SELECT } from '@/lib/selects/task';
