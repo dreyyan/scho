@@ -49,7 +49,7 @@ describe('GET /api/tasks', () => {
       data: {
         email: generateRandomEmail('other'),
         passwordHash: 'x',
-      }
+      },
     });
 
     otherUserId = otherUser.id;
@@ -58,8 +58,8 @@ describe('GET /api/tasks', () => {
       data: {
         userId: otherUserId,
         title: 'Not yours',
-      }
-    })
+      },
+    });
 
     const task = await prisma.task.create({
       data: {
@@ -94,15 +94,15 @@ describe('GET /api/tasks', () => {
     });
 
     await prisma.user.delete({
-      where: { id: testUserId  },
+      where: { id: testUserId },
     });
 
     await prisma.user.delete({
-      where: { id: otherUserId  },
+      where: { id: otherUserId },
     });
   });
 
-  it('returns the user\'s tasks successfully', async () => {
+  it("returns the user's tasks successfully", async () => {
     const response = await GET();
     const result = await response.json();
     const taskTitles = result.data.tasks.map((task: { title: string }) => task.title);
@@ -114,7 +114,7 @@ describe('GET /api/tasks', () => {
     expect(taskTitles).not.toContain('Not yours');
   });
 
-  it("rejects an unauthorized user", async () => {
+  it('rejects an unauthorized user', async () => {
     mockAuth.mockResolvedValue(null);
 
     const response = await GET();
