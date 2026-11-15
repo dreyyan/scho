@@ -18,19 +18,27 @@ export default function useTasks() {
 
   // Retrieve the user's tasks from the backend.
   useEffect(() => {
+    let ignore = false;
+
     const fetchTasks = async () => {
       try {
         const fetchedTasks = await getTasks();
-        setTasks(fetchedTasks);
+        if (!ignore) setTasks(fetchedTasks);
       } catch (err: unknown) {
-        console.error('Failed to retrieve tasks: ', err);
-        setError(getErrorMessage(err));
+        if (!ignore) {
+          console.error('Failed to retrieve tasks: ', err);
+          setError(getErrorMessage(err));
+        }
       } finally {
-        setIsLoading(false);
+        if (!ignore) setIsLoading(false);
       }
     };
 
     fetchTasks();
+
+    return () => {
+      ignore = true;
+    };
   }, [reloadKey]);
 
   const retry = () => {
