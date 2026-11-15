@@ -23,7 +23,7 @@ import useTasks from '@/hooks/useTasks';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
-  const { tasks, setTasks, isLoading, error, retry, editTask, deleteTask } = useTasks();
+  const { tasks, setTasks, isLoading, error, retry, toggleTask, editTask, deleteTask } = useTasks();
 
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
@@ -234,7 +234,6 @@ export default function Tasks() {
       console.error('Failed to edit task: ', err);
 
       const errMsg = getErrorMessage(err);
-
       openModal({
         variant: 'error',
         title: 'Updated Task Failed',
@@ -257,28 +256,12 @@ export default function Tasks() {
 
   // Immediately update the task's `isCompleted` state before sending a PATCH request to the backend server.
   const handleCheckedChange = async (id: string, checked: boolean) => {
-    const prevTask = tasks.find((task) => task.id === id);
-
-    if (!prevTask) return;
-
-    // Update the UI immediately.
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === id ? { ...task, isCompleted: checked } : task)),
-    );
-
     try {
-      await editTask(id, { isCompleted: checked });
+      await toggleTask(id, checked);
     } catch (err: unknown) {
       console.error('Failed to update task completion: ', err);
 
       const errMsg = getErrorMessage(err);
-
-      // Revert the UI update if the request fails.
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          task.id === id ? { ...task, isCompleted: prevTask.isCompleted } : task,
-        ),
-      );
 
       openModal({
         variant: 'error',

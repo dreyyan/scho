@@ -48,6 +48,37 @@ export default function useTasks() {
   };
 
   /**
+   * Optimistically updates a task's `isCompleted` in local state, then saves it to the server.
+   *
+   * @param id - The task's ID.
+   * @param isCompleted - The task's `isCompleted` field.
+   * @throws If the request fails; the optimistic update is reverted.
+   */
+  const toggleTask = async (id: string, isCompleted: boolean) => {
+    const prevTask = tasks.find((task) => task.id === id);
+
+    if (!prevTask) return;
+
+    try {
+      // Update the UI immediately (optimistic update).
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task.id === id ? { ...task, isCompleted } : task)),
+      );
+
+      await taskApi.editTask(id, { isCompleted });
+    } catch (err: unknown) {
+      // Revert the UI update if the request fails.
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === id ? { ...task, isCompleted: prevTask.isCompleted } : task,
+        ),
+      );
+
+      throw err;
+    }
+  };
+
+  /**
    * Updates a task on the server, then updates it in local state.
    *
    * @param id - The task's ID.
@@ -79,6 +110,7 @@ export default function useTasks() {
     error,
     retry,
     editTask,
+    toggleTask,
     deleteTask,
   };
 }
