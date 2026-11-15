@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { createTaskSchema } from '@/validations/task';
 import { logger } from '@/lib/logger';
 import { requireUserId } from '@/lib/auth/require-user-id';
-import { createTask, DuplicateSourceItemError, listTasks } from '@/server/tasks';
+import { createTask, DuplicateSourceItemError, listTasks } from '@/server/task';
 
 /**
  ** GET — Retrieve the user's tasks.

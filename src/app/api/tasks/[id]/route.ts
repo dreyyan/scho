@@ -5,7 +5,7 @@ import { logger } from '@/lib/logger';
 
 import { updateTaskSchema } from '@/validations/task';
 import { requireUserId } from '@/lib/auth/require-user-id';
-import { deleteTask, updateTask } from '@/server/tasks';
+import { deleteTask, updateTask } from '@/server/task';
 
 /**
  ** PATCH — Update an existing task.
