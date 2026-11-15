@@ -84,6 +84,8 @@ export async function updateTask(userId: string, taskId: string, data: UpdateTas
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2025') {
       return null;
     }
+
+    throw err;
   }
 }
 
