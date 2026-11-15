@@ -17,19 +17,13 @@ const TASK_API_URL = `/api/tasks`;
  * @throws Error if the request fails.
  */
 export async function getTasks(): Promise<TaskResponse[]> {
-  const response = await fetch(TASK_API_URL, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const res = await fetch(TASK_API_URL);
 
-  if (!response.ok) {
-    await throwApiError(response, 'Failed to retrieve tasks.');
+  if (!res.ok) {
+    await throwApiError(res, 'Failed to retrieve tasks.');
   }
 
-  const result: GetTasksResponse = await response.json();
-
+  const result: GetTasksResponse = await res.json();
   return result.data.tasks;
 }
 
@@ -54,7 +48,6 @@ export async function createTask(data: TaskFormData): Promise<TaskResponse> {
   }
 
   const result: CreateTaskResponse = await response.json();
-
   return result.data.task;
 }
 
@@ -80,7 +73,6 @@ export async function editTask(id: string, data: UpdateTaskFormData) {
   }
 
   const result: UpdateTaskResponse = await response.json();
-
   return result.data.task;
 }
 

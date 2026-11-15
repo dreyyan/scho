@@ -13,7 +13,7 @@ import Sort from '@/components/ui/Sort';
 import EmptyState from '@/components/ui/EmptyState';
 import TaskForm from '@/components/form/TaskForm';
 
-import { createTask, deleteTask, editTask, getTasks } from '@/services/task.service';
+import { createTask, deleteTask, editTask, getTasks } from '@/lib/api-client/task';
 import { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
 import { getVisibleTasks, paginate } from '@/lib/utils/task';
