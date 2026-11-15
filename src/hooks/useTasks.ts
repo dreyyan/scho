@@ -1,6 +1,6 @@
 'use client';
 
-import { getTasks } from '@/lib/api-client/task';
+import * as taskApi from '@/lib/api-client/task';
 import { getErrorMessage } from '@/lib/utils/error';
 import type { TaskResponse } from '@/types/task';
 import { useEffect, useState } from 'react';
@@ -22,7 +22,7 @@ export default function useTasks() {
 
     const fetchTasks = async () => {
       try {
-        const fetchedTasks = await getTasks();
+        const fetchedTasks = await taskApi.getTasks();
         if (!ignore) setTasks(fetchedTasks);
       } catch (err: unknown) {
         if (!ignore) {
@@ -47,5 +47,24 @@ export default function useTasks() {
     setReloadKey((prev) => prev + 1);
   };
 
-  return { tasks, setTasks, isLoading, error, retry };
+  /**
+   * Deletes a task on the server, then removes it from the local state.
+   *
+   * @param id - The task's ID.
+   * @throws If the request fails; local state is left unchanged.
+   */
+  const deleteTask = async (id: string) => {
+    await taskApi.deleteTask(id);
+
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+  };
+
+  return {
+    tasks,
+    setTasks,
+    isLoading,
+    error,
+    retry,
+    deleteTask,
+  };
 }

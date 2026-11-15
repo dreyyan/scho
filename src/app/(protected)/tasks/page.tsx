@@ -14,7 +14,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import Pagination from '@/components/ui/Pagination';
 import TaskForm from '@/components/form/TaskForm';
 
-import { createTask, deleteTask, editTask } from '@/lib/api-client/task';
+import { createTask, editTask } from '@/lib/api-client/task';
 import { TaskFormData, UpdateTaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
 import { getVisibleTasks, paginate } from '@/lib/utils/task';
@@ -23,7 +23,7 @@ import useTasks from '@/hooks/useTasks';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
-  const { tasks, setTasks, isLoading, error, retry } = useTasks();
+  const { tasks, setTasks, isLoading, error, retry, deleteTask } = useTasks();
 
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
@@ -320,9 +320,6 @@ export default function Tasks() {
     try {
       await deleteTask(id);
 
-      // Update the local state of task items.
-      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
-
       closeModal();
     } catch (err: unknown) {
       console.error('Failed to delete task: ', err);
@@ -344,8 +341,6 @@ export default function Tasks() {
           onClick: () => handleDeleteTask(id),
         },
       });
-
-      setPage(1);
     } finally {
       setIsSubmitting(false);
     }
