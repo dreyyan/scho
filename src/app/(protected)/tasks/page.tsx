@@ -14,17 +14,16 @@ import EmptyState from '@/components/ui/EmptyState';
 import Pagination from '@/components/ui/Pagination';
 import TaskForm from '@/components/form/TaskForm';
 
-import { createTask, deleteTask, editTask, getTasks } from '@/lib/api-client/task';
-import { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
+import { createTask, deleteTask, editTask } from '@/lib/api-client/task';
+import { TaskFormData, UpdateTaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
 import { getVisibleTasks, paginate } from '@/lib/utils/task';
 import { getErrorMessage } from '@/lib/utils/error';
+import useTasks from '@/hooks/useTasks';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
-
-  const [items, setItems] = useState<TaskResponse[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const { tasks, setTasks, isLoading, error, retry } = useTasks();
 
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
@@ -32,9 +31,7 @@ export default function Tasks() {
   const [sort, setSort] = useState<string>(SORT_OPTIONS[0].value);
   const [filter, setFilter] = useState<string>(FILTER_OPTIONS[0].value);
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [reloadKey, setReloadKey] = useState(0);
 
   const [currentTime, setCurrentTime] = useState(() => Date.now());
 
@@ -50,7 +47,7 @@ export default function Tasks() {
   }, []);
 
   // Retrieve the filtered and sorted tasks.
-  const sortedTasks = getVisibleTasks(items, {
+  const sortedTasks = getVisibleTasks(tasks, {
     search,
     status,
     sort,
@@ -98,14 +95,14 @@ export default function Tasks() {
           variant='error'
           action={{
             label: 'Try again',
-            onClick: handleRetry,
+            onClick: retry,
           }}
           icon={CircleX}
         />
       );
     }
 
-    if (items.length === 0) {
+    if (tasks.length === 0) {
       return (
         <EmptyState
           title='No tasks yet'
@@ -147,29 +144,6 @@ export default function Tasks() {
     ));
   };
 
-  // Retrieve the user's tasks from the backend.
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const items = await getTasks();
-        setItems(items);
-      } catch (err: unknown) {
-        console.error('Failed to retrieve tasks: ', err);
-        setError(getErrorMessage(err));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTasks();
-  }, [reloadKey]);
-
-  const handleRetry = () => {
-    setError(null);
-    setIsLoading(true);
-    setReloadKey((prev) => prev + 1);
-  };
-
   const handleAddTask = async (data: TaskFormData) => {
     if (isSubmitting) return;
 
@@ -187,7 +161,7 @@ export default function Tasks() {
     try {
       const newTask = await createTask(data);
 
-      setItems((prev) => [
+      setTasks((prev) => [
         ...prev,
         {
           ...newTask,
@@ -246,8 +220,8 @@ export default function Tasks() {
     try {
       const updatedTask = await editTask(id, data);
 
-      // Update the local state of task items.
-      setItems((prevItems) => prevItems.map((task) => (task.id === id ? updatedTask : task)));
+      // Update the local state of tasks.
+      setTasks((prevTasks) => prevTasks.map((task) => (task.id === id ? updatedTask : task)));
 
       openModal({
         variant: 'success',
@@ -286,13 +260,13 @@ export default function Tasks() {
 
   // Immediately update the task's `isCompleted` state before sending a PATCH request to the backend server.
   const handleCheckedChange = async (id: string, checked: boolean) => {
-    const prevTask = items.find((task) => task.id === id);
+    const prevTask = tasks.find((task) => task.id === id);
 
     if (!prevTask) return;
 
     // Update the UI immediately.
-    setItems((prevItems) =>
-      prevItems.map((item) => (item.id === id ? { ...item, isCompleted: checked } : item)),
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === id ? { ...task, isCompleted: checked } : task)),
     );
 
     try {
@@ -303,9 +277,9 @@ export default function Tasks() {
       const errMsg = getErrorMessage(err);
 
       // Revert the UI update if the request fails.
-      setItems((prevItems) =>
-        prevItems.map((item) =>
-          item.id === id ? { ...item, isCompleted: prevTask.isCompleted } : item,
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === id ? { ...task, isCompleted: prevTask.isCompleted } : task,
         ),
       );
 
@@ -347,7 +321,7 @@ export default function Tasks() {
       await deleteTask(id);
 
       // Update the local state of task items.
-      setItems((prevItems) => prevItems.filter((task) => task.id !== id));
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
 
       closeModal();
     } catch (err: unknown) {
@@ -397,7 +371,7 @@ export default function Tasks() {
   };
 
   const openEditTaskForm = (id: string) => {
-    const task = items.find((item) => item.id === id);
+    const task = tasks.find((task) => task.id === id);
 
     if (!task) return;
 
