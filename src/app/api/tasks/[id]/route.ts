@@ -6,8 +6,8 @@ import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
 
 import { updateTaskSchema } from '@/validations/task';
-import { TASK_SELECT } from '@/lib/selects/task';
 import { requireUserId } from '@/lib/auth/require-user-id';
+import { updateTask } from '@/server/tasks';
 
 /**
  ** PATCH — Update an existing task.
@@ -50,8 +50,6 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       { status: 400 },
     );
   }
-
-  const { title, isCompleted, deadline } = result.data;
 
   try {
     const task = await updateTask(userId, taskId, result.data);
