@@ -11,7 +11,7 @@ import { TaskFormData, UpdateTaskFormData } from '@/types/task';
  * @returns The user's tasks.
  */
 export async function listTasks(userId: string) {
-  await prisma.task.findMany({
+  return prisma.task.findMany({
     where: {
       userId,
     },
