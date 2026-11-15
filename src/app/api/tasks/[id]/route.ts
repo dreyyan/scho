@@ -8,6 +8,7 @@ import { auth } from '@/auth';
 
 import { updateTaskSchema } from '@/validations/task';
 import { TASK_SELECT } from '@/lib/selects/task';
+import { requireUserId } from '@/lib/auth/require-user-id';
 
 /**
  ** PATCH — Update an existing task.
@@ -18,23 +19,13 @@ import { TASK_SELECT } from '@/lib/selects/task';
  */
 export async function PATCH(request: Request, { params }: { params: Promise<{ id: string }> }) {
   let body: unknown;
-  let userId: string;
   const { id: taskId } = await params;
 
   // Validate user authorization.
-  try {
-    const session = await auth();
+  const authResult = await requireUserId();
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-    }
-
-    userId = session.user.id;
-  } catch (err: unknown) {
-    logger.error('Authentication failed: ', err);
-
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
-  }
+  if (authResult instanceof NextResponse) return authResult;
+  const userId = authResult;
 
   const taskIdResult = z.uuid().safeParse(taskId);
 
@@ -105,23 +96,13 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
  * @returns a JSON response indicating success or failure.
  */
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
-  let userId: string;
   const { id: taskId } = await params;
-
+  
   // Validate user authorization.
-  try {
-    const session = await auth();
+  const authResult = await requireUserId();
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-    }
-
-    userId = session.user.id;
-  } catch (err: unknown) {
-    logger.error('Authentication failed: ', err);
-
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
-  }
+  if (authResult instanceof NextResponse) return authResult;
+  const userId = authResult;
 
   const taskIdResult = z.uuid().safeParse(taskId);
 

@@ -3,10 +3,10 @@ import { NextResponse } from 'next/server';
 
 import { createTaskSchema } from '@/validations/task';
 import { prisma } from '@/lib/prisma';
-import { auth } from '@/auth';
 import { logger } from '@/lib/logger';
 import { Prisma } from '@/generated/prisma/client';
 import { TASK_SELECT } from '@/lib/selects/task';
+import { requireUserId } from '@/lib/auth/require-user-id';
 
 /**
  ** GET — Retrieve the user's tasks.
@@ -14,22 +14,11 @@ import { TASK_SELECT } from '@/lib/selects/task';
  * @returns a JSON response of the user's tasks.
  */
 export async function GET() {
-  let userId: string;
-
   // Validate user authorization.
-  try {
-    const session = await auth();
+  const authResult = await requireUserId();
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-    }
-
-    userId = session.user.id;
-  } catch (err: unknown) {
-    logger.error('Authentication failed: ', err);
-
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
-  }
+  if (authResult instanceof NextResponse) return authResult;
+  const userId = authResult;
 
   try {
     const tasks = await prisma.task.findMany({
@@ -62,22 +51,12 @@ export async function GET() {
  */
 export async function POST(request: Request) {
   let body: unknown;
-  let userId: string;
 
   // Validate user authorization.
-  try {
-    const session = await auth();
+  const authResult = await requireUserId();
 
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized.' }, { status: 401 });
-    }
-
-    userId = session.user.id;
-  } catch (err: unknown) {
-    logger.error('Authentication failed: ', err);
-
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
-  }
+  if (authResult instanceof NextResponse) return authResult;
+  const userId = authResult;
 
   try {
     body = await request.json();
