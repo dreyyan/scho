@@ -42,6 +42,9 @@ jobs:
       - name: Unit tests
         run: pnpm test:run tests/unit
 
+      - name: Check formatting
+        run: pnpm format:check
+
   integration:
     name: Integration tests
     runs-on: ubuntu-latest
