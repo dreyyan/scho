@@ -1,10 +1,10 @@
-import { auth } from "@/auth";
-import { NextResponse } from "next/server";
-import { logger } from "../logger";
+import { auth } from '@/auth';
+import { NextResponse } from 'next/server';
+import { logger } from '../logger';
 
 /**
- * Validate user authorization.
- * 
+ * Requires an authenticated user.
+ *
  * @returns the authorized user's ID or a NextResponse containing the error message and status.
  */
 export async function requireUserId(): Promise<string | NextResponse> {
