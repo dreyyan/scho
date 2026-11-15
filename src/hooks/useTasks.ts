@@ -2,7 +2,7 @@
 
 import * as taskApi from '@/lib/api-client/task';
 import { getErrorMessage } from '@/lib/utils/error';
-import type { TaskResponse, UpdateTaskFormData } from '@/types/task';
+import type { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
 import { useEffect, useState } from 'react';
 
 /**
@@ -45,6 +45,18 @@ export default function useTasks() {
     setError(null);
     setIsLoading(true);
     setReloadKey((prev) => prev + 1);
+  };
+
+  /**
+   * Creates a task on the server, then adds it to local state.
+   *
+   * @param data - The task data from the form.
+   * @throws If the request fails; local state is left unchanged.
+   */
+  const addTask = async (data: TaskFormData) => {
+    const newTask = await taskApi.createTask(data);
+
+    setTasks((prevTasks) => [...prevTasks, newTask]);
   };
 
   /**
@@ -105,10 +117,10 @@ export default function useTasks() {
 
   return {
     tasks,
-    setTasks,
     isLoading,
     error,
     retry,
+    addTask,
     editTask,
     toggleTask,
     deleteTask,

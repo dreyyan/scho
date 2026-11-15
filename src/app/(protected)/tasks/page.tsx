@@ -14,7 +14,6 @@ import EmptyState from '@/components/ui/EmptyState';
 import Pagination from '@/components/ui/Pagination';
 import TaskForm from '@/components/form/TaskForm';
 
-import { createTask } from '@/lib/api-client/task';
 import { TaskFormData, UpdateTaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
 import { getVisibleTasks, paginate } from '@/lib/utils/task';
@@ -23,7 +22,7 @@ import useTasks from '@/hooks/useTasks';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
-  const { tasks, setTasks, isLoading, error, retry, toggleTask, editTask, deleteTask } = useTasks();
+  const { tasks, isLoading, error, retry, addTask, toggleTask, editTask, deleteTask } = useTasks();
 
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
@@ -159,14 +158,7 @@ export default function Tasks() {
     });
 
     try {
-      const newTask = await createTask(data);
-
-      setTasks((prev) => [
-        ...prev,
-        {
-          ...newTask,
-        },
-      ]);
+      await addTask(data);
 
       openModal({
         variant: 'success',
