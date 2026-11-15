@@ -28,6 +28,15 @@ let testUserId: string;
 vi.mock('@/auth', () => ({ auth: vi.fn() }));
 const mockAuth = vi.mocked(auth as () => Promise<Session | null>);
 
+describe("GET /api/tasks", () => {
+  it("returns the user's tasks successfully", () => {
+      
+  });
+  it("rejects an unauthorized user", () => {
+      
+  });
+});
+
 describe('POST /api/tasks', () => {
   beforeAll(async () => {
     const user = await prisma.user.create({
@@ -50,6 +59,18 @@ describe('POST /api/tasks', () => {
         id: testUserId,
       },
       expires: '2026-12-31T00:00:00.000Z',
+    });
+  });
+
+  afterAll(async () => {
+    if (!testUserId) return;
+
+    await prisma.task.deleteMany({
+      where: { userId: testUserId },
+    });
+
+    await prisma.user.delete({
+      where: { id: testUserId },
     });
   });
 
@@ -126,18 +147,6 @@ describe('POST /api/tasks', () => {
   it('rejects a task referencing an already linked inbox item', () => {
     // TODO: Rejects a task referencing an already linked inbox item.
   });
-
-  afterAll(async () => {
-    if (!testUserId) return;
-
-    await prisma.task.deleteMany({
-      where: { userId: testUserId },
-    });
-
-    await prisma.user.delete({
-      where: { id: testUserId },
-    });
-  });
 });
 
 describe('PATCH /api/tasks/:id', () => {
@@ -174,6 +183,18 @@ describe('PATCH /api/tasks/:id', () => {
         id: testUserId,
       },
       expires: '2026-12-31T00:00:00.000Z',
+    });
+  });
+
+  afterAll(async () => {
+    if (!testUserId) return;
+
+    await prisma.task.deleteMany({
+      where: { userId: testUserId },
+    });
+
+    await prisma.user.delete({
+      where: { id: testUserId },
     });
   });
 
@@ -216,18 +237,6 @@ describe('PATCH /api/tasks/:id', () => {
     expect(response.status).toBe(200);
     expect(result.data.task.isCompleted).toBe(isCompleted);
   });
-
-  afterAll(async () => {
-    if (!testUserId) return;
-
-    await prisma.task.deleteMany({
-      where: { userId: testUserId },
-    });
-
-    await prisma.user.delete({
-      where: { id: testUserId },
-    });
-  });
 });
 
 describe('DELETE /api/tasks/:id', () => {
@@ -265,6 +274,18 @@ describe('DELETE /api/tasks/:id', () => {
     });
 
     testTaskId = task.id;
+  });
+
+  afterAll(async () => {
+    if (!testUserId) return;
+
+    await prisma.task.deleteMany({
+      where: { userId: testUserId },
+    });
+
+    await prisma.user.delete({
+      where: { id: testUserId },
+    });
   });
 
   it('accepts valid task deletion data', async () => {
@@ -339,17 +360,5 @@ describe('DELETE /api/tasks/:id', () => {
 
     expect(response.status).toBe(404);
     expect(result.error).toBe('Task not found.');
-  });
-
-  afterAll(async () => {
-    if (!testUserId) return;
-
-    await prisma.task.deleteMany({
-      where: { userId: testUserId },
-    });
-
-    await prisma.user.delete({
-      where: { id: testUserId },
-    });
   });
 });
