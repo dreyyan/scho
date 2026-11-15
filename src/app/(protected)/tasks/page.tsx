@@ -19,16 +19,23 @@ import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/
 import { getVisibleTasks, paginate } from '@/lib/utils/task';
 import { getErrorMessage } from '@/lib/utils/error';
 import useTasks from '@/hooks/useTasks';
+import useTaskView from '@/hooks/useTaskView';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
   const { tasks, isLoading, error, retry, addTask, toggleTask, editTask, deleteTask } = useTasks();
-
-  const [page, setPage] = useState<number>(1);
-  const [search, setSearch] = useState<string>('');
-  const [status, setStatus] = useState<string>(STATUS_OPTIONS[0].value);
-  const [sort, setSort] = useState<string>(SORT_OPTIONS[0].value);
-  const [filter, setFilter] = useState<string>(FILTER_OPTIONS[0].value);
+  const {
+    page,
+    search,
+    status,
+    sort,
+    filter,
+    changeSearch,
+    changeStatus,
+    changeFilter,
+    changeSort,
+    changePage,
+  } = useTaskView();
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -60,24 +67,6 @@ export default function Tasks() {
 
   // Retrieve the tasks after pagination.
   const paginatedTasks = paginate(sortedTasks, currentPage, TASKS_PER_PAGE);
-
-  const handleSearchChange = (value: string) => {
-    setSearch(value);
-    setPage(1);
-  };
-
-  const handleStatusChange = (value: string) => {
-    setStatus(value);
-    setPage(1);
-  };
-  const handleFilterChange = (value: string) => {
-    setFilter(value);
-    setPage(1);
-  };
-  const handleSortChange = (value: string) => {
-    setSort(value);
-    setPage(1);
-  };
 
   const renderTaskList = () => {
     if (isLoading) {
@@ -380,7 +369,7 @@ export default function Tasks() {
     <div className='space-y-1'>
       <header className='flex justify-between items-center'>
         <h1 className='text-gray-700 font-bold'>Tasks</h1>
-        <FilterGroup options={STATUS_OPTIONS} value={status} onChange={handleStatusChange} />
+        <FilterGroup options={STATUS_OPTIONS} value={status} onChange={changeStatus} />
       </header>
 
       <main
@@ -400,13 +389,9 @@ export default function Tasks() {
         >
           {/* Left: Search, Filter, and Sort */}
           <div className='flex items-center h-10 gap-x-2'>
-            <SearchBar
-              value={search}
-              onChange={handleSearchChange}
-              placeholder='Search for tasks...'
-            />
-            <Filter value={filter} onChange={handleFilterChange} options={FILTER_OPTIONS} />
-            <Sort value={sort} onChange={handleSortChange} options={SORT_OPTIONS} />
+            <SearchBar value={search} onChange={changeSearch} placeholder='Search for tasks...' />
+            <Filter value={filter} onChange={changeFilter} options={FILTER_OPTIONS} />
+            <Sort value={sort} onChange={changeSort} options={SORT_OPTIONS} />
           </div>
 
           {/* Right: Primary Action Button */}
@@ -439,7 +424,7 @@ export default function Tasks() {
         text-sm
       '
       >
-        <Pagination page={currentPage} totalPages={totalPages} onPageChange={setPage} />
+        <Pagination page={currentPage} totalPages={totalPages} onPageChange={changePage} />
       </div>
     </div>
   );
