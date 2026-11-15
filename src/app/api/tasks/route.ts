@@ -2,11 +2,10 @@ import { z } from 'zod';
 import { NextResponse } from 'next/server';
 
 import { createTaskSchema } from '@/validations/task';
-import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
 import { Prisma } from '@/generated/prisma/client';
-import { TASK_SELECT } from '@/lib/selects/task';
 import { requireUserId } from '@/lib/auth/require-user-id';
+import { createTask, listTasks } from '@/server/tasks';
 
 /**
  ** GET — Retrieve the user's tasks.
@@ -20,12 +19,7 @@ export async function GET() {
   const userId = authResult;
 
   try {
-    const tasks = await prisma.task.findMany({
-      where: {
-        userId,
-      },
-      select: TASK_SELECT,
-    });
+    const tasks = await listTasks(userId);
 
     return NextResponse.json(
       {
@@ -76,20 +70,10 @@ export async function POST(request: Request) {
     );
   }
 
-  const { title, sourceItemId, deadline } = result.data;
+  const task = await createTask(userId, result.data);
 
   try {
     // TODO: Validate whether InboxItem belongs to the user.
-
-    const task = await prisma.task.create({
-      data: {
-        userId,
-        ...(sourceItemId !== undefined && { sourceItemId }),
-        title,
-        deadline,
-      },
-      select: TASK_SELECT,
-    });
 
     return NextResponse.json(
       {
