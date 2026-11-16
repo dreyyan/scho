@@ -1,11 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CircleX, Loader2, Plus, ClipboardList, SearchX } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
-import Item from '@/components/ui/Item';
 import FilterGroup from '@/components/ui/FilterGroup';
-import EmptyState from '@/components/ui/EmptyState';
 import Pagination from '@/components/ui/Pagination';
 import Toolbar from '@/components/ui/Toolbar';
 import TaskForm from '@/components/form/TaskForm';
@@ -17,6 +15,7 @@ import useTaskView from '@/hooks/useTaskView';
 import { TaskFormData, UpdateTaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS } from '@/lib/constants/task';
 import { getErrorMessage } from '@/lib/utils/error';
+import TaskList from '@/components/tasks/TaskList';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
@@ -38,70 +37,6 @@ export default function Tasks() {
   } = useTaskView(tasks);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-  const renderTaskList = () => {
-    if (isLoading) {
-      return (
-        <EmptyState description='Loading tasks...' icon={Loader2} iconClassName='animate-spin' />
-      );
-    }
-
-    if (error) {
-      return (
-        <EmptyState
-          title='Failed to load tasks'
-          description={error}
-          variant='error'
-          action={{
-            label: 'Try again',
-            onClick: retry,
-          }}
-          icon={CircleX}
-        />
-      );
-    }
-
-    if (tasks.length === 0) {
-      return (
-        <EmptyState
-          title='No tasks yet'
-          description='Create your first task to get started.'
-          action={{
-            label: 'Add Task',
-            onClick: openAddTaskForm,
-          }}
-          icon={ClipboardList}
-        />
-      );
-    }
-
-    if (visibleTasks.length === 0) {
-      return (
-        <EmptyState
-          title='No matching tasks'
-          description='No tasks match your current filters.'
-          icon={SearchX}
-          variant='error'
-        />
-      );
-    }
-
-    return paginatedTasks.map((task) => (
-      <Item
-        key={task.id}
-        id={task.id}
-        category='Task'
-        title={task.title}
-        isChecked={task.isCompleted}
-        deadline={task.deadline ?? ''}
-        canEdit={true}
-        canDelete={true}
-        onCheckedChange={(checked) => handleCheckedChange(task.id, checked)}
-        onEdit={() => openEditTaskForm(task.id)}
-        onDelete={() => openDeleteTaskModal(task.id)}
-      />
-    ));
-  };
 
   const handleAddTask = async (data: TaskFormData) => {
     if (isSubmitting) return;
@@ -383,7 +318,18 @@ export default function Tasks() {
           gap-y-2
         '
         >
-          {renderTaskList()}
+          <TaskList
+            isLoading={isLoading}
+            error={error}
+            onRetry={retry}
+            tasks={tasks}
+            paginatedTasks={paginatedTasks}
+            visibleTasks={visibleTasks}
+            onAdd={openAddTaskForm}
+            onEdit={openEditTaskForm}
+            onToggle={handleCheckedChange}
+            onDelete={openDeleteTaskModal}
+          />
         </div>
       </main>
 
