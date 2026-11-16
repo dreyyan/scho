@@ -57,7 +57,7 @@ export default function TaskList({
         title='No tasks yet'
         description='Create your first task to get started.'
         action={{
-          label: 'Add Task',
+          label: 'Create your first task',
           onClick: onAdd,
         }}
         icon={ClipboardList}
