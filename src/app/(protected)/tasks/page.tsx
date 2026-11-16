@@ -243,26 +243,18 @@ export default function Tasks() {
             icon: Plus,
           }}
         />
-
-        <div
-          className='
-          flex flex-1 flex-col
-          gap-y-2
-        '
-        >
-          <TaskList
-            isLoading={isLoading}
-            error={error}
-            onRetry={retry}
-            tasks={tasks}
-            paginatedTasks={paginatedTasks}
-            visibleTasks={visibleTasks}
-            onAdd={openAddTaskForm}
-            onEdit={openEditTaskForm}
-            onToggle={handleCheckedChange}
-            onDelete={openDeleteTaskModal}
-          />
-        </div>
+        <TaskList
+          isLoading={isLoading}
+          error={error}
+          onRetry={retry}
+          tasks={tasks}
+          paginatedTasks={paginatedTasks}
+          visibleTasks={visibleTasks}
+          onAdd={openAddTaskForm}
+          onEdit={openEditTaskForm}
+          onToggle={handleCheckedChange}
+          onDelete={openDeleteTaskModal}
+        />
       </main>
 
       <div

@@ -76,19 +76,24 @@ export default function TaskList({
     );
   }
 
-  return paginatedTasks.map((task) => (
-    <Item
-      key={task.id}
-      id={task.id}
-      category='Task'
-      title={task.title}
-      isChecked={task.isCompleted}
-      deadline={task.deadline ?? ''}
-      canEdit={true}
-      canDelete={true}
-      onCheckedChange={(checked) => onToggle(task.id, checked)}
-      onEdit={() => onEdit(task.id)}
-      onDelete={() => onDelete(task.id)}
-    />
-  ));
+  return (
+    <ul className='flex flex-1 flex-col gap-y-2'>
+      {paginatedTasks.map((task) => (
+        <li key={task.id}>
+          <Item
+            id={task.id}
+            category='Task'
+            title={task.title}
+            isChecked={task.isCompleted}
+            deadline={task.deadline ?? ''}
+            canEdit={true}
+            canDelete={true}
+            onCheckedChange={(checked) => onToggle(task.id, checked)}
+            onEdit={() => onEdit(task.id)}
+            onDelete={() => onDelete(task.id)}
+          />
+        </li>
+      ))}
+    </ul>
+  );
 }
