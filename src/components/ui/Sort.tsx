@@ -3,13 +3,13 @@
 import * as Select from '@radix-ui/react-select';
 import { Check, ChevronDown } from 'lucide-react';
 
-interface SortProps {
-  value: string;
-  onChange: (value: string) => void;
-  options: { label: string; value: string }[];
+export interface SortProps<T extends string> {
+  value: T;
+  onChange: (value: T) => void;
+  options: readonly { label: string; value: T }[];
 }
 
-export default function Sort({ value, onChange, options }: SortProps) {
+export default function Sort<T extends string>({ value, onChange, options }: SortProps<T>) {
   return (
     <Select.Root value={value} onValueChange={onChange}>
       <Select.Trigger

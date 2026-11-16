@@ -1,3 +1,4 @@
+import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS } from '@/lib/constants/task';
 import { createTaskSchema, updateTaskSchema } from '@/validations/task';
 import z from 'zod';
 
@@ -15,6 +16,21 @@ export type UpdateTaskFormData = z.input<typeof updateTaskSchema>;
  * Represents field-specific task form errors.
  */
 export type TaskFormErrors = Partial<Record<keyof TaskFormData, string>>;
+
+/**
+ * Represents a task's status type.
+ */
+export type TaskStatus = (typeof STATUS_OPTIONS)[number]['value'];
+
+/**
+ * Represents a task's sort type.
+ */
+export type TaskSort = (typeof SORT_OPTIONS)[number]['value'];
+
+/**
+ * Represents a task's filter type.
+ */
+export type TaskFilter = (typeof FILTER_OPTIONS)[number]['value'];
 
 /**
  * Represents a task returned by the backend.
@@ -62,8 +78,8 @@ export interface UpdateTaskResponse {
  */
 export interface TaskViewOptions {
   search: string;
-  status: string;
-  filter: string;
-  sort: string;
+  status: TaskStatus;
+  filter: TaskFilter;
+  sort: TaskSort;
   currentTime: number;
 }

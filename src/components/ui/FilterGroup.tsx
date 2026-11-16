@@ -1,17 +1,21 @@
 import React from 'react';
 
-type FilterOption = {
+type FilterOption<T extends string> = {
   label: string;
-  value: string;
+  value: T;
 };
 
-interface FilterGroupProps {
-  options: FilterOption[];
-  value: string;
-  onChange: (value: string) => void;
+interface FilterGroupProps<T extends string> {
+  options: readonly FilterOption<T>[];
+  value: T;
+  onChange: (value: T) => void;
 }
 
-export default function FilterGroup({ options, value, onChange }: FilterGroupProps) {
+export default function FilterGroup<T extends string>({
+  options,
+  value,
+  onChange,
+}: FilterGroupProps<T>) {
   return (
     <div className='flex items-center gap-x-2'>
       {options.map((option) => (
