@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import useModal from '@/hooks/useModal';
 import { CircleX, Loader2, Plus, ClipboardList, SearchX } from 'lucide-react';
 
@@ -15,8 +15,7 @@ import Pagination from '@/components/ui/Pagination';
 import TaskForm from '@/components/form/TaskForm';
 
 import { TaskFormData, UpdateTaskFormData } from '@/types/task';
-import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
-import { getVisibleTasks, paginate } from '@/lib/utils/task';
+import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS } from '@/lib/constants/task';
 import { getErrorMessage } from '@/lib/utils/error';
 import useTasks from '@/hooks/useTasks';
 import useTaskView from '@/hooks/useTaskView';
@@ -25,7 +24,6 @@ export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
   const { tasks, isLoading, error, retry, addTask, toggleTask, editTask, deleteTask } = useTasks();
   const {
-    page,
     search,
     status,
     sort,
@@ -35,38 +33,13 @@ export default function Tasks() {
     changeFilter,
     changeSort,
     changePage,
-  } = useTaskView();
+    paginatedTasks,
+    visibleTasks,
+    currentPage,
+    totalPages,
+  } = useTaskView(tasks);
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
-  const [currentTime, setCurrentTime] = useState(() => Date.now());
-
-  // Update time every 60 seconds.
-  useEffect(() => {
-    const updateTime = () => {
-      setCurrentTime(Date.now());
-    };
-
-    const interval = setInterval(updateTime, 60_000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Retrieve the filtered and sorted tasks.
-  const sortedTasks = getVisibleTasks(tasks, {
-    search,
-    status,
-    sort,
-    filter,
-    currentTime,
-  });
-
-  // Calculate pages information.
-  const totalPages = Math.ceil(sortedTasks.length / TASKS_PER_PAGE);
-  const currentPage = Math.min(page, Math.max(totalPages, 1));
-
-  // Retrieve the tasks after pagination.
-  const paginatedTasks = paginate(sortedTasks, currentPage, TASKS_PER_PAGE);
 
   const renderTaskList = () => {
     if (isLoading) {
@@ -104,7 +77,7 @@ export default function Tasks() {
       );
     }
 
-    if (sortedTasks.length === 0) {
+    if (visibleTasks.length === 0) {
       return (
         <EmptyState
           title='No matching tasks'
