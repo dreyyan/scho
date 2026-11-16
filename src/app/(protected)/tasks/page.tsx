@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import { Plus } from 'lucide-react';
 
 import FilterGroup from '@/components/ui/FilterGroup';
@@ -36,12 +36,12 @@ export default function Tasks() {
     totalPages,
   } = useTaskView(tasks);
 
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const isSubmittingRef = useRef<boolean>(false);
 
   const handleAddTask = async (data: TaskFormData) => {
-    if (isSubmitting) return;
+    if (isSubmittingRef.current) return;
 
-    setIsSubmitting(true);
+    isSubmittingRef.current = true;
 
     updateModal({
       primaryAction: {
@@ -86,14 +86,14 @@ export default function Tasks() {
         },
       });
     } finally {
-      setIsSubmitting(false);
+      isSubmittingRef.current = false;
     }
   };
 
   const handleEditTask = async (id: string, data: UpdateTaskFormData) => {
-    if (isSubmitting) return;
+    if (isSubmittingRef.current) return;
 
-    setIsSubmitting(true);
+    isSubmittingRef.current = true;
 
     updateModal({
       primaryAction: {
@@ -137,7 +137,7 @@ export default function Tasks() {
         },
       });
     } finally {
-      setIsSubmitting(false);
+      isSubmittingRef.current = false;
     }
   };
 
@@ -172,9 +172,9 @@ export default function Tasks() {
   };
 
   const handleDeleteTask = async (id: string) => {
-    if (isSubmitting) return;
+    if (isSubmittingRef.current) return;
 
-    setIsSubmitting(true);
+    isSubmittingRef.current = true;
 
     updateModal({
       primaryAction: {
@@ -209,7 +209,7 @@ export default function Tasks() {
         },
       });
     } finally {
-      setIsSubmitting(false);
+      isSubmittingRef.current = false;
     }
   };
 
@@ -223,7 +223,6 @@ export default function Tasks() {
         label: 'Add',
         type: 'submit',
         form: 'task-form',
-        isLoading: isSubmitting,
       },
       secondaryAction: {
         label: 'Cancel',
