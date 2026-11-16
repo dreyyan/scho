@@ -12,6 +12,9 @@ const getRegistrationForm = (page: Page) => {
 };
 
 test.describe('Registration', () => {
+  // Start logged out: the config loads a saved session for every test by default.
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test('display the registration form', async ({ page }) => {
     await page.goto(`/register`);
 
