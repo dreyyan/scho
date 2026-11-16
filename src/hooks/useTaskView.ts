@@ -2,7 +2,7 @@
 
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS, TASKS_PER_PAGE } from '@/lib/constants/task';
 import { getVisibleTasks, paginate } from '@/lib/utils/task';
-import type { TaskResponse } from '@/types/task';
+import type { TaskFilter, TaskResponse, TaskSort, TaskStatus } from '@/types/task';
 import { useEffect, useState } from 'react';
 
 /**
@@ -14,9 +14,9 @@ import { useEffect, useState } from 'react';
 export default function useTaskView(tasks: TaskResponse[]) {
   const [page, setPage] = useState<number>(1);
   const [search, setSearch] = useState<string>('');
-  const [status, setStatus] = useState<string>(STATUS_OPTIONS[0].value);
-  const [sort, setSort] = useState<string>(SORT_OPTIONS[0].value);
-  const [filter, setFilter] = useState<string>(FILTER_OPTIONS[0].value);
+  const [status, setStatus] = useState<TaskStatus>(STATUS_OPTIONS[0].value);
+  const [sort, setSort] = useState<TaskSort>(SORT_OPTIONS[0].value);
+  const [filter, setFilter] = useState<TaskFilter>(FILTER_OPTIONS[0].value);
   const [currentTime, setCurrentTime] = useState(() => Date.now());
 
   // Update time every 60 seconds.
@@ -51,10 +51,12 @@ export default function useTaskView(tasks: TaskResponse[]) {
    *
    * @param setter - The task view's setter.
    */
-  const resetPageAfter = (setter: (value: string) => void) => (value: string) => {
-    setter(value);
-    setPage(1);
-  };
+  const resetPageAfter =
+    <T>(setter: (value: T) => void) =>
+    (value: T) => {
+      setter(value);
+      setPage(1);
+    };
 
   const changeSearch = resetPageAfter(setSearch);
   const changeStatus = resetPageAfter(setStatus);

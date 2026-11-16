@@ -3,15 +3,15 @@
 import * as Select from '@radix-ui/react-select';
 import { Check, ChevronDown } from 'lucide-react';
 
-interface FilterProps {
-  value: string;
-  onChange: (value: string) => void;
-  options: readonly { label: string; value: string }[];
+export interface FilterProps<T extends string> {
+  value: T;
+  options: readonly { label: string; value: T }[];
+  onChange: (value: T) => void;
 }
 
-export default function Filter({ value, onChange, options }: FilterProps) {
+export default function Filter<T extends string>({ value, onChange, options }: FilterProps<T>) {
   return (
-    <Select.Root value={value} onValueChange={onChange}>
+    <Select.Root value={value} onValueChange={(v) => onChange(v as T)}>
       <Select.Trigger
         aria-label='Filter tasks'
         className='

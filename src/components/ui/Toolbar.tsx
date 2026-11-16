@@ -1,17 +1,22 @@
 import { ComponentProps } from 'react';
 import SearchBar from './SearchBar';
-import Filter from './Filter';
-import Sort from './Sort';
+import Filter, { FilterProps } from './Filter';
+import Sort, { SortProps } from './Sort';
 import Button from './Button';
 
-interface ToolbarProps {
+interface ToolbarProps<F extends string, S extends string> {
   search: ComponentProps<typeof SearchBar>;
-  filter?: ComponentProps<typeof Filter>;
-  sort?: ComponentProps<typeof Sort>;
+  filter?: FilterProps<F>;
+  sort?: SortProps<S>;
   action?: ComponentProps<typeof Button>;
 }
 
-export default function Toolbar({ search, filter, sort, action }: ToolbarProps) {
+export default function Toolbar<F extends string, S extends string>({
+  search,
+  filter,
+  sort,
+  action,
+}: ToolbarProps<F, S>) {
   return (
     <div
       className='

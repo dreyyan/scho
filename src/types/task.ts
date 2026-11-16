@@ -78,8 +78,8 @@ export interface UpdateTaskResponse {
  */
 export interface TaskViewOptions {
   search: string;
-  status: string;
-  filter: string;
-  sort: string;
+  status: TaskStatus;
+  filter: TaskFilter;
+  sort: TaskSort;
   currentTime: number;
 }
