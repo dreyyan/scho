@@ -14,11 +14,12 @@ import useTaskView from '@/hooks/useTaskView';
 
 import { TaskFormData, UpdateTaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS } from '@/lib/constants/task';
-import { getErrorMessage } from '@/lib/utils/error';
 import TaskList from '@/components/tasks/TaskList';
+import useErrorModal from '@/hooks/useErrorModal';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
+  const showErrorModal = useErrorModal();
   const { tasks, isLoading, error, retry, addTask, toggleTask, editTask, deleteTask } = useTasks();
   const {
     search,
@@ -57,7 +58,7 @@ export default function Tasks() {
 
       openModal({
         variant: 'success',
-        title: 'Task Created',
+        title: 'Task created',
         description: 'The task has been successfully created!',
         primaryAction: {
           label: 'Got it',
@@ -67,24 +68,7 @@ export default function Tasks() {
       });
     } catch (err: unknown) {
       console.error('Failed to add task: ', err);
-
-      const errMsg = getErrorMessage(err);
-
-      openModal({
-        variant: 'error',
-        title: 'Failed Task Creation',
-        description: errMsg,
-        primaryAction: {
-          label: 'Got it',
-          type: 'button',
-          onClick: () => closeModal(),
-        },
-        secondaryAction: {
-          label: 'Retry',
-          type: 'button',
-          onClick: () => handleAddTask(data),
-        },
-      });
+      showErrorModal('Failed to add task', err, () => handleAddTask(data));
     } finally {
       isSubmittingRef.current = false;
     }
@@ -109,7 +93,7 @@ export default function Tasks() {
 
       openModal({
         variant: 'success',
-        title: 'Task Updated',
+        title: 'Task updated',
         description: 'Task updated successfully!',
         primaryAction: {
           label: 'Got it',
@@ -119,54 +103,20 @@ export default function Tasks() {
       });
     } catch (err: unknown) {
       console.error('Failed to edit task: ', err);
-
-      const errMsg = getErrorMessage(err);
-      openModal({
-        variant: 'error',
-        title: 'Updated Task Failed',
-        description: errMsg,
-        primaryAction: {
-          label: 'Got it',
-          type: 'button',
-          onClick: () => closeModal(),
-        },
-        secondaryAction: {
-          label: 'Retry',
-          type: 'button',
-          onClick: () => handleEditTask(id, data),
-        },
-      });
+      showErrorModal('Failed to edit task', err, () => handleEditTask(id, data));
     } finally {
       isSubmittingRef.current = false;
     }
   };
 
-  // Immediately update the task's `isCompleted` state before sending a PATCH request to the backend server.
   const handleCheckedChange = async (id: string, checked: boolean) => {
     try {
       await toggleTask(id, checked);
     } catch (err: unknown) {
       console.error('Failed to update task completion: ', err);
-
-      const errMsg = getErrorMessage(err);
-
-      openModal({
-        variant: 'error',
-        title: 'Failed to Update Task',
-        description: errMsg,
-        primaryAction: {
-          label: 'Got it',
-          type: 'button',
-          onClick: () => closeModal(),
-        },
-        secondaryAction: {
-          label: 'Retry',
-          type: 'button',
-          onClick: () => {
-            closeModal();
-            handleCheckedChange(id, checked);
-          },
-        },
+      showErrorModal('Failed to update task completion', err, () => {
+        closeModal();
+        handleCheckedChange(id, checked);
       });
     }
   };
@@ -190,24 +140,7 @@ export default function Tasks() {
       closeModal();
     } catch (err: unknown) {
       console.error('Failed to delete task: ', err);
-
-      const errMsg = getErrorMessage(err);
-
-      openModal({
-        variant: 'error',
-        title: 'Failed Task Deletion',
-        description: errMsg,
-        primaryAction: {
-          label: 'Got it',
-          type: 'button',
-          onClick: () => closeModal(),
-        },
-        secondaryAction: {
-          label: 'Retry',
-          type: 'button',
-          onClick: () => handleDeleteTask(id),
-        },
-      });
+      showErrorModal('Failed to delete task', err, () => handleDeleteTask(id));
     } finally {
       isSubmittingRef.current = false;
     }
@@ -216,7 +149,7 @@ export default function Tasks() {
   const openAddTaskForm = () => {
     openModal({
       variant: 'confirm',
-      title: 'Add Task',
+      title: 'Add task',
       description: 'Add a new task to your list.',
       children: <TaskForm onSubmit={handleAddTask} />,
       primaryAction: {
@@ -238,7 +171,7 @@ export default function Tasks() {
 
     openModal({
       variant: 'confirm',
-      title: 'Edit Task',
+      title: 'Edit task',
       description: 'Edit the current task.',
       children: <TaskForm initialValues={task} onSubmit={(data) => handleEditTask(id, data)} />,
       primaryAction: {
@@ -256,7 +189,7 @@ export default function Tasks() {
   const openDeleteTaskModal = (id: string) => {
     openModal({
       variant: 'error',
-      title: 'Delete Task',
+      title: 'Delete task',
       description: 'Are you sure you want to delete this task?',
       primaryAction: {
         label: 'Delete',
