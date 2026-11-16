@@ -6,7 +6,7 @@ import { Check, ChevronDown } from 'lucide-react';
 interface FilterProps {
   value: string;
   onChange: (value: string) => void;
-  options: { label: string; value: string }[];
+  options: readonly { label: string; value: string }[];
 }
 
 export default function Filter({ value, onChange, options }: FilterProps) {

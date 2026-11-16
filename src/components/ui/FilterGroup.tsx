@@ -6,7 +6,7 @@ type FilterOption = {
 };
 
 interface FilterGroupProps {
-  options: FilterOption[];
+  options: readonly FilterOption[];
   value: string;
   onChange: (value: string) => void;
 }

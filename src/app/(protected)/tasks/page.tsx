@@ -1,24 +1,22 @@
 'use client';
 
 import React, { useState } from 'react';
-import useModal from '@/hooks/useModal';
 import { CircleX, Loader2, Plus, ClipboardList, SearchX } from 'lucide-react';
 
-import FilterGroup from '@/components/ui/FilterGroup';
-import Button from '@/components/ui/Button';
 import Item from '@/components/ui/Item';
-import SearchBar from '@/components/ui/SearchBar';
-import Filter from '@/components/ui/Filter';
-import Sort from '@/components/ui/Sort';
+import FilterGroup from '@/components/ui/FilterGroup';
 import EmptyState from '@/components/ui/EmptyState';
 import Pagination from '@/components/ui/Pagination';
+import Toolbar from '@/components/ui/Toolbar';
 import TaskForm from '@/components/form/TaskForm';
+
+import useModal from '@/hooks/useModal';
+import useTasks from '@/hooks/useTasks';
+import useTaskView from '@/hooks/useTaskView';
 
 import { TaskFormData, UpdateTaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS } from '@/lib/constants/task';
 import { getErrorMessage } from '@/lib/utils/error';
-import useTasks from '@/hooks/useTasks';
-import useTaskView from '@/hooks/useTaskView';
 
 export default function Tasks() {
   const { openModal, closeModal, updateModal } = useModal();
@@ -354,30 +352,30 @@ export default function Tasks() {
         bg-gray-100 border-2 border-gray-300
       '
       >
-        <div
-          className='
-          flex justify-between items-center
-          h-10 gap-x-3 mb-4
-        '
-        >
-          {/* Left: Search, Filter, and Sort */}
-          <div className='flex items-center h-10 gap-x-2'>
-            <SearchBar value={search} onChange={changeSearch} placeholder='Search for tasks...' />
-            <Filter value={filter} onChange={changeFilter} options={FILTER_OPTIONS} />
-            <Sort value={sort} onChange={changeSort} options={SORT_OPTIONS} />
-          </div>
-
-          {/* Right: Primary Action Button */}
-          <div className='h-full'>
-            <Button
-              label='Add Task'
-              variant='primary'
-              type='button'
-              onClick={openAddTaskForm}
-              icon={Plus}
-            />
-          </div>
-        </div>
+        <Toolbar
+          search={{
+            value: search,
+            onChange: changeSearch,
+            placeholder: 'Search for tasks...',
+          }}
+          filter={{
+            value: filter,
+            onChange: changeFilter,
+            options: FILTER_OPTIONS,
+          }}
+          sort={{
+            value: sort,
+            onChange: changeSort,
+            options: SORT_OPTIONS,
+          }}
+          action={{
+            label: 'Add Task',
+            variant: 'primary',
+            type: 'button',
+            onClick: openAddTaskForm,
+            icon: Plus,
+          }}
+        />
 
         <div
           className='
@@ -389,7 +387,6 @@ export default function Tasks() {
         </div>
       </main>
 
-      {/* TODO: Pagination. */}
       <div
         className='
         flex justify-center items-center

@@ -6,7 +6,7 @@ import { Check, ChevronDown } from 'lucide-react';
 interface SortProps {
   value: string;
   onChange: (value: string) => void;
-  options: { label: string; value: string }[];
+  options: readonly { label: string; value: string }[];
 }
 
 export default function Sort({ value, onChange, options }: SortProps) {
