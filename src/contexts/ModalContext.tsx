@@ -22,10 +22,12 @@ export const ModalContext = createContext<ModalContextType | null>(null);
  * Manages global modal state and actions.
  */
 export function ModalProvider({ children }: { children: ReactNode }) {
+  const [openedCount, setOpenedCount] = useState<number>(0);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [modalOptions, setModalOptions] = useState<ModalOptions | null>(null);
 
   const openModal = (options: ModalOptions) => {
+    setOpenedCount((prevCount) => prevCount + 1);
     setModalOptions(options);
     setIsOpen(true);
   };
@@ -42,7 +44,9 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     <ModalContext.Provider value={{ openModal, closeModal, updateModal }}>
       {children}
 
-      {modalOptions && <Modal {...modalOptions} isOpen={isOpen} onClose={closeModal} />}
+      {modalOptions && (
+        <Modal key={openedCount} {...modalOptions} isOpen={isOpen} onClose={closeModal} />
+      )}
     </ModalContext.Provider>
   );
 }
