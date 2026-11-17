@@ -63,23 +63,48 @@ test.describe('Tasks', () => {
         const task = page.getByRole('listitem').filter({ hasText: title });
         await expect(task).toBeVisible();
       });
-      test('display an error for an empty task title', async ({ page }) => {
-        const { dialog, actionButton } = getTaskForm(page, 'Add task', 'Add');
+      const errors = [
+        {
+          case: 'empty task title',
+          message: 'Title is required.',
+          taskName: '',
+        },
+        {
+          case: 'whitespace task title',
+          message: 'Title is required.',
+          taskName: ' ',
+        },
+        {
+          case: 'overlong title',
+          message: 'Title must not exceed 150 characters.',
+          taskName: 'a'.repeat(151),
+        },
+      ];
+      for (const error of errors) {
+        test(`displays an error for ${error.case}`, async ({ page }) => {
+          const { dialog, taskNameInputField, actionButton } = getTaskForm(page, 'Add task', 'Add');
 
-        // Submit the form.
-        await actionButton.click();
+          // Fill in input field with value.
+          await taskNameInputField.fill(error.taskName);
 
-        // Verify whether the error description is visible.
-        const error = dialog.getByText('Title is required.', { exact: true });
-        await expect(error).toBeVisible();
+          // Submit the form.
+          await actionButton.click();
 
-        // Verify whether dialog is still open.
-        await expect(dialog).toBeVisible();
+          // Verify whether the error description is visible.
+          const errMsg = dialog.getByText(error.message, { exact: true });
+          await expect(errMsg).toBeVisible();
 
-        // Verify whether no confirmation dialog shows.
-        const confirmationDialog = page.getByRole('dialog', { name: 'Task created', exact: true });
-        await expect(confirmationDialog).not.toBeVisible();
-      });
+          // Verify whether dialog is still open.
+          await expect(dialog).toBeVisible();
+
+          // Verify whether no confirmation dialog shows.
+          const confirmationDialog = page.getByRole('dialog', {
+            name: 'Task created',
+            exact: true,
+          });
+          await expect(confirmationDialog).not.toBeVisible();
+        });
+      }
     });
     // test('edits a task', () => {});
     // test('deletes a task', () => {});
