@@ -63,6 +63,23 @@ test.describe('Tasks', () => {
         const task = page.getByRole('listitem').filter({ hasText: title });
         await expect(task).toBeVisible();
       });
+      test('display an error for an empty task title', async ({ page }) => {
+        const { dialog, actionButton } = getTaskForm(page, 'Add task', 'Add');
+
+        // Submit the form.
+        await actionButton.click();
+
+        // Verify whether the error description is visible.
+        const error = dialog.getByText('Title is required.', { exact: true });
+        await expect(error).toBeVisible();
+
+        // Verify whether dialog is still open.
+        await expect(dialog).toBeVisible();
+
+        // Verify whether no confirmation dialog shows.
+        const confirmationDialog = page.getByRole('dialog', { name: 'Task created', exact: true });
+        await expect(confirmationDialog).not.toBeVisible();
+      });
     });
     // test('edits a task', () => {});
     // test('deletes a task', () => {});
