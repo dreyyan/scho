@@ -236,7 +236,7 @@ export default function Tasks() {
             options: SORT_OPTIONS,
           }}
           action={{
-            label: 'Add Task',
+            label: 'Add task',
             variant: 'primary',
             type: 'button',
             onClick: openAddTaskForm,
