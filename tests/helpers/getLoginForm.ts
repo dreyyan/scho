@@ -1,9 +1,9 @@
 import type { Page } from '@playwright/test';
 
 /**
- * Access a login Page's form elements.
+ * Access a login Page's form locators.
  *
- * @param page - The page representing as the browser tab.
+ * @param page - The page representing the browser tab.
  * @returns The login form's locators.
  */
 export const getLoginForm = (page: Page) => {

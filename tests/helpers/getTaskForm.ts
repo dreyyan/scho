@@ -1,10 +1,10 @@
 import type { Page } from '@playwright/test';
 
 /**
- * Access the Task form's elements.
+ * Access the Task form's locators.
  *
- * @param page - The page representing as the browser tab.
- * @param title - The form's title
+ * @param page - The page representing the browser tab.
+ * @param title - The form's title.
  * @param buttonLabel - The task form button's label.
  * @returns The task form's locators.
  */
