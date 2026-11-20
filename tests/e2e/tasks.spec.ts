@@ -4,6 +4,23 @@ import { getTaskForm } from '../helpers/getTaskForm';
 import { createTask } from '../helpers/createTask';
 
 test.describe('Tasks', () => {
+  const errors = [
+    {
+      case: 'empty task title',
+      message: 'Title is required.',
+      taskName: '',
+    },
+    {
+      case: 'whitespace task title',
+      message: 'Title is required.',
+      taskName: ' ',
+    },
+    {
+      case: 'overlong title',
+      message: 'Title must not exceed 150 characters.',
+      taskName: 'a'.repeat(151),
+    },
+  ];
   test.describe('when logged out', () => {
     // Start logged out: the config loads a saved session for every test by default.
     test.use({ storageState: { cookies: [], origins: [] } });
@@ -65,23 +82,6 @@ test.describe('Tasks', () => {
         const task = page.getByRole('listitem').filter({ hasText: title });
         await expect(task).toBeVisible();
       });
-      const errors = [
-        {
-          case: 'empty task title',
-          message: 'Title is required.',
-          taskName: '',
-        },
-        {
-          case: 'whitespace task title',
-          message: 'Title is required.',
-          taskName: ' ',
-        },
-        {
-          case: 'overlong title',
-          message: 'Title must not exceed 150 characters.',
-          taskName: 'a'.repeat(151),
-        },
-      ];
       for (const error of errors) {
         test(`displays an error for ${error.case}`, async ({ page }) => {
           const { dialog, taskNameInputField, actionButton } = getTaskForm(page, 'Add task', 'Add');
@@ -159,6 +159,35 @@ test.describe('Tasks', () => {
         const task = page.getByRole('listitem').filter({ hasText: title });
         await expect(task).toBeVisible();
       });
+      for (const error of errors) {
+        test(`displays an error for ${error.case}`, async ({ page }) => {
+          const { dialog, taskNameInputField, actionButton } = getTaskForm(
+            page,
+            'Edit task',
+            'Edit',
+          );
+
+          // Fill in input field with value.
+          await taskNameInputField.fill(error.taskName);
+
+          // Submit the form.
+          await actionButton.click();
+
+          // Verify whether the error description is visible.
+          const errMsg = dialog.getByText(error.message, { exact: true });
+          await expect(errMsg).toBeVisible();
+
+          // Verify whether dialog is still open.
+          await expect(dialog).toBeVisible();
+
+          // Verify whether no confirmation dialog shows.
+          const confirmationDialog = page.getByRole('dialog', {
+            name: 'Task updated',
+            exact: true,
+          });
+          await expect(confirmationDialog).not.toBeVisible();
+        });
+      }
     });
     // test('deletes a task', () => {});
   });
