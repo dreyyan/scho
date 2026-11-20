@@ -57,7 +57,7 @@ test.describe('Tasks', () => {
 
         // Fill in input fields with values.
         const deadline = '2099-12-31T09:00';
-        const title = `${validTaskCreationData.title} ${Date.now()}`;
+        const title = `${validTaskCreationData.title} ${crypto.randomUUID()}`;
         await taskNameInputField.fill(title);
         await deadlineInputField.fill(deadline);
 
@@ -112,7 +112,7 @@ test.describe('Tasks', () => {
       let title: string;
       test.beforeEach(async ({ page }) => {
         // Create a task before testing task completion.
-        title = `${validTaskCreationData.title} ${Date.now()}`;
+        title = `${validTaskCreationData.title} ${crypto.randomUUID()}`;
         await createTask(page.request, title);
 
         // Reload the page to make the new task appear.
@@ -148,7 +148,7 @@ test.describe('Tasks', () => {
     test.describe("when the 'Edit task' dialog is open", () => {
       test.beforeEach(async ({ page }) => {
         // Create a task before testing task edit.
-        const title = `${validTaskCreationData.title} ${Date.now()}`;
+        const title = `${validTaskCreationData.title} ${crypto.randomUUID()}`;
         await createTask(page.request, title);
 
         // Reload the page to make the new task appear.
@@ -170,7 +170,7 @@ test.describe('Tasks', () => {
         );
 
         // Fill input fields with valid values.
-        const title = `Edited task name ${Date.now()}`;
+        const title = `Edited task name ${crypto.randomUUID()}`;
         const deadline = '2099-12-31T09:00';
         await taskNameInputField.fill(title);
         await deadlineInputField.fill(deadline);
@@ -229,7 +229,7 @@ test.describe('Tasks', () => {
     test.describe("when the 'Delete task' dialog is open", () => {
       let title: string;
       test.beforeEach(async ({ page }) => {
-        title = `${validTaskCreationData.title} ${Date.now()}`; // Create a task before testing task deletion.
+        title = `${validTaskCreationData.title} ${crypto.randomUUID()}`; // Create a task before testing task deletion.
         await createTask(page.request, title);
 
         // Reload the page to make the new task appear.
