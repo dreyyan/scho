@@ -108,6 +108,43 @@ test.describe('Tasks', () => {
         });
       }
     });
+    test.describe('when marking a task as completed', () => {
+      let title: string;
+      test.beforeEach(async ({ page }) => {
+        // Create a task before testing task completion.
+        title = `${validTaskCreationData.title} ${Date.now()}`;
+        await createTask(page.request, title);
+
+        // Reload the page to make the new task appear.
+        await page.reload();
+      });
+      test('marks a task as complete', async ({ page }) => {
+        const isCompletedCheckbox = page.getByRole('checkbox', { name: `Complete ${title}` });
+
+        // Verify whether checkbox is marked incomplete before testing for completeness.
+        await expect(isCompletedCheckbox).not.toBeChecked();
+
+        // Start waiting for the save request before clicking.
+        const responsePromise = page.waitForResponse(
+          (res) => res.url().includes('/api/tasks') && res.request().method() === 'PATCH',
+        );
+
+        // Mark the checkbox as complete.
+        await isCompletedCheckbox.click();
+
+        // Wait for the save request to finish.
+        const response = await responsePromise;
+        expect(response.ok()).toBe(true);
+
+        // Verify whether checkbox was marked as completed.
+        await expect(isCompletedCheckbox).not.toBeVisible();
+
+        // Reload, switch to 'Completed' status panel, and verify the change was saved.
+        await page.reload();
+        await page.getByRole('button', { name: 'Completed', exact: true }).click();
+        await expect(isCompletedCheckbox).toBeChecked();
+      });
+    });
     test.describe("when the 'Edit task' dialog is open", () => {
       test.beforeEach(async ({ page }) => {
         // Create a task before testing task edit.
