@@ -189,6 +189,36 @@ test.describe('Tasks', () => {
         });
       }
     });
-    // test('deletes a task', () => {});
+    test.describe("when the 'Delete task' dialog is open", () => {
+      let title: string;
+      test.beforeEach(async ({ page }) => {
+        title = `${validTaskCreationData.title} ${Date.now()}`; // Create a task before testing task deletion.
+        await createTask(page.request, title);
+
+        // Reload the page to make the new task appear.
+        await page.reload();
+
+        // Click the 'Delete task' button.
+        const deleteTaskButton = page.getByRole('button', { name: `Delete ${title}` });
+        await deleteTaskButton.click();
+
+        const { dialog } = getTaskForm(page, 'Delete task', 'Delete');
+        await expect(dialog).toBeVisible();
+      });
+      test('deletes a task', async ({ page }) => {
+        const { actionButton } = getTaskForm(page, 'Delete task', 'Delete');
+
+        // Verify that task exists before deleting.
+        let task = page.getByRole('listitem').filter({ hasText: title });
+        await expect(task).toBeVisible();
+
+        // Delete the task.
+        await actionButton.click();
+
+        // Verify task was deleted.
+        task = page.getByRole('listitem').filter({ hasText: title });
+        await expect(task).not.toBeVisible();
+      });
+    });
   });
 });
