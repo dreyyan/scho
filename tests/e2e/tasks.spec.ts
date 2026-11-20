@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { validTaskCreationData } from '../fixtures/task';
 import { getTaskForm } from '../helpers/getTaskForm';
+import { createTask } from '../helpers/createTask';
 
 test.describe('Tasks', () => {
   test.describe('when logged out', () => {
@@ -15,12 +16,13 @@ test.describe('Tasks', () => {
   });
 
   test.describe('when logged in', () => {
+    test.beforeEach(async ({ page }) => {
+      // Navigate to 'Tasks' page.
+      await page.goto('/tasks');
+      await expect(page.getByRole('heading', { name: 'Tasks', exact: true })).toBeVisible();
+    });
     test.describe("when the 'Add task' dialog is open", () => {
       test.beforeEach(async ({ page }) => {
-        // Navigate to 'Tasks' page.
-        await page.goto('/tasks');
-        await expect(page.getByRole('heading', { name: 'Tasks', exact: true })).toBeVisible();
-
         // Click the 'Add task' button.
         const addTaskButton = page.getByRole('button', { name: 'Add task', exact: true });
         await addTaskButton.click();
@@ -106,7 +108,58 @@ test.describe('Tasks', () => {
         });
       }
     });
-    // test('edits a task', () => {});
+    test.describe("when the 'Edit task' dialog is open", () => {
+      test.beforeEach(async ({ page }) => {
+        // Create a task before testing task edit.
+        const title = `${validTaskCreationData.title} ${Date.now()}`;
+        await createTask(page.request, title);
+
+        // Reload the page to make the new task appear.
+        await page.reload();
+
+        // Click the 'Edit task' button.
+        const editTaskButton = page.getByRole('button', { name: `Edit ${title}` });
+        await editTaskButton.click();
+
+        const { dialog } = getTaskForm(page, 'Edit task', 'Edit');
+        await expect(dialog).toBeVisible();
+      });
+
+      test('edits a task', async ({ page }) => {
+        const { taskNameInputField, deadlineInputField, actionButton } = getTaskForm(
+          page,
+          'Edit task',
+          'Edit',
+        );
+
+        // Fill input fields with valid values.
+        const title = `Edited task name ${Date.now()}`;
+        const deadline = '2099-12-31T09:00';
+        await taskNameInputField.fill(title);
+        await deadlineInputField.fill(deadline);
+
+        // Save edit changes.
+        await actionButton.click();
+
+        // Access the confirmation dialog.
+        const confirmationDialog = page.getByRole('dialog', { name: 'Task updated', exact: true });
+        await expect(confirmationDialog).toBeVisible();
+
+        // Close the modal.
+        const confirmationPrimaryButton = confirmationDialog.getByRole('button', {
+          name: 'Got it',
+          exact: true,
+        });
+        await confirmationPrimaryButton.click();
+
+        // Confirm that confirmation modal closed.
+        await expect(confirmationDialog).not.toBeVisible();
+
+        // Verify task was edited.
+        const task = page.getByRole('listitem').filter({ hasText: title });
+        await expect(task).toBeVisible();
+      });
+    });
     // test('deletes a task', () => {});
   });
 });
