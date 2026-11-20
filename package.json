@@ -10,6 +10,8 @@
     "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "check": "pnpm format:check && pnpm lint && pnpm typecheck",
+    "fix": "pnpm format && pnpm lint --fix",
     "test": "vitest",
     "test:run": "vitest run",
     "test:run:verbose": "vitest run --reporter=verbose",

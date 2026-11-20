@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import InputField from '../ui/InputField';
 import { TaskFormData, TaskFormErrors } from '@/types/task';
 import { toDateTimeLocal } from '@/lib/utils/date';
+import { createTaskSchema } from '@/validations/task';
+import z from 'zod';
 
 interface TaskFormProps {
   initialValues?: TaskFormData;
@@ -36,16 +38,36 @@ export default function TaskForm({ initialValues, onSubmit }: TaskFormProps) {
   const handleSubmit = (event: React.ChangeEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    onSubmit({
+    // Build the payload.
+    const payload = {
       ...data,
       deadline: data.deadline
         ? new Date(data.deadline).toISOString() // convert localtime to UTC.
         : null,
-    });
+    };
+
+    // Validate the payload's data.
+    const result = createTaskSchema.safeParse(payload);
+
+    // If invalid data, set the errors and return.
+    if (!result.success) {
+      const fieldErrors = z.flattenError(result.error).fieldErrors;
+
+      setErrors({
+        title: fieldErrors.title?.[0],
+        sourceItemId: fieldErrors.sourceItemId?.[0],
+        deadline: fieldErrors.deadline?.[0],
+      });
+
+      return;
+    }
+
+    // Else, submit the data.
+    onSubmit(result.data);
   };
 
   return (
-    <form id='task-form' onSubmit={handleSubmit} className='space-y-2'>
+    <form id='task-form' noValidate onSubmit={handleSubmit} className='space-y-2'>
       <InputField
         id='title'
         name='title'

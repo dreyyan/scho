@@ -1,24 +1,17 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { validLoginData } from '../fixtures/auth';
 import { generateRandomEmail } from '../helpers/generateRandomEmail';
+import { getLoginForm } from '../helpers/getLoginForm';
 
 const testLoginData = {
   ...validLoginData,
   email: generateRandomEmail('login'),
 };
 
-const getLoginForm = (page: Page) => {
-  return {
-    emailInputField: page.getByLabel('Email'),
-    passwordInputField: page.getByRole('textbox', {
-      name: 'Password',
-      exact: true,
-    }),
-    loginButton: page.getByRole('button', { name: 'Login' }),
-  };
-};
-
 test.describe('Login', () => {
+  // Start logged out: the config loads a saved session for every test by default.
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test.beforeAll(async ({ request }) => {
     const response = await request.post('/api/auth/register', {
       data: {

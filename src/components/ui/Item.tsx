@@ -19,6 +19,7 @@ export default function Item(props: ItemProps) {
           <label className='relative flex size-6 cursor-pointer items-center justify-center'>
             <input
               type='checkbox'
+              aria-label={`Complete ${props.title}`}
               checked={props.isChecked}
               onChange={(e) => props.onCheckedChange(e.target.checked)}
               className='
@@ -75,6 +76,7 @@ export default function Item(props: ItemProps) {
         {props.canEdit && (
           <button
             onClick={props.onEdit}
+            aria-label={`Edit ${props.title}`}
             className='
               p-2
               rounded
@@ -92,6 +94,7 @@ export default function Item(props: ItemProps) {
         {props.canDelete && (
           <button
             onClick={props.onDelete}
+            aria-label={`Delete ${props.title}`}
             className='
               p-2
               rounded
