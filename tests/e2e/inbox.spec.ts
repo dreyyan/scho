@@ -1,0 +1,231 @@
+import { test, expect } from '@playwright/test';
+import { validInboxItemCreationData } from '../fixtures/inbox';
+import { getInboxItemForm } from '../helpers/inbox/getInboxItemForm';
+import { createInboxItem } from '../helpers/inbox/createInboxItem';
+
+const INBOX_URL = '/inbox';
+
+test.describe('Inbox', () => {
+  const errors = [
+    {
+      case: 'empty content',
+      message: 'Content is required.',
+      content: '',
+    },
+    {
+      case: 'whitespace content',
+      message: 'Content is required.',
+      content: ' ',
+    },
+    {
+      case: 'overlong content',
+      message: 'Content must not exceed 2000 characters.',
+      content: 'a'.repeat(2001),
+    },
+  ];
+  test.describe('when logged out', () => {
+    // Start logged out: the config loads a saved session for every test by default.
+    test.use({ storageState: { cookies: [], origins: [] } });
+
+    test('redirects to the login page', async ({ page }) => {
+      await page.goto(INBOX_URL);
+
+      await expect(page).toHaveURL(/\/login\/?$/);
+    });
+  });
+
+  test.describe('when logged in', () => {
+    test.beforeEach(async ({ page }) => {
+      // Navigate to 'Inbox' page.
+      await page.goto(INBOX_URL);
+      await expect(page.getByRole('heading', { name: 'Inbox', exact: true })).toBeVisible();
+    });
+    test.describe("when the 'Add inbox' dialog is open", () => {
+      test.beforeEach(async ({ page }) => {
+        // Click the 'Add inbox' button.
+        const addInboxItemButton = page.getByRole('button', {
+          name: 'Add inbox item',
+          exact: true,
+        });
+        await addInboxItemButton.click();
+
+        const { dialog } = getInboxItemForm(page, 'Add inbox item', 'Add');
+        await expect(dialog).toBeVisible();
+      });
+
+      test('creates an inbox item', async ({ page }) => {
+        const { contentInputField, actionButton } = getInboxItemForm(page, 'Add inbox item', 'Add');
+
+        // Fill in input fields with values.
+        const content = `${validInboxItemCreationData.content} ${crypto.randomUUID()}`;
+        await contentInputField.fill(content);
+
+        // Submit the form.
+        await actionButton.click();
+
+        // Access the confirmation dialog.
+        const confirmationDialog = page.getByRole('dialog', {
+          name: 'Inbox item created',
+          exact: true,
+        });
+        await expect(confirmationDialog).toBeVisible();
+
+        // Close the modal.
+        const confirmationPrimaryButton = confirmationDialog.getByRole('button', {
+          name: 'Got it',
+          exact: true,
+        });
+        await confirmationPrimaryButton.click();
+
+        // Confirm that confirmation modal closed.
+        await expect(confirmationDialog).not.toBeVisible();
+
+        // Verify inbox item exists.
+        const inboxItem = page.getByRole('listitem').filter({ hasText: content });
+        await expect(inboxItem).toBeVisible();
+      });
+      for (const error of errors) {
+        test(`displays an error for ${error.case}`, async ({ page }) => {
+          const { dialog, contentInputField, actionButton } = getInboxItemForm(
+            page,
+            'Add inbox item',
+            'Add',
+          );
+
+          // Fill in input field with value.
+          await contentInputField.fill(error.content);
+
+          // Submit the form.
+          await actionButton.click();
+
+          // Verify whether the error description is visible.
+          const errMsg = dialog.getByText(error.message, { exact: true });
+          await expect(errMsg).toBeVisible();
+
+          // Verify whether dialog is still open.
+          await expect(dialog).toBeVisible();
+
+          // Verify whether no confirmation dialog shows.
+          const confirmationDialog = page.getByRole('dialog', {
+            name: 'Inbox item created',
+            exact: true,
+          });
+          await expect(confirmationDialog).not.toBeVisible();
+        });
+      }
+    });
+    test.describe("when the 'Edit inbox item' dialog is open", () => {
+      test.beforeEach(async ({ page }) => {
+        // Create an inbox item before testing inbox item edit.
+        const content = `${validInboxItemCreationData.content} ${crypto.randomUUID()}`;
+        await createInboxItem(page.request, content);
+
+        // Reload the page to make the new inbox item appear.
+        await page.reload();
+
+        // Click the 'Edit inbox item' button.
+        const editInboxItemButton = page.getByRole('button', { name: `Edit ${content}` });
+        await editInboxItemButton.click();
+
+        const { dialog } = getInboxItemForm(page, 'Edit inbox item', 'Edit');
+        await expect(dialog).toBeVisible();
+      });
+
+      test('edits an inbox item', async ({ page }) => {
+        const { contentInputField, actionButton } = getInboxItemForm(
+          page,
+          'Edit inbox item',
+          'Edit',
+        );
+
+        // Fill input fields with valid values.
+        const content = `Edited inbox item content ${crypto.randomUUID()}`;
+        await contentInputField.fill(content);
+
+        // Save edit changes.
+        await actionButton.click();
+
+        // Access the confirmation dialog.
+        const confirmationDialog = page.getByRole('dialog', {
+          name: 'Inbox item updated',
+          exact: true,
+        });
+        await expect(confirmationDialog).toBeVisible();
+
+        // Close the modal.
+        const confirmationPrimaryButton = confirmationDialog.getByRole('button', {
+          name: 'Got it',
+          exact: true,
+        });
+        await confirmationPrimaryButton.click();
+
+        // Confirm that confirmation modal closed.
+        await expect(confirmationDialog).not.toBeVisible();
+
+        // Verify inbox item was edited.
+        const inboxItem = page.getByRole('listitem').filter({ hasText: content });
+        await expect(inboxItem).toBeVisible();
+      });
+      for (const error of errors) {
+        test(`displays an error for ${error.case}`, async ({ page }) => {
+          const { dialog, contentInputField, actionButton } = getInboxItemForm(
+            page,
+            'Edit inbox item',
+            'Edit',
+          );
+
+          // Fill in input field with value.
+          await contentInputField.fill(error.content);
+
+          // Submit the form.
+          await actionButton.click();
+
+          // Verify whether the error description is visible.
+          const errMsg = dialog.getByText(error.message, { exact: true });
+          await expect(errMsg).toBeVisible();
+
+          // Verify whether dialog is still open.
+          await expect(dialog).toBeVisible();
+
+          // Verify whether no confirmation dialog shows.
+          const confirmationDialog = page.getByRole('dialog', {
+            name: 'Inbox item updated',
+            exact: true,
+          });
+          await expect(confirmationDialog).not.toBeVisible();
+        });
+      }
+    });
+    test.describe("when the 'Delete inbox item' dialog is open", () => {
+      let content: string;
+      test.beforeEach(async ({ page }) => {
+        content = `${validInboxItemCreationData.content} ${crypto.randomUUID()}`; // Create an inbox item before testing inbox item deletion.
+        await createInboxItem(page.request, content);
+
+        // Reload the page to make the new inbox item appear.
+        await page.reload();
+
+        // Click the 'Delete inbox item' button.
+        const deleteInboxItemButton = page.getByRole('button', { name: `Delete ${content}` });
+        await deleteInboxItemButton.click();
+
+        const { dialog } = getInboxItemForm(page, 'Delete inbox item', 'Delete');
+        await expect(dialog).toBeVisible();
+      });
+      test('deletes an inbox item', async ({ page }) => {
+        const { actionButton } = getInboxItemForm(page, 'Delete inbox item', 'Delete');
+
+        // Verify that inbox item exists before deleting.
+        let inboxItem = page.getByRole('listitem').filter({ hasText: content });
+        await expect(inboxItem).toBeVisible();
+
+        // Delete the inbox item.
+        await actionButton.click();
+
+        // Verify inbox item was deleted.
+        inboxItem = page.getByRole('listitem').filter({ hasText: content });
+        await expect(inboxItem).not.toBeVisible();
+      });
+    });
+  });
+});
