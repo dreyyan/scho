@@ -59,6 +59,22 @@ export function getVisibleInboxItems(
 }
 
 /**
+ * Return the type of an inbox item.
+ *
+ * @param content - The inbox item's content.
+ * @returns The inbox item's type.
+ */
+export function getInboxItemType(content: string): 'TEXT' | 'LINK' {
+  try {
+    const url = new URL(content);
+    if (['http:', 'https:'].includes(url.protocol)) return 'LINK';
+    return 'TEXT';
+  } catch {
+    return 'TEXT';
+  }
+}
+
+/**
  * Return `n` inbox items on a specific page number.
  *
  * @param inboxItems - The list of inbox items.
