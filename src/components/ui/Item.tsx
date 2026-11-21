@@ -51,7 +51,7 @@ export default function Item(props: ItemProps) {
         )}
         {props.category === 'Link' ? (
           <Link size={20} className='text-gray-600' />
-        ) : props.category === 'Item' ? (
+        ) : props.category === 'Note' ? (
           <File size={20} className='text-gray-600' />
         ) : (
           ''
@@ -64,7 +64,7 @@ export default function Item(props: ItemProps) {
           <span className='text-xs'>
             {props.category}&nbsp;·&nbsp;
             <span className='text-gray-500'>
-              {props.category === 'Link' || props.category === 'Item'
+              {props.category === 'Link' || props.category === 'Note'
                 ? props.createdAt
                 : formatDeadline(props.deadline)}
             </span>

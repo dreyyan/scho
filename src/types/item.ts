@@ -1,7 +1,7 @@
 /**
  * Represents the available item categories.
  */
-export type ItemCategory = 'Task' | 'Link' | 'Item';
+export type ItemCategory = 'Task' | 'Link' | 'Note';
 
 /**
  * Represents the shared fields for any Item type.
@@ -31,6 +31,6 @@ export type ItemProps =
       createdAt: string;
     })
   | (BaseItemProps & {
-      category: 'Item';
+      category: 'Note';
       createdAt: string;
     });
