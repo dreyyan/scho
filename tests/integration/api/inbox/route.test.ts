@@ -324,6 +324,26 @@ describe(`PATCH ${INBOX_API_URL}/:id`, () => {
     expect(result.message).toBe('Inbox item updated successfully.');
     expect(result.data.inboxItem).toHaveProperty('createdAt');
   });
+
+  it('detects a link when content changes to a URL', async () => {
+    const request = new Request(`${INBOX_URL}/${testInboxItemId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ content: 'https://example.com' }),
+    });
+
+    const response = await PATCH(request, {
+      params: Promise.resolve({ id: testInboxItemId }),
+    });
+    const result = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(result.message).toBe('Inbox item updated successfully.');
+    expect(result.data.inboxItem.type).toBe('LINK');
+    expect(result.data.inboxItem).toHaveProperty('createdAt');
+  });
 });
 
 describe(`DELETE ${INBOX_API_URL}/:id`, () => {
