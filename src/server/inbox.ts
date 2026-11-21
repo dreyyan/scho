@@ -4,9 +4,10 @@ import { prisma } from '@/lib/prisma';
 import { INBOX_ITEM_SELECT } from '@/lib/selects/inbox';
 import { InboxItemFormData, UpdateInboxItemFormData } from '@/types/inbox';
 import { Prisma } from '@/generated/prisma/client';
+import { getInboxItemType } from '@/lib/utils/inbox';
 
 /**
- * Retrieve the user's inbox item from the databsae.
+ * Retrieve the user's inbox item from the database.
  *
  * @param userId - The user's ID.
  * @returns The user's inbox items.
@@ -35,14 +36,11 @@ export async function createInboxItem(userId: string, data: InboxItemFormData) {
       data: {
         userId,
         content,
+        type: getInboxItemType(content),
       },
       select: INBOX_ITEM_SELECT,
     });
   } catch (err: unknown) {
-    if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-      return null;
-    }
-
     throw err;
   }
 }
@@ -70,6 +68,7 @@ export async function updateInboxItem(
       },
       data: {
         content,
+        type: getInboxItemType(content),
       },
       select: INBOX_ITEM_SELECT,
     });
