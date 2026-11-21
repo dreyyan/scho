@@ -19,6 +19,7 @@ import { INBOX_API_URL } from '@/lib/constants/inbox';
 
 const PORT = process.env.PORT ?? 3001;
 const INBOX_URL = `http://localhost:${PORT}${INBOX_API_URL}`;
+const EXAMPLE_URL = 'https://example.com';
 const testLoginData = {
   ...validLoginData,
   email: generateRandomEmail('login'),
@@ -236,7 +237,7 @@ describe(`POST ${INBOX_API_URL}`, () => {
   });
 
   it.each([
-    ['https://example.com', 'an http(s) URL', 'LINK'],
+    [EXAMPLE_URL, 'an http(s) URL', 'LINK'],
     ['not-a-link', 'plain text', 'TEXT'],
     ['todo: some task', 'text with a colon', 'TEXT'],
   ])('detects %s as %s', async (content, _, expectedType) => {
@@ -331,7 +332,7 @@ describe(`PATCH ${INBOX_API_URL}/:id`, () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ content: 'https://example.com' }),
+      body: JSON.stringify({ content: EXAMPLE_URL }),
     });
 
     const response = await PATCH(request, {
