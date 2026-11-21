@@ -8,7 +8,7 @@ import type {
   UpdateTaskResponse,
 } from '@/types/task';
 
-const TASK_API_URL = `/api/tasks`;
+import { TASKS_API_URL } from '../constants/task';
 
 /**
  ** Sends a GET request to retrieve the user's tasks.
@@ -17,7 +17,7 @@ const TASK_API_URL = `/api/tasks`;
  * @throws Error if the request fails.
  */
 export async function getTasks(): Promise<TaskResponse[]> {
-  const res = await fetch(TASK_API_URL);
+  const res = await fetch(TASKS_API_URL);
 
   if (!res.ok) {
     await throwApiError(res, 'Failed to retrieve tasks.');
@@ -35,7 +35,7 @@ export async function getTasks(): Promise<TaskResponse[]> {
  * @throws Error if the request fails.
  */
 export async function createTask(data: TaskFormData): Promise<TaskResponse> {
-  const response = await fetch(TASK_API_URL, {
+  const response = await fetch(TASKS_API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export async function createTask(data: TaskFormData): Promise<TaskResponse> {
  * @throws Error if the request fails.
  */
 export async function editTask(id: string, data: UpdateTaskFormData) {
-  const response = await fetch(`${TASK_API_URL}/${id}`, {
+  const response = await fetch(`${TASKS_API_URL}/${id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -83,7 +83,7 @@ export async function editTask(id: string, data: UpdateTaskFormData) {
  * @throws Error if the request fails.
  */
 export async function deleteTask(id: string) {
-  const response = await fetch(`${TASK_API_URL}/${id}`, {
+  const response = await fetch(`${TASKS_API_URL}/${id}`, {
     method: 'DELETE',
   });
 

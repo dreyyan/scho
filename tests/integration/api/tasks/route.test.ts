@@ -15,9 +15,10 @@ import { malformedJSON } from '../../../fixtures/common';
 import { GET, POST } from '@/app/api/tasks/route';
 import { PATCH, DELETE } from '@/app/api/tasks/[id]/route';
 import { generateRandomEmail } from '../../../helpers/generateRandomEmail';
+import { TASKS_API_URL } from '@/lib/constants/task';
 
 const PORT = process.env.PORT ?? 3001;
-const TASK_URL = `http://localhost:${PORT}/api/tasks`;
+const TASK_URL = `http://localhost:${PORT}${TASKS_API_URL}`;
 const testLoginData = {
   ...validLoginData,
   email: generateRandomEmail('login'),
@@ -28,7 +29,7 @@ let testUserId: string;
 vi.mock('@/auth', () => ({ auth: vi.fn() }));
 const mockAuth = vi.mocked(auth as () => Promise<Session | null>);
 
-describe('GET /api/tasks', () => {
+describe(`GET ${TASKS_API_URL}`, () => {
   let testUserId: string;
   let otherUserId: string;
   let testTaskId: string;
@@ -125,7 +126,7 @@ describe('GET /api/tasks', () => {
   });
 });
 
-describe('POST /api/tasks', () => {
+describe(`POST ${TASKS_API_URL}`, () => {
   beforeAll(async () => {
     const user = await prisma.user.create({
       data: {
@@ -237,7 +238,7 @@ describe('POST /api/tasks', () => {
   });
 });
 
-describe('PATCH /api/tasks/:id', () => {
+describe(`PATCH ${TASKS_API_URL}/:id`, () => {
   let testUserId: string;
   let testTaskId: string;
 
@@ -327,7 +328,7 @@ describe('PATCH /api/tasks/:id', () => {
   });
 });
 
-describe('DELETE /api/tasks/:id', () => {
+describe(`DELETE ${TASKS_API_URL}/:id`, () => {
   let testUserId: string;
   let testTaskId: string;
 

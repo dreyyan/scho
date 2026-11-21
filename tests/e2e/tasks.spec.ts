@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { validTaskCreationData } from '../fixtures/task';
-import { getTaskForm } from '../helpers/getTaskForm';
-import { createTask } from '../helpers/createTask';
+import { getTaskForm } from '../helpers/task/getTaskForm';
+import { createTask } from '../helpers/task/createTask';
+import { TASKS_API_URL } from '@/lib/constants/task';
 
 test.describe('Tasks', () => {
   const errors = [
@@ -126,7 +127,7 @@ test.describe('Tasks', () => {
 
         // Start waiting for the save request before clicking.
         const responsePromise = page.waitForResponse(
-          (res) => res.url().includes('/api/tasks') && res.request().method() === 'PATCH',
+          (res) => res.url().includes(TASKS_API_URL) && res.request().method() === 'PATCH',
         );
 
         // Mark the checkbox as complete.
