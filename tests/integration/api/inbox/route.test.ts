@@ -234,6 +234,27 @@ describe(`POST ${INBOX_API_URL}`, () => {
     expect(response.status).toBe(400);
     expect(result.error).toBe('Invalid inbox item creation data.');
   });
+
+  it.each([
+    ['https://example.com', 'an http(s) URL', 'LINK'],
+    ['not-a-link', 'plain text', 'TEXT'],
+    ['todo: some task', 'text with a colon', 'TEXT'],
+  ])('detects %s as %s', async (content, _, expectedType) => {
+    const request = new Request(INBOX_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ content }),
+    });
+
+    const response = await POST(request);
+    const result = await response.json();
+
+    expect(result.data.inboxItem.type).toBe(expectedType);
+    expect(response.status).toBe(201);
+    expect(result.message).toBe('Inbox item created successfully.');
+  });
 });
 
 describe(`PATCH ${INBOX_API_URL}/:id`, () => {
