@@ -11,6 +11,7 @@ export interface BaseItemProps {
   title: string;
   canEdit?: boolean;
   canDelete?: boolean;
+  onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
 }

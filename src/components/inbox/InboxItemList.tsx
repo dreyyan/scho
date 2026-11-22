@@ -13,6 +13,7 @@ interface InboxItemListProps {
   paginatedInboxItems: InboxItemResponse[];
   visibleInboxItems: InboxItemResponse[];
   onAdd: () => void;
+  onView: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }
@@ -25,6 +26,7 @@ export default function InboxItemList({
   paginatedInboxItems,
   visibleInboxItems,
   onAdd,
+  onView,
   onEdit,
   onDelete,
 }: InboxItemListProps) {
@@ -91,6 +93,7 @@ export default function InboxItemList({
               title={inboxItem.content}
               canEdit={true}
               canDelete={true}
+              onView={() => onView(inboxItem.id)}
               onEdit={() => onEdit(inboxItem.id)}
               onDelete={() => onDelete(inboxItem.id)}
             />
@@ -102,6 +105,7 @@ export default function InboxItemList({
               title={inboxItem.content}
               canEdit={true}
               canDelete={true}
+              onView={() => onView(inboxItem.id)}
               onEdit={() => onEdit(inboxItem.id)}
               onDelete={() => onDelete(inboxItem.id)}
             />

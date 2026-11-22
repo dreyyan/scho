@@ -153,6 +153,39 @@ export default function Inbox() {
     });
   };
 
+  const openViewInboxItemModal = (id: string) => {
+    const inboxItem = inboxItems.find((inboxItem) => inboxItem.id === id);
+
+    if (!inboxItem) return;
+
+    openModal({
+      variant: 'confirm',
+      title: 'View inbox item',
+      children: (
+        <div className='flex flex-col gap-3'>
+          <p className='whitespace-pre-wrap wrap-break-word'>{inboxItem.content}</p>
+
+          {inboxItem.type === 'LINK' && (
+            <a
+              href={inboxItem.content}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-sm text-blue-600 hover:underline'
+            >
+              Open link
+            </a>
+          )}
+        </div>
+      ),
+
+      primaryAction: {
+        label: 'Close',
+        type: 'button',
+        onClick: closeModal,
+      },
+    });
+  };
+
   const openEditInboxItemForm = (id: string) => {
     const inboxItem = inboxItems.find((inboxItem) => inboxItem.id === id);
 
@@ -245,6 +278,7 @@ export default function Inbox() {
           paginatedInboxItems={paginatedInboxItems}
           visibleInboxItems={visibleInboxItems}
           onAdd={openAddInboxItemForm}
+          onView={openViewInboxItemModal}
           onEdit={openEditInboxItemForm}
           onDelete={openDeleteInboxItemModal}
         />

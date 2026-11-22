@@ -58,9 +58,17 @@ export default function Item(props: ItemProps) {
         )}
 
         <span className='flex flex-col min-w-0'>
-          <span className='text-sm font-semibold text-gray-800 hover:underline hover:cursor-pointer truncate'>
-            {props.title}
-          </span>
+          {props.onView ? (
+            <button
+              type='button'
+              onClick={props.onView}
+              className='text-left text-sm font-semibold text-gray-800 hover:underline hover:cursor-pointer truncate'
+            >
+              {props.title}
+            </button>
+          ) : (
+            <span className='text-sm font-semibold text-gray-800 truncate'>{props.title}</span>
+          )}
           <span className='text-xs'>
             {props.category}&nbsp;·&nbsp;
             <span className='text-gray-500'>
