@@ -4,7 +4,12 @@ import { NextResponse } from 'next/server';
 import { createTaskSchema } from '@/validations/task';
 import { logger } from '@/lib/logger';
 import { requireUserId } from '@/lib/auth/require-user-id';
-import { createTask, DuplicateSourceItemError, listTasks } from '@/server/task';
+import {
+  createTask,
+  DuplicateSourceItemError,
+  listTasks,
+  SourceItemNotFoundError,
+} from '@/server/task';
 
 /**
  ** GET — Retrieve the user's tasks.
@@ -86,6 +91,10 @@ export async function POST(request: Request) {
         { error: 'Task with the same inbox item already exists.' },
         { status: 409 },
       );
+    }
+
+    if (err instanceof SourceItemNotFoundError) {
+      return NextResponse.json({ error: 'Inbox item not found.' }, { status: 404 });
     }
 
     // Log unexpected task creation errors.
