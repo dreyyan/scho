@@ -6,22 +6,32 @@ import { Plus } from 'lucide-react';
 import FilterGroup from '@/components/ui/FilterGroup';
 import Pagination from '@/components/ui/Pagination';
 import Toolbar from '@/components/ui/Toolbar';
+import InboxItemList from '@/components/inbox/InboxItemList';
 import InboxItemForm from '@/components/form/InboxItemForm';
+import TaskForm from '@/components/form/TaskForm';
 
 import useModal from '@/hooks/useModal';
 import useInboxItems from '@/hooks/useInboxItems';
 import useInboxView from '@/hooks/useInboxView';
+import useErrorModal from '@/hooks/useErrorModal';
 
 import { InboxItemFormData, UpdateInboxItemFormData } from '@/types/inbox';
+import type { TaskFormData } from '@/types/task';
 import { FILTER_OPTIONS, SORT_OPTIONS, TYPE_OPTIONS } from '@/lib/constants/inbox';
-import InboxItemList from '@/components/inbox/InboxItemList';
-import useErrorModal from '@/hooks/useErrorModal';
 
 export default function Inbox() {
   const { openModal, closeModal, updateModal } = useModal();
   const showErrorModal = useErrorModal();
-  const { inboxItems, isLoading, error, retry, addInboxItem, editInboxItem, deleteInboxItem } =
-    useInboxItems();
+  const {
+    inboxItems,
+    isLoading,
+    error,
+    retry,
+    addInboxItem,
+    editInboxItem,
+    convertInboxItem,
+    deleteInboxItem,
+  } = useInboxItems();
   const {
     search,
     type,
@@ -105,6 +115,41 @@ export default function Inbox() {
     } catch (err: unknown) {
       console.error('Failed to edit inbox item: ', err);
       showErrorModal('inbox item', err, () => handleEditInboxItem(id, data));
+    } finally {
+      isSubmittingRef.current = false;
+    }
+  };
+
+  const handleConvertInboxItem = async (id: string, data: TaskFormData) => {
+    if (isSubmittingRef.current) return;
+
+    isSubmittingRef.current = true;
+
+    updateModal({
+      primaryAction: {
+        label: 'Converting...',
+        type: 'submit',
+        form: 'task-form',
+        isLoading: true,
+      },
+    });
+
+    try {
+      await convertInboxItem(id, data);
+
+      openModal({
+        variant: 'success',
+        title: 'Inbox item converted',
+        description: 'Inbox item converted successfully!',
+        primaryAction: {
+          label: 'Got it',
+          type: 'button',
+          onClick: () => closeModal(),
+        },
+      });
+    } catch (err: unknown) {
+      console.error('Failed to convert inbox item: ', err);
+      showErrorModal('inbox item', err, () => handleConvertInboxItem(id, data));
     } finally {
       isSubmittingRef.current = false;
     }
@@ -213,6 +258,33 @@ export default function Inbox() {
     });
   };
 
+  const openConvertInboxItemForm = (id: string) => {
+    const inboxItem = inboxItems.find((inboxItem) => inboxItem.id === id);
+
+    if (!inboxItem) return;
+
+    openModal({
+      variant: 'confirm',
+      title: 'Convert inbox item',
+      description: 'Create a task from this inbox item.',
+      children: (
+        <TaskForm
+          initialValues={{ title: inboxItem.content }}
+          onSubmit={(data) => handleConvertInboxItem(id, data)}
+        />
+      ),
+      primaryAction: {
+        label: 'Convert',
+        type: 'submit',
+        form: 'task-form',
+      },
+      secondaryAction: {
+        label: 'Cancel',
+        onClick: closeModal,
+      },
+    });
+  };
+
   const openDeleteInboxItemModal = (id: string) => {
     openModal({
       variant: 'error',
@@ -279,6 +351,7 @@ export default function Inbox() {
           visibleInboxItems={visibleInboxItems}
           onAdd={openAddInboxItemForm}
           onView={openViewInboxItemModal}
+          onConvert={openConvertInboxItemForm}
           onEdit={openEditInboxItemForm}
           onDelete={openDeleteInboxItemModal}
         />
