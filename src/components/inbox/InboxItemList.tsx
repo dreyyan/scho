@@ -14,6 +14,7 @@ interface InboxItemListProps {
   visibleInboxItems: InboxItemResponse[];
   onAdd: () => void;
   onView: (id: string) => void;
+  onConvert: (id: string) => void;
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
 }
@@ -27,6 +28,7 @@ export default function InboxItemList({
   visibleInboxItems,
   onAdd,
   onView,
+  onConvert,
   onEdit,
   onDelete,
 }: InboxItemListProps) {
@@ -94,6 +96,7 @@ export default function InboxItemList({
               canEdit={true}
               canDelete={true}
               onView={() => onView(inboxItem.id)}
+              onConvert={inboxItem.task === null ? () => onConvert(inboxItem.id) : undefined}
               onEdit={() => onEdit(inboxItem.id)}
               onDelete={() => onDelete(inboxItem.id)}
             />
@@ -106,6 +109,7 @@ export default function InboxItemList({
               canEdit={true}
               canDelete={true}
               onView={() => onView(inboxItem.id)}
+              onConvert={inboxItem.task === null ? () => onConvert(inboxItem.id) : undefined}
               onEdit={() => onEdit(inboxItem.id)}
               onDelete={() => onDelete(inboxItem.id)}
             />
