@@ -1,8 +1,10 @@
 'use client';
 
+import * as taskApi from '@/lib/api-client/task';
 import * as inboxItemApi from '@/lib/api-client/inbox';
 import { getErrorMessage } from '@/lib/utils/error';
 import type { InboxItemFormData, InboxItemResponse, UpdateInboxItemFormData } from '@/types/inbox';
+import type { TaskFormData } from '@/types/task';
 import { useEffect, useState } from 'react';
 
 /**
@@ -75,6 +77,22 @@ export default function useInboxItems() {
   };
 
   /**
+   * Converts an inbox item to a task on the server, then updates it in local state.
+   *
+   * @param id - The inbox item's id.
+   * @param data - The task data from the form.
+   */
+  const convertInboxItem = async (id: string, data: TaskFormData) => {
+    const newTask = await taskApi.createTask({ ...data, sourceItemId: id });
+
+    setInboxItems((prevInboxItems) =>
+      prevInboxItems.map((inboxItem) =>
+        inboxItem.id === id ? { ...inboxItem, task: { id: newTask.id } } : inboxItem,
+      ),
+    );
+  };
+
+  /**
    * Deletes an inbox item on the server, then removes it from the local state.
    *
    * @param id - The inbox item's ID.
@@ -93,6 +111,7 @@ export default function useInboxItems() {
     retry,
     addInboxItem,
     editInboxItem,
+    convertInboxItem,
     deleteInboxItem,
   };
 }
