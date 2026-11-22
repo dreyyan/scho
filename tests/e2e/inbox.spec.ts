@@ -114,6 +114,67 @@ test.describe('Inbox', () => {
         });
       }
     });
+    test.describe("when the 'View inbox item' dialog is open", () => {
+      let content: string;
+      test.beforeEach(async ({ page }) => {
+        // Create an inbox item before testing inbox item viewing.
+        content = `${validInboxItemCreationData.content} ${crypto.randomUUID()}`;
+        await createInboxItem(page.request, content);
+
+        // Reload the page to make the new inbox item appear.
+        await page.reload();
+
+        // Click the 'View' button for this inbox item.
+        const viewInboxItemButton = page.getByRole('button', { name: `View ${content}` });
+        await viewInboxItemButton.click();
+
+        const dialog = page.getByRole('dialog', { name: 'View inbox item', exact: true });
+        await expect(dialog).toBeVisible();
+      });
+      test("the inbox item's content is displayed", async ({ page }) => {
+        const dialog = page.getByRole('dialog', { name: 'View inbox item', exact: true });
+        await expect(dialog).toBeVisible();
+
+        const contentText = dialog.getByText(content, { exact: true });
+        await expect(contentText).toBeVisible();
+      });
+      test('the dialog can be closed', async ({ page }) => {
+        const dialog = page.getByRole('dialog', { name: 'View inbox item', exact: true });
+        await expect(dialog).toBeVisible();
+
+        // Close the inbox item dialog.
+        const closeButton = dialog.getByRole('button', { name: 'Close', exact: true });
+        await closeButton.click();
+
+        await expect(dialog).not.toBeVisible();
+      });
+    });
+    test.describe('when viewing a link inbox item', () => {
+      let url: string;
+      test.beforeEach(async ({ page }) => {
+        url = `https://example.com/${crypto.randomUUID()}`;
+
+        // Create an inbox item before testing inbox item link viewing.
+        await createInboxItem(page.request, url);
+
+        // Reload the page to make the new inbox item appear.
+        await page.reload();
+
+        // Click the 'View' button for this inbox item.
+        const viewInboxItemButton = page.getByRole('button', { name: `View ${url}` });
+        await viewInboxItemButton.click();
+
+        const dialog = page.getByRole('dialog', { name: 'View inbox item', exact: true });
+        await expect(dialog).toBeVisible();
+      });
+      test("an 'Open link' link is displayed", async ({ page }) => {
+        const dialog = page.getByRole('dialog', { name: 'View inbox item', exact: true });
+        await expect(dialog).toBeVisible();
+
+        const openLinkURL = dialog.getByRole('link', { name: 'Open link', exact: true });
+        await expect(openLinkURL).toHaveAttribute('href', url);
+      });
+    });
     test.describe("when the 'Edit inbox item' dialog is open", () => {
       test.beforeEach(async ({ page }) => {
         // Create an inbox item before testing inbox item edit.
