@@ -62,6 +62,7 @@ export default function Item(props: ItemProps) {
             <button
               type='button'
               onClick={props.onView}
+              aria-label={`View ${props.title}`}
               className='text-left text-sm font-semibold text-gray-800 hover:underline hover:cursor-pointer truncate'
             >
               {props.title}
