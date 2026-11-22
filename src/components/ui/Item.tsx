@@ -1,4 +1,4 @@
-import { File, Link, X, Check, SquarePen } from 'lucide-react';
+import { File, Link, X, Check, SquarePen, ArrowRightLeft } from 'lucide-react';
 import { ItemProps } from '@/types/item';
 import { formatDeadline } from '@/lib/utils/date';
 
@@ -97,6 +97,25 @@ export default function Item(props: ItemProps) {
             '
           >
             <SquarePen size={16} className='' />
+          </button>
+        )}
+
+        {props.category !== 'Task' && props.onConvert && (
+          <button
+            type='button'
+            onClick={props.onConvert}
+            aria-label={`Convert ${props.title} to task`}
+            className='
+              p-2
+              rounded
+              text-gray-700
+              transition-colors duration-300
+              hover:text-gray-900
+              hover:bg-gray-200
+              cursor-pointer
+            '
+          >
+            <ArrowRightLeft size={16} className='' />
           </button>
         )}
 

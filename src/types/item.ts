@@ -30,8 +30,10 @@ export type ItemProps =
       category: 'Link';
       url: string;
       createdAt: string;
+      onConvert?: () => void;
     })
   | (BaseItemProps & {
       category: 'Note';
       createdAt: string;
+      onConvert?: () => void;
     });
