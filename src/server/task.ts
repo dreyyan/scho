@@ -12,6 +12,13 @@ export class DuplicateSourceItemError extends Error {
   }
 }
 
+export class SourceItemNotFoundError extends Error {
+  constructor() {
+    super('The source inbox item cannot be found for this task.');
+    this.name = 'SourceItemNotFoundError';
+  }
+}
+
 /**
  * Retrieve the user's tasks from the databsae.
  *
@@ -34,9 +41,19 @@ export async function listTasks(userId: string) {
  * @param data - The form data for the new task.
  * @returns The new task.
  * @throws {DuplicateSourceItemError} If the inbox item is already linked to a task.
+ * @throws {SourceItemNotFoundError} If the inbox item doesn't exist or isn't owned by the user.
  */
 export async function createTask(userId: string, data: TaskFormData) {
   const { title, sourceItemId, deadline } = data;
+
+  // Check inbox item ownership.
+  if (sourceItemId) {
+    const inboxItem = await prisma.inboxItem.findFirst({ where: { id: sourceItemId, userId } });
+
+    if (!inboxItem) {
+      throw new SourceItemNotFoundError();
+    }
+  }
 
   try {
     return await prisma.task.create({

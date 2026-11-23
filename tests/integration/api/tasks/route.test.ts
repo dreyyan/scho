@@ -15,9 +15,10 @@ import { malformedJSON } from '../../../fixtures/common';
 import { GET, POST } from '@/app/api/tasks/route';
 import { PATCH, DELETE } from '@/app/api/tasks/[id]/route';
 import { generateRandomEmail } from '../../../helpers/generateRandomEmail';
+import { TASKS_API_URL } from '@/lib/constants/task';
 
 const PORT = process.env.PORT ?? 3001;
-const TASK_URL = `http://localhost:${PORT}/api/tasks`;
+const TASK_URL = `http://localhost:${PORT}${TASKS_API_URL}`;
 const testLoginData = {
   ...validLoginData,
   email: generateRandomEmail('login'),
@@ -28,7 +29,7 @@ let testUserId: string;
 vi.mock('@/auth', () => ({ auth: vi.fn() }));
 const mockAuth = vi.mocked(auth as () => Promise<Session | null>);
 
-describe('GET /api/tasks', () => {
+describe(`GET ${TASKS_API_URL}`, () => {
   let testUserId: string;
   let otherUserId: string;
   let testTaskId: string;
@@ -125,7 +126,7 @@ describe('GET /api/tasks', () => {
   });
 });
 
-describe('POST /api/tasks', () => {
+describe(`POST ${TASKS_API_URL}`, () => {
   beforeAll(async () => {
     const user = await prisma.user.create({
       data: {
@@ -237,7 +238,153 @@ describe('POST /api/tasks', () => {
   });
 });
 
-describe('PATCH /api/tasks/:id', () => {
+describe(`POST ${TASKS_API_URL} with sourceItemId`, () => {
+  const firstUserEmail = generateRandomEmail('convert');
+  const secondUserEmail = generateRandomEmail('other');
+  let testUserId: string;
+  let otherUserId: string;
+  let testInboxItemId: string;
+  let otherInboxItemId: string;
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+
+    mockAuth.mockResolvedValue({
+      user: {
+        id: testUserId,
+      },
+      expires: '2026-12-31T00:00:00.000Z',
+    });
+  });
+  beforeAll(async () => {
+    const firstUser = await prisma.user.create({
+      data: {
+        email: firstUserEmail,
+        passwordHash: await argon2.hash(testLoginData.password, {
+          type: argon2.argon2id,
+        }),
+      },
+    });
+
+    testUserId = firstUser.id;
+
+    const firstUserInboxItem = await prisma.inboxItem.create({
+      data: {
+        userId: testUserId,
+        content: 'User inbox item #1',
+      },
+    });
+
+    testInboxItemId = firstUserInboxItem.id;
+
+    const secondUser = await prisma.user.create({
+      data: {
+        email: secondUserEmail,
+        passwordHash: await argon2.hash(testLoginData.password, {
+          type: argon2.argon2id,
+        }),
+      },
+    });
+
+    otherUserId = secondUser.id;
+
+    const secondUserInboxItem = await prisma.inboxItem.create({
+      data: {
+        userId: otherUserId,
+        content: 'User inbox item #2',
+      },
+    });
+
+    otherInboxItemId = secondUserInboxItem.id;
+  });
+
+  afterAll(async () => {
+    await prisma.task.deleteMany({
+      where: { userId: { in: [testUserId, otherUserId] } },
+    });
+
+    await prisma.inboxItem.deleteMany({
+      where: { userId: { in: [testUserId, otherUserId] } },
+    });
+
+    await prisma.user.deleteMany({
+      where: { id: { in: [testUserId, otherUserId] } },
+    });
+  });
+
+  it('converts an inbox item', async () => {
+    const request = new Request(TASK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...validTaskCreationData, sourceItemId: testInboxItemId }),
+    });
+
+    const response = await POST(request);
+    const result = await response.json();
+
+    expect(response.status).toBe(201);
+    expect(result.message).toBe('Task created successfully.');
+
+    const inboxItem = await prisma.inboxItem.findUnique({
+      where: { id: testInboxItemId },
+      include: { task: true },
+    });
+
+    expect(inboxItem?.task?.id).toBe(result.data.task.id);
+  });
+
+  it('rejects converting the same inbox item twice', async () => {
+    const request = new Request(TASK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...validTaskCreationData, sourceItemId: testInboxItemId }),
+    });
+
+    const response = await POST(request);
+    const result = await response.json();
+
+    expect(response.status).toBe(409);
+    expect(result.error).toBe('Task with the same inbox item already exists.');
+  });
+
+  it("rejects another user's inbox item", async () => {
+    const request = new Request(TASK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...validTaskCreationData, sourceItemId: otherInboxItemId }),
+    });
+
+    const response = await POST(request);
+    const result = await response.json();
+
+    expect(response.status).toBe(404);
+    expect(result.error).toBe('Inbox item not found.');
+  });
+
+  it('rejects a non-existing inbox item', async () => {
+    const request = new Request(TASK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ ...validTaskCreationData, sourceItemId: crypto.randomUUID() }),
+    });
+
+    const response = await POST(request);
+    const result = await response.json();
+
+    expect(response.status).toBe(404);
+    expect(result.error).toBe('Inbox item not found.');
+  });
+});
+
+describe(`PATCH ${TASKS_API_URL}/:id`, () => {
   let testUserId: string;
   let testTaskId: string;
 
@@ -327,7 +474,7 @@ describe('PATCH /api/tasks/:id', () => {
   });
 });
 
-describe('DELETE /api/tasks/:id', () => {
+describe(`DELETE ${TASKS_API_URL}/:id`, () => {
   let testUserId: string;
   let testTaskId: string;
 

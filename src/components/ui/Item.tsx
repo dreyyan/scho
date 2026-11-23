@@ -1,4 +1,4 @@
-import { File, Link, X, Check, SquarePen } from 'lucide-react';
+import { File, Link, X, Check, SquarePen, ArrowRightLeft } from 'lucide-react';
 import { ItemProps } from '@/types/item';
 import { formatDeadline } from '@/lib/utils/date';
 
@@ -51,20 +51,29 @@ export default function Item(props: ItemProps) {
         )}
         {props.category === 'Link' ? (
           <Link size={20} className='text-gray-600' />
-        ) : props.category === 'Item' ? (
+        ) : props.category === 'Note' ? (
           <File size={20} className='text-gray-600' />
         ) : (
           ''
         )}
 
         <span className='flex flex-col min-w-0'>
-          <span className='text-sm font-semibold text-gray-800 hover:underline hover:cursor-pointer truncate'>
-            {props.title}
-          </span>
+          {props.onView ? (
+            <button
+              type='button'
+              onClick={props.onView}
+              aria-label={`View ${props.title}`}
+              className='text-left text-sm font-semibold text-gray-800 hover:underline hover:cursor-pointer truncate'
+            >
+              {props.title}
+            </button>
+          ) : (
+            <span className='text-sm font-semibold text-gray-800 truncate'>{props.title}</span>
+          )}
           <span className='text-xs'>
             {props.category}&nbsp;·&nbsp;
             <span className='text-gray-500'>
-              {props.category === 'Link' || props.category === 'Item'
+              {props.category === 'Link' || props.category === 'Note'
                 ? props.createdAt
                 : formatDeadline(props.deadline)}
             </span>
@@ -88,6 +97,25 @@ export default function Item(props: ItemProps) {
             '
           >
             <SquarePen size={16} className='' />
+          </button>
+        )}
+
+        {props.category !== 'Task' && props.onConvert && (
+          <button
+            type='button'
+            onClick={props.onConvert}
+            aria-label={`Convert ${props.title} to task`}
+            className='
+              p-2
+              rounded
+              text-gray-700
+              transition-colors duration-300
+              hover:text-gray-900
+              hover:bg-gray-200
+              cursor-pointer
+            '
+          >
+            <ArrowRightLeft size={16} className='' />
           </button>
         )}
 

@@ -22,7 +22,7 @@ export interface ModalAction {
 export interface ModalOptions {
   variant: ModalVariant;
   title: string;
-  description: string;
+  description?: string;
   children?: ReactNode;
   primaryAction: ModalAction;
   secondaryAction?: ModalAction;

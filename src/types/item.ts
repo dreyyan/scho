@@ -1,7 +1,7 @@
 /**
  * Represents the available item categories.
  */
-export type ItemCategory = 'Task' | 'Link' | 'Item';
+export type ItemCategory = 'Task' | 'Link' | 'Note';
 
 /**
  * Represents the shared fields for any Item type.
@@ -11,6 +11,7 @@ export interface BaseItemProps {
   title: string;
   canEdit?: boolean;
   canDelete?: boolean;
+  onView?: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
 }
@@ -29,8 +30,10 @@ export type ItemProps =
       category: 'Link';
       url: string;
       createdAt: string;
+      onConvert?: () => void;
     })
   | (BaseItemProps & {
-      category: 'Item';
+      category: 'Note';
       createdAt: string;
+      onConvert?: () => void;
     });

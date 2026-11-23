@@ -35,7 +35,7 @@ export default function Modal({
       ref={dialogRef}
       onClose={onClose}
       aria-labelledby={titleId}
-      aria-describedby={descriptionId}
+      aria-describedby={description ? descriptionId : undefined}
       className='
       m-auto w-sm max-w-md
       rounded-lg
@@ -77,9 +77,11 @@ export default function Modal({
         </div>
 
         {/* Description */}
-        <p id={descriptionId} className='text-sm text-gray-600'>
-          {description}
-        </p>
+        {description && (
+          <p id={descriptionId} className='text-sm text-gray-600'>
+            {description}
+          </p>
+        )}
 
         {/* Custom content */}
         {children && <div className='py-2'>{children}</div>}
