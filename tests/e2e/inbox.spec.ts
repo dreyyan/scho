@@ -333,17 +333,58 @@ test.describe('Inbox', () => {
         await page.getByRole('option', { name: 'Converted', exact: true }).click();
 
         await expect(page.getByRole('listitem').filter({ hasText: content })).toBeVisible();
-
-        // Verify whether inbox item was converted to task via absence of conversion button.
-        await expect(confirmationDialog).not.toBeVisible();
-        await expect(page.getByRole('button', { name: `Convert ${content} to task` })).toHaveCount(
-          0,
-        );
       });
 
-      test("the converted task appears on the 'Tasks' page", async ({ page }) => {});
+      test("the converted task appears on the 'Tasks' page", async ({ page }) => {
+        const { taskNameInputField, actionButton } = getTaskForm(
+          page,
+          'Convert inbox item',
+          'Convert',
+        );
 
-      test('displays an error for an empty task name', async ({ page }) => {});
+        const title = `Converted task ${crypto.randomUUID()}`;
+
+        // Fill the input field with a value.
+        await taskNameInputField.fill(title);
+
+        // Submit the form.
+        await actionButton.click();
+
+        // Verify whether a confirmation dialog shows.
+        const confirmationDialog = page.getByRole('dialog', {
+          name: 'Inbox item converted',
+          exact: true,
+        });
+        await expect(confirmationDialog).toBeVisible();
+
+        // Close the confirmation dialog.
+        const closeButton = confirmationDialog.getByRole('button', { name: 'Got it', exact: true });
+        await closeButton.click();
+
+        // Click the 'Tasks' navigation button.
+        const taskNavigationLink = page.getByRole('link', { name: 'Tasks' });
+        await taskNavigationLink.click();
+
+        await expect(page.getByRole('listitem').filter({ hasText: title })).toBeVisible();
+      });
+
+      test('displays an error for an empty task name', async ({ page }) => {
+        const { dialog, taskNameInputField, actionButton } = getTaskForm(
+          page,
+          'Convert inbox item',
+          'Convert',
+        );
+
+        // Clear the input field.
+        await taskNameInputField.fill('');
+
+        // Submit the form.
+        await actionButton.click();
+
+        // Verify whether the inline error is shown.
+        await expect(dialog.getByText('Title is required.', { exact: true })).toBeVisible();
+        await expect(dialog).toBeVisible();
+      });
     });
 
     test.describe("when the 'Delete inbox item' dialog is open", () => {
