@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import { validInboxItemCreationData } from '../fixtures/inbox';
 import { getInboxItemForm } from '../helpers/inbox/getInboxItemForm';
 import { createInboxItem } from '../helpers/inbox/createInboxItem';
+import { getTaskForm } from '../helpers/task/getTaskForm';
 
 const INBOX_URL = '/inbox';
 
@@ -257,6 +258,94 @@ test.describe('Inbox', () => {
         });
       }
     });
+
+    test.describe("when the 'Convert inbox item' dialog is open", () => {
+      let content: string;
+      test.beforeEach(async ({ page }) => {
+        // Create an inbox item before testing inbox item conversion.
+        content = `${validInboxItemCreationData.content} ${crypto.randomUUID()}`;
+        await createInboxItem(page.request, content);
+
+        // Reload the page to make the new inbox item appear.
+        await page.reload();
+
+        // Click the 'Convert inbox item' button.
+        const convertInboxItemButton = page.getByRole('button', {
+          name: `Convert ${content} to task`,
+        });
+        await convertInboxItemButton.click();
+
+        const { dialog } = getTaskForm(page, 'Convert inbox item', 'Convert');
+        await expect(dialog).toBeVisible();
+      });
+
+      test("the task name is pre-filled with the inbox item's content", async ({ page }) => {
+        const { taskNameInputField } = getTaskForm(page, 'Convert inbox item', 'Convert');
+
+        await expect(taskNameInputField).toHaveValue(content);
+      });
+
+      test('converts an inbox item to a task', async ({ page }) => {
+        const { actionButton } = getTaskForm(page, 'Convert inbox item', 'Convert');
+
+        // Submit the form.
+        await actionButton.click();
+
+        // Verify whether a confirmation dialog shows.
+        const confirmationDialog = page.getByRole('dialog', {
+          name: 'Inbox item converted',
+          exact: true,
+        });
+        await expect(confirmationDialog).toBeVisible();
+
+        // Close the confirmation dialog.
+        const closeButton = confirmationDialog.getByRole('button', { name: 'Got it', exact: true });
+        await closeButton.click();
+
+        // Verify whether inbox item was converted to task via absence of conversion button.
+        await expect(confirmationDialog).not.toBeVisible();
+        await expect(page.getByRole('button', { name: `Convert ${content} to task` })).toHaveCount(
+          0,
+        );
+      });
+
+      test("the 'Convert' button stays hidden after a reload", async ({ page }) => {
+        const { actionButton } = getTaskForm(page, 'Convert inbox item', 'Convert');
+
+        // Submit the form.
+        await actionButton.click();
+
+        // Verify whether a confirmation dialog shows.
+        const confirmationDialog = page.getByRole('dialog', {
+          name: 'Inbox item converted',
+          exact: true,
+        });
+        await expect(confirmationDialog).toBeVisible();
+
+        // Close the confirmation dialog.
+        const closeButton = confirmationDialog.getByRole('button', { name: 'Got it', exact: true });
+        await closeButton.click();
+
+        await page.reload();
+
+        // Converted items are hidden from the default 'Unprocessed' view.
+        await page.getByRole('combobox', { name: 'Filter tasks' }).click();
+        await page.getByRole('option', { name: 'Converted', exact: true }).click();
+
+        await expect(page.getByRole('listitem').filter({ hasText: content })).toBeVisible();
+
+        // Verify whether inbox item was converted to task via absence of conversion button.
+        await expect(confirmationDialog).not.toBeVisible();
+        await expect(page.getByRole('button', { name: `Convert ${content} to task` })).toHaveCount(
+          0,
+        );
+      });
+
+      test("the converted task appears on the 'Tasks' page", async ({ page }) => {});
+
+      test('displays an error for an empty task name', async ({ page }) => {});
+    });
+
     test.describe("when the 'Delete inbox item' dialog is open", () => {
       let content: string;
       test.beforeEach(async ({ page }) => {
