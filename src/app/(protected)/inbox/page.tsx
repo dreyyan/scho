@@ -114,7 +114,7 @@ export default function Inbox() {
       });
     } catch (err: unknown) {
       console.error('Failed to edit inbox item: ', err);
-      showErrorModal('inbox item', err, () => handleEditInboxItem(id, data));
+      showErrorModal('Failed to edit inbox item', err, () => handleEditInboxItem(id, data));
     } finally {
       isSubmittingRef.current = false;
     }
@@ -149,7 +149,7 @@ export default function Inbox() {
       });
     } catch (err: unknown) {
       console.error('Failed to convert inbox item: ', err);
-      showErrorModal('inbox item', err, () => handleConvertInboxItem(id, data));
+      showErrorModal('Failed to convert inbox item', err, () => handleConvertInboxItem(id, data));
     } finally {
       isSubmittingRef.current = false;
     }
