@@ -55,7 +55,6 @@ export default function TaskForm({ initialValues, onSubmit }: TaskFormProps) {
 
       setErrors({
         title: fieldErrors.title?.[0],
-        sourceItemId: fieldErrors.sourceItemId?.[0],
         deadline: fieldErrors.deadline?.[0],
       });
 

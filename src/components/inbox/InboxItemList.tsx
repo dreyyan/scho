@@ -96,7 +96,7 @@ export default function InboxItemList({
               canEdit={true}
               canDelete={true}
               onView={() => onView(inboxItem.id)}
-              onConvert={inboxItem.task === null ? () => onConvert(inboxItem.id) : undefined}
+              onConvert={() => onConvert(inboxItem.id)}
               onEdit={() => onEdit(inboxItem.id)}
               onDelete={() => onDelete(inboxItem.id)}
             />
@@ -109,7 +109,7 @@ export default function InboxItemList({
               canEdit={true}
               canDelete={true}
               onView={() => onView(inboxItem.id)}
-              onConvert={inboxItem.task === null ? () => onConvert(inboxItem.id) : undefined}
+              onConvert={() => onConvert(inboxItem.id)}
               onEdit={() => onEdit(inboxItem.id)}
               onDelete={() => onDelete(inboxItem.id)}
             />

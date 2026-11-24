@@ -12,4 +12,6 @@ const TASK_SELECT = {
   createdAt: true,
 } satisfies Prisma.TaskSelect;
 
-export { TASK_SELECT };
+type TaskRecord = Prisma.TaskGetPayload<{ select: typeof TASK_SELECT }>;
+
+export { TASK_SELECT, type TaskRecord };

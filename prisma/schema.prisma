@@ -39,24 +39,21 @@ model InboxItem {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
 
-  user User  @relation(fields: [userId], references: [id])
-  task Task?
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
 
 model Task {
-  id           String    @id @default(uuid()) @db.Uuid
-  userId       String    @db.Uuid
-  sourceItemId String?   @unique @db.Uuid
-  title        String
-  isCompleted  Boolean   @default(false)
-  deadline     DateTime?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id          String    @id @default(uuid()) @db.Uuid
+  userId      String    @db.Uuid
+  title       String
+  isCompleted Boolean   @default(false)
+  deadline    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  user       User       @relation(fields: [userId], references: [id])
-  sourceItem InboxItem? @relation(fields: [sourceItemId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }

@@ -7,6 +7,7 @@ import type {
   UpdateInboxItemFormData,
   UpdateInboxItemResponse,
 } from '@/types/inbox';
+import type { CreateTaskResponse, TaskFormData, TaskResponse } from '@/types/task';
 
 const INBOX_API_URL = `/api/inbox`;
 
@@ -56,10 +57,13 @@ export async function createInboxItem(data: InboxItemFormData): Promise<InboxIte
  *
  * @param id - The ID of the inbox item to edit.
  * @param data - The inbox item data from the form.
- * @returns The response in JSON.
+ * @returns The new task.
  * @throws Error if the request fails.
  */
-export async function editInboxItem(id: string, data: UpdateInboxItemFormData) {
+export async function editInboxItem(
+  id: string,
+  data: UpdateInboxItemFormData,
+): Promise<InboxItemResponse> {
   const response = await fetch(`${INBOX_API_URL}/${id}`, {
     method: 'PATCH',
     headers: {
@@ -77,12 +81,37 @@ export async function editInboxItem(id: string, data: UpdateInboxItemFormData) {
 }
 
 /**
+ ** Sends a POST request to convert the inbox item into a task.
+ *
+ * @param id - The ID of the inbox item to convert.
+ * @param data - The task conversion data from the form.
+ * @returns The response in JSON.
+ * @throws Error if the request fails.
+ */
+export async function convertInboxItem(id: string, data: TaskFormData): Promise<TaskResponse> {
+  const response = await fetch(`${INBOX_API_URL}/${id}/convert`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    await throwApiError(response, 'Failed to convert inbox item.');
+  }
+
+  const result: CreateTaskResponse = await response.json();
+  return result.data.task;
+}
+
+/**
  ** Sends a DELETE request to remove an inbox item.
  *
  * @param id - The ID of the inbox item to delete.
  * @throws Error if the request fails.
  */
-export async function deleteInboxItem(id: string) {
+export async function deleteInboxItem(id: string): Promise<void> {
   const response = await fetch(`${INBOX_API_URL}/${id}`, {
     method: 'DELETE',
   });
