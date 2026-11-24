@@ -5,6 +5,8 @@ import { INBOX_ITEM_SELECT } from '@/lib/selects/inbox';
 import { InboxItemFormData, UpdateInboxItemFormData } from '@/types/inbox';
 import { Prisma } from '@/generated/prisma/client';
 import { getInboxItemType } from '@/lib/utils/inbox';
+import { TaskFormData } from '@/types/task';
+import { TASK_SELECT, TaskRecord } from '@/lib/selects/task';
 
 /**
  * Retrieve the user's inbox item from the database.
@@ -79,6 +81,54 @@ export async function updateInboxItem(
 
     throw err;
   }
+}
+
+/**
+ * Convert a user's inbox item into a task in the database.
+ *
+ * @param userId - The user's ID.
+ * @param inboxItemId - The inbox item's ID.
+ * @param data - The form data for the task to be converted.
+ * @returns The converted task, or null if the inbox item isn't found or isn't owned by the user.
+ */
+export async function convertInboxItem(
+  userId: string,
+  inboxItemId: string,
+  data: TaskFormData,
+): Promise<TaskRecord | null> {
+  const { title, deadline } = data;
+
+  return prisma.$transaction(async (tx) => {
+    // Verify user's inbox item ownership.
+    const inboxItem = await tx.inboxItem.findFirst({
+      where: {
+        id: inboxItemId,
+        userId,
+      },
+    });
+
+    if (!inboxItem) return null;
+
+    // Create task from inbox item.
+    const convertedTask = await tx.task.create({
+      data: {
+        userId,
+        title,
+        deadline,
+      },
+      select: TASK_SELECT,
+    });
+
+    // Delete the inbox item.
+    await tx.inboxItem.delete({
+      where: {
+        id: inboxItemId,
+        userId,
+      },
+    });
+
+    return convertedTask;
+  });
 }
 
 /**
