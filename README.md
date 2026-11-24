@@ -86,7 +86,7 @@ Ensure the following are installed:
 - [x] Wireframe
 - [x] Authentication
 - [x] Page Navigation & Task Management
-- [ ] Quick Capture & Inbox
+- [x] Quick Capture & Inbox
 - [ ] Settings
 - [ ] Dashboard & Polishing
 - [ ] Finalize Software Project Plan
