@@ -9,9 +9,6 @@ const INBOX_ITEM_SELECT = {
   content: true,
   type: true,
   createdAt: true,
-  task: {
-    select: { id: true },
-  },
 } satisfies Prisma.InboxItemSelect;
 
 export { INBOX_ITEM_SELECT };

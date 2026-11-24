@@ -4,12 +4,7 @@ import { NextResponse } from 'next/server';
 import { createTaskSchema } from '@/validations/task';
 import { logger } from '@/lib/logger';
 import { requireUserId } from '@/lib/auth/require-user-id';
-import {
-  createTask,
-  DuplicateSourceItemError,
-  listTasks,
-  SourceItemNotFoundError,
-} from '@/server/task';
+import { createTask, listTasks } from '@/server/task';
 
 /**
  ** GET — Retrieve the user's tasks.
@@ -75,7 +70,6 @@ export async function POST(request: Request) {
   }
 
   try {
-    // TODO: Validate whether InboxItem belongs to the user.
     const task = await createTask(userId, result.data);
 
     return NextResponse.json(
@@ -86,17 +80,6 @@ export async function POST(request: Request) {
       { status: 201 },
     );
   } catch (err: unknown) {
-    if (err instanceof DuplicateSourceItemError) {
-      return NextResponse.json(
-        { error: 'Task with the same inbox item already exists.' },
-        { status: 409 },
-      );
-    }
-
-    if (err instanceof SourceItemNotFoundError) {
-      return NextResponse.json({ error: 'Inbox item not found.' }, { status: 404 });
-    }
-
     // Log unexpected task creation errors.
     logger.error('Task creation failed: ', err);
 

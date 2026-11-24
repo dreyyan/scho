@@ -17,7 +17,7 @@ import useErrorModal from '@/hooks/useErrorModal';
 
 import { InboxItemFormData, UpdateInboxItemFormData } from '@/types/inbox';
 import type { TaskFormData } from '@/types/task';
-import { FILTER_OPTIONS, SORT_OPTIONS, TYPE_OPTIONS } from '@/lib/constants/inbox';
+import { SORT_OPTIONS, TYPE_OPTIONS } from '@/lib/constants/inbox';
 
 export default function Inbox() {
   const { openModal, closeModal, updateModal } = useModal();
@@ -36,10 +36,8 @@ export default function Inbox() {
     search,
     type,
     sort,
-    filter,
     changeSearch,
     changeType,
-    changeFilter,
     changeSort,
     changePage,
     paginatedInboxItems,
@@ -323,11 +321,6 @@ export default function Inbox() {
             value: search,
             onChange: changeSearch,
             placeholder: 'Search for inbox items...',
-          }}
-          filter={{
-            value: filter,
-            onChange: changeFilter,
-            options: FILTER_OPTIONS,
           }}
           sort={{
             value: sort,

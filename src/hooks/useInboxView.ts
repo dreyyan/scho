@@ -1,13 +1,8 @@
 'use client';
 
-import { FILTER_OPTIONS, SORT_OPTIONS, TYPE_OPTIONS, INBOX_PER_PAGE } from '@/lib/constants/inbox';
+import { SORT_OPTIONS, TYPE_OPTIONS, INBOX_PER_PAGE } from '@/lib/constants/inbox';
 import { getVisibleInboxItems, paginate } from '@/lib/utils/inbox';
-import type {
-  InboxItemFilter,
-  InboxItemResponse,
-  InboxItemSort,
-  InboxItemType,
-} from '@/types/inbox';
+import type { InboxItemResponse, InboxItemSort, InboxItemType } from '@/types/inbox';
 import { useState } from 'react';
 
 /**
@@ -21,14 +16,12 @@ export default function useInboxView(inboxItems: InboxItemResponse[]) {
   const [search, setSearch] = useState<string>('');
   const [type, setType] = useState<InboxItemType>(TYPE_OPTIONS[0].value);
   const [sort, setSort] = useState<InboxItemSort>(SORT_OPTIONS[0].value);
-  const [filter, setFilter] = useState<InboxItemFilter>(FILTER_OPTIONS[0].value);
 
   // Retrieve the filtered and sorted inbox items.
   const visibleInboxItems = getVisibleInboxItems(inboxItems, {
     search,
     type,
     sort,
-    filter,
   });
 
   // Calculate pages information.
@@ -53,17 +46,14 @@ export default function useInboxView(inboxItems: InboxItemResponse[]) {
   const changeSearch = resetPageAfter(setSearch);
   const changeType = resetPageAfter(setType);
   const changeSort = resetPageAfter(setSort);
-  const changeFilter = resetPageAfter(setFilter);
 
   return {
     search,
     type,
     sort,
-    filter,
     changeSearch,
     changeType,
     changeSort,
-    changeFilter,
     changePage: setPage,
     paginatedInboxItems,
     visibleInboxItems,

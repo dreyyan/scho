@@ -12,7 +12,7 @@ export function getVisibleInboxItems(
   inboxItems: InboxItemResponse[],
   options: InboxItemViewOptions,
 ): InboxItemResponse[] {
-  const { search, type, filter, sort } = options;
+  const { search, type, sort } = options;
 
   const searchedInboxItems = inboxItems.filter((inboxItem) =>
     inboxItem.content.toLowerCase().includes(search.trim().toLowerCase()),
@@ -29,22 +29,7 @@ export function getVisibleInboxItems(
         return true;
     }
   });
-  const filteredInboxItems = typeFilteredInboxItems.filter((inboxItem) => {
-    switch (filter) {
-      case 'unprocessed':
-        return inboxItem.task === null;
-
-      case 'converted':
-        return inboxItem.task !== null;
-
-      case 'all':
-        return true;
-
-      default:
-        return true;
-    }
-  });
-  const sortedInboxItems = [...filteredInboxItems].sort((a, b) => {
+  const sortedInboxItems = [...typeFilteredInboxItems].sort((a, b) => {
     switch (sort) {
       case 'newest':
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();

@@ -1,4 +1,4 @@
-import { FILTER_OPTIONS, SORT_OPTIONS, TYPE_OPTIONS } from '@/lib/constants/inbox';
+import { SORT_OPTIONS, TYPE_OPTIONS } from '@/lib/constants/inbox';
 import { createInboxItemSchema, updateInboxItemSchema } from '@/validations/inbox';
 import z from 'zod';
 
@@ -28,11 +28,6 @@ export type InboxItemType = (typeof TYPE_OPTIONS)[number]['value'];
 export type InboxItemSort = (typeof SORT_OPTIONS)[number]['value'];
 
 /**
- * Represents an InboxItem's filter type.
- */
-export type InboxItemFilter = (typeof FILTER_OPTIONS)[number]['value'];
-
-/**
  * Represents an InboxItem returned by the backend.
  */
 export interface InboxItemResponse {
@@ -40,7 +35,6 @@ export interface InboxItemResponse {
   content: string;
   type: InboxItemType;
   createdAt: string;
-  task: { id: string } | null;
 }
 
 /**
@@ -79,6 +73,5 @@ export interface UpdateInboxItemResponse {
 export interface InboxItemViewOptions {
   search: string;
   type: InboxItemType;
-  filter: InboxItemFilter;
   sort: InboxItemSort;
 }
