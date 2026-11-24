@@ -1,14 +1,10 @@
 import { z } from 'zod';
+import { emailSchema, passwordSchema } from './common';
 
 const registerSchema = z
   .object({
-    email: z.email({ error: 'Invalid email or password.' }).trim().toLowerCase(),
-    password: z
-      .string()
-      .min(8, 'Password must contain at least 8 characters.')
-      .regex(/[A-Z]/, 'Password must contain at least one uppercase letter.')
-      .regex(/[a-z]/, 'Password must contain at least one lowercase letter.')
-      .regex(/[^A-Za-z0-9]/, 'Password must contain at least one symbol.'),
+    email: emailSchema('Invalid email or password.'),
+    password: passwordSchema,
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -17,7 +13,7 @@ const registerSchema = z
   });
 
 const loginSchema = z.object({
-  email: z.email({ error: 'Invalid email or password.' }).trim().toLowerCase(),
+  email: emailSchema('Invalid email or password.'),
   password: z.string().min(1, 'Invalid email or password.'),
 });
 
