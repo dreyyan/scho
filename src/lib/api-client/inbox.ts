@@ -60,7 +60,10 @@ export async function createInboxItem(data: InboxItemFormData): Promise<InboxIte
  * @returns The new task.
  * @throws Error if the request fails.
  */
-export async function editInboxItem(id: string, data: UpdateInboxItemFormData) {
+export async function editInboxItem(
+  id: string,
+  data: UpdateInboxItemFormData,
+): Promise<InboxItemResponse> {
   const response = await fetch(`${INBOX_API_URL}/${id}`, {
     method: 'PATCH',
     headers: {
@@ -108,7 +111,7 @@ export async function convertInboxItem(id: string, data: TaskFormData): Promise<
  * @param id - The ID of the inbox item to delete.
  * @throws Error if the request fails.
  */
-export async function deleteInboxItem(id: string) {
+export async function deleteInboxItem(id: string): Promise<void> {
   const response = await fetch(`${INBOX_API_URL}/${id}`, {
     method: 'DELETE',
   });
