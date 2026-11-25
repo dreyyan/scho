@@ -36,7 +36,7 @@ export async function getInboxItems(): Promise<InboxItemResponse[]> {
  * @throws Error if the request fails.
  */
 export async function createInboxItem(data: InboxItemFormData): Promise<InboxItemResponse> {
-  const response = await fetch(INBOX_API_URL, {
+  const res = await fetch(INBOX_API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -44,11 +44,11 @@ export async function createInboxItem(data: InboxItemFormData): Promise<InboxIte
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    await throwApiError(response, 'Failed to create InboxItem.');
+  if (!res.ok) {
+    await throwApiError(res, 'Failed to create InboxItem.');
   }
 
-  const result: CreateInboxItemResponse = await response.json();
+  const result: CreateInboxItemResponse = await res.json();
   return result.data.inboxItem;
 }
 
@@ -64,7 +64,7 @@ export async function editInboxItem(
   id: string,
   data: UpdateInboxItemFormData,
 ): Promise<InboxItemResponse> {
-  const response = await fetch(`${INBOX_API_URL}/${id}`, {
+  const res = await fetch(`${INBOX_API_URL}/${id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -72,11 +72,11 @@ export async function editInboxItem(
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    await throwApiError(response, 'Failed to edit inbox item.');
+  if (!res.ok) {
+    await throwApiError(res, 'Failed to edit inbox item.');
   }
 
-  const result: UpdateInboxItemResponse = await response.json();
+  const result: UpdateInboxItemResponse = await res.json();
   return result.data.inboxItem;
 }
 
@@ -89,7 +89,7 @@ export async function editInboxItem(
  * @throws Error if the request fails.
  */
 export async function convertInboxItem(id: string, data: TaskFormData): Promise<TaskResponse> {
-  const response = await fetch(`${INBOX_API_URL}/${id}/convert`, {
+  const res = await fetch(`${INBOX_API_URL}/${id}/convert`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -97,11 +97,11 @@ export async function convertInboxItem(id: string, data: TaskFormData): Promise<
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    await throwApiError(response, 'Failed to convert inbox item.');
+  if (!res.ok) {
+    await throwApiError(res, 'Failed to convert inbox item.');
   }
 
-  const result: CreateTaskResponse = await response.json();
+  const result: CreateTaskResponse = await res.json();
   return result.data.task;
 }
 
@@ -112,11 +112,11 @@ export async function convertInboxItem(id: string, data: TaskFormData): Promise<
  * @throws Error if the request fails.
  */
 export async function deleteInboxItem(id: string): Promise<void> {
-  const response = await fetch(`${INBOX_API_URL}/${id}`, {
+  const res = await fetch(`${INBOX_API_URL}/${id}`, {
     method: 'DELETE',
   });
 
-  if (!response.ok) {
-    await throwApiError(response, 'Failed to delete inbox item.');
+  if (!res.ok) {
+    await throwApiError(res, 'Failed to delete inbox item.');
   }
 }
