@@ -1,13 +1,14 @@
 'use client';
 
 import * as inboxItemApi from '@/lib/api-client/inbox';
+import { logger } from '@/lib/logger';
 import { getErrorMessage } from '@/lib/utils/error';
 import type { InboxItemFormData, InboxItemResponse, UpdateInboxItemFormData } from '@/types/inbox';
 import type { TaskFormData } from '@/types/task';
 import { useEffect, useState } from 'react';
 
 /**
- * Provides access to InboxItem operations.
+ * Provides access to Inbox item operations.
  *
  * @returns The user's inbox items, loading and error state, and retry function.
  */
@@ -27,7 +28,7 @@ export default function useInboxItems() {
         if (!ignore) setInboxItems(fetchedInboxItems);
       } catch (err: unknown) {
         if (!ignore) {
-          console.error('Failed to retrieve inbox items: ', err);
+          logger.error('Failed to retrieve inbox items: ', err);
           setError(getErrorMessage(err));
         }
       } finally {

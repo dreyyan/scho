@@ -1,6 +1,7 @@
 'use client';
 
 import * as taskApi from '@/lib/api-client/task';
+import { logger } from '@/lib/logger';
 import { getErrorMessage } from '@/lib/utils/error';
 import type { TaskFormData, TaskResponse, UpdateTaskFormData } from '@/types/task';
 import { useEffect, useState } from 'react';
@@ -26,7 +27,7 @@ export default function useTasks() {
         if (!ignore) setTasks(fetchedTasks);
       } catch (err: unknown) {
         if (!ignore) {
-          console.error('Failed to retrieve tasks: ', err);
+          logger.error('Failed to retrieve tasks: ', err);
           setError(getErrorMessage(err));
         }
       } finally {
