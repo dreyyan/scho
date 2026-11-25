@@ -13,7 +13,7 @@ import { TASKS_API_URL } from '../constants/task';
 /**
  ** Sends a GET request to retrieve the user's tasks.
  *
- * @returns The user's tasks in JSON.
+ * @returns The user's tasks.
  * @throws Error if the request fails.
  */
 export async function getTasks(): Promise<TaskResponse[]> {
@@ -31,7 +31,7 @@ export async function getTasks(): Promise<TaskResponse[]> {
  ** Sends a POST request to create a new task.
  *
  * @param data - The task data from the form.
- * @returns The response in JSON.
+ * @returns The created task.
  * @throws Error if the request fails.
  */
 export async function createTask(data: TaskFormData): Promise<TaskResponse> {
@@ -56,7 +56,7 @@ export async function createTask(data: TaskFormData): Promise<TaskResponse> {
  *
  * @param id - The ID of the task to edit.
  * @param data - The task data from the form.
- * @returns The response in JSON.
+ * @returns The edited task.
  * @throws Error if the request fails.
  */
 export async function editTask(id: string, data: UpdateTaskFormData) {

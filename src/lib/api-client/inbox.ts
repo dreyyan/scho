@@ -14,7 +14,7 @@ const INBOX_API_URL = `/api/inbox`;
 /**
  ** Sends a GET request to retrieve the user's inbox items.
  *
- * @returns The user's inbox items in JSON.
+ * @returns The user's inbox items.
  * @throws Error if the request fails.
  */
 export async function getInboxItems(): Promise<InboxItemResponse[]> {
@@ -32,7 +32,7 @@ export async function getInboxItems(): Promise<InboxItemResponse[]> {
  ** Sends a POST request to create a new inbox item.
  *
  * @param data - The inbox item data from the form.
- * @returns The response in JSON.
+ * @returns The created inbox item.
  * @throws Error if the request fails.
  */
 export async function createInboxItem(data: InboxItemFormData): Promise<InboxItemResponse> {
@@ -57,7 +57,7 @@ export async function createInboxItem(data: InboxItemFormData): Promise<InboxIte
  *
  * @param id - The ID of the inbox item to edit.
  * @param data - The inbox item data from the form.
- * @returns The new task.
+ * @returns The updated inbox item.
  * @throws Error if the request fails.
  */
 export async function editInboxItem(
@@ -85,7 +85,7 @@ export async function editInboxItem(
  *
  * @param id - The ID of the inbox item to convert.
  * @param data - The task conversion data from the form.
- * @returns The response in JSON.
+ * @returns The converted task.
  * @throws Error if the request fails.
  */
 export async function convertInboxItem(id: string, data: TaskFormData): Promise<TaskResponse> {
