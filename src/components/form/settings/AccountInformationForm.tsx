@@ -1,21 +1,25 @@
 import React, { useState } from 'react';
+import { z } from 'zod';
+
+import Button from '@/components/ui/Button';
 import InputField from '../../ui/InputField';
+
 import {
   AccountInformationFormData,
   AccountInformationFormErrors,
   AccountInformationResponse,
 } from '@/types/settings';
 import { accountInformationSchema } from '@/validations/settings';
-import { z } from 'zod';
-import Button from '@/components/ui/Button';
 
 interface AccountInformationFormProps {
   initialValues: AccountInformationResponse;
+  isSubmitting: boolean;
   onSubmit: (data: AccountInformationFormData) => void;
 }
 
 export default function AccountInformationForm({
   initialValues,
+  isSubmitting,
   onSubmit,
 }: AccountInformationFormProps) {
   const [data, setData] = useState<AccountInformationFormData>({
@@ -91,7 +95,12 @@ export default function AccountInformationForm({
       />
       <div className='flex justify-end mt-3'>
         <div className='w-32'>
-          <Button label='Save Changes' variant='primary' type='submit' disabled={!hasChanges} />
+          <Button
+            label={isSubmitting ? 'Saving...' : 'Save Changes'}
+            variant='primary'
+            type='submit'
+            disabled={!hasChanges || isSubmitting}
+          />
         </div>
       </div>
     </form>
