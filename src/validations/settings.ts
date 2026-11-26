@@ -21,7 +21,7 @@ const changePasswordSchema = z
     path: ['confirmPassword'],
   })
   .refine((data) => data.newPassword !== data.currentPassword, {
-    message: 'New password is the same as current password.',
+    message: 'New password cannot be the same as current password.',
     path: ['newPassword'],
   });
 
