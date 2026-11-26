@@ -9,8 +9,10 @@ import useAccountInformation from '@/hooks/useAccountInformation';
 import AccountInformationForm from '@/components/form/settings/AccountInformationForm';
 import EmptyState from '@/components/ui/EmptyState';
 
-import { AccountInformationFormData } from '@/types/settings';
+import { AccountInformationFormData, ChangePasswordFormData } from '@/types/settings';
 import { Loader2 } from 'lucide-react';
+import ChangePasswordForm from '@/components/form/settings/ChangePasswordForm';
+import { changePassword } from '@/lib/api-client/settings';
 
 export default function Settings() {
   const { openModal, closeModal } = useModal();
@@ -18,14 +20,19 @@ export default function Settings() {
   const { accountInformation, isLoading, error, retry, updateAccountInformation } =
     useAccountInformation();
 
-  const isSubmittingRef = useRef<boolean>(false);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [passwordFormKey, setPasswordFormKey] = useState<number>(0);
+
+  const isSubmittingAccountInformationRef = useRef<boolean>(false);
+  const [isSubmittingAccountInformation, setIsSubmittingAccountInformation] =
+    useState<boolean>(false);
+  const isSubmittingChangePasswordRef = useRef<boolean>(false);
+  const [isSubmittingChangePassword, setIsSubmittingChangePassword] = useState<boolean>(false);
 
   const handleUpdateAccountInformation = async (data: AccountInformationFormData) => {
-    if (isSubmittingRef.current) return;
+    if (isSubmittingAccountInformationRef.current) return;
 
-    isSubmittingRef.current = true;
-    setIsSubmitting(true);
+    isSubmittingAccountInformationRef.current = true;
+    setIsSubmittingAccountInformation(true);
 
     try {
       await updateAccountInformation(data);
@@ -46,25 +53,50 @@ export default function Settings() {
         handleUpdateAccountInformation(data),
       );
     } finally {
-      isSubmittingRef.current = false;
-      setIsSubmitting(false);
+      isSubmittingAccountInformationRef.current = false;
+      setIsSubmittingAccountInformation(false);
+    }
+  };
+
+  const handleChangePassword = async (data: ChangePasswordFormData) => {
+    if (isSubmittingChangePasswordRef.current) return;
+
+    isSubmittingChangePasswordRef.current = true;
+    setIsSubmittingChangePassword(true);
+
+    try {
+      await changePassword(data);
+      setPasswordFormKey((prev) => prev + 1);
+
+      openModal({
+        variant: 'success',
+        title: 'Password changed',
+        description: 'Your password has been successfully changed!',
+        primaryAction: {
+          label: 'Got it',
+          type: 'button',
+          onClick: () => closeModal(),
+        },
+      });
+    } catch (err: unknown) {
+      console.error('Failed to change password: ', err);
+      showErrorModal('Failed to change password', err, () => handleChangePassword(data));
+    } finally {
+      isSubmittingChangePasswordRef.current = false;
+      setIsSubmittingChangePassword(false);
     }
   };
 
   if (isLoading) {
     return (
-      <EmptyState
-        description='Loading account information...'
-        icon={Loader2}
-        iconClassName='animate-spin'
-      />
+      <EmptyState description='Loading settings...' icon={Loader2} iconClassName='animate-spin' />
     );
   }
 
   if (error) {
     return (
       <EmptyState
-        title='Failed to load account information'
+        title='Failed to load settings'
         description={error}
         variant='error'
         action={{
@@ -95,10 +127,15 @@ export default function Settings() {
       >
         <AccountInformationForm
           initialValues={accountInformation}
-          isSubmitting={isSubmitting}
+          isSubmitting={isSubmittingAccountInformation}
           onSubmit={handleUpdateAccountInformation}
         />
         <hr className='text-gray-400' />
+        <ChangePasswordForm
+          key={passwordFormKey}
+          isSubmitting={isSubmittingChangePassword}
+          onSubmit={handleChangePassword}
+        />
       </main>
     </div>
   );
