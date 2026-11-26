@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import InputField from '../../ui/InputField';
-import { AccountInformationFormData, AccountInformationFormErrors } from '@/types/settings';
+import {
+  AccountInformationFormData,
+  AccountInformationFormErrors,
+  AccountInformationResponse,
+} from '@/types/settings';
 import { accountInformationSchema } from '@/validations/settings';
 import { z } from 'zod';
 import Button from '@/components/ui/Button';
 
 interface AccountInformationFormProps {
-  initialValues: AccountInformationFormData;
+  initialValues: AccountInformationResponse;
   onSubmit: (data: AccountInformationFormData) => void;
 }
 
@@ -14,14 +18,18 @@ export default function AccountInformationForm({
   initialValues,
   onSubmit,
 }: AccountInformationFormProps) {
-  const [data, setData] = useState<AccountInformationFormData>(initialValues);
+  const [data, setData] = useState<AccountInformationFormData>({
+    name: initialValues.name || '',
+    email: initialValues.email || '',
+  });
 
   const [errors, setErrors] = useState<AccountInformationFormErrors>({
     name: '',
     email: '',
   });
 
-  const hasChanges = data.name !== initialValues.name || data.email !== initialValues.email;
+  const hasChanges =
+    data.name !== (initialValues.name || '') || data.email !== (initialValues.email || '');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
