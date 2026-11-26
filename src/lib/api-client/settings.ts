@@ -2,11 +2,12 @@ import { throwApiError } from '../utils/api';
 import type {
   AccountInformationFormData,
   AccountInformationResponse,
+  ChangePasswordFormData,
   GetAccountInformationResponse,
   UpdateAccountInformationResponse,
 } from '@/types/settings';
 
-import { SETTINGS_API_URL } from '../constants/settings';
+import { SETTINGS_API_URL, PASSWORD_API_URL } from '../constants/settings';
 
 /**
  ** Sends a GET request to retrieve the user's account information.
@@ -49,4 +50,24 @@ export async function updateAccountInformation(
 
   const result: UpdateAccountInformationResponse = await res.json();
   return result.data.accountInformation;
+}
+
+/**
+ ** Sends a PATCH request to change the user's password.
+ *
+ * @param data - The user's change password data from the form.
+ * @throws Error if the request fails.
+ */
+export async function changePassword(data: ChangePasswordFormData): Promise<void> {
+  const res = await fetch(PASSWORD_API_URL, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    await throwApiError(res, 'Failed to change password.');
+  }
 }
