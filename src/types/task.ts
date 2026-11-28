@@ -1,6 +1,6 @@
 import { FILTER_OPTIONS, SORT_OPTIONS, STATUS_OPTIONS } from '@/lib/constants/task';
 import { createTaskSchema, updateTaskSchema } from '@/validations/task';
-import z from 'zod';
+import { z } from 'zod';
 
 /**
  * Represents the task form's input data.

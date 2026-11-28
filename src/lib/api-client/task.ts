@@ -13,7 +13,7 @@ import { TASKS_API_URL } from '../constants/task';
 /**
  ** Sends a GET request to retrieve the user's tasks.
  *
- * @returns The user's tasks in JSON.
+ * @returns The user's tasks.
  * @throws Error if the request fails.
  */
 export async function getTasks(): Promise<TaskResponse[]> {
@@ -31,11 +31,11 @@ export async function getTasks(): Promise<TaskResponse[]> {
  ** Sends a POST request to create a new task.
  *
  * @param data - The task data from the form.
- * @returns The response in JSON.
+ * @returns The created task.
  * @throws Error if the request fails.
  */
 export async function createTask(data: TaskFormData): Promise<TaskResponse> {
-  const response = await fetch(TASKS_API_URL, {
+  const res = await fetch(TASKS_API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -43,11 +43,11 @@ export async function createTask(data: TaskFormData): Promise<TaskResponse> {
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    await throwApiError(response, 'Failed to create task.');
+  if (!res.ok) {
+    await throwApiError(res, 'Failed to create task.');
   }
 
-  const result: CreateTaskResponse = await response.json();
+  const result: CreateTaskResponse = await res.json();
   return result.data.task;
 }
 
@@ -56,11 +56,11 @@ export async function createTask(data: TaskFormData): Promise<TaskResponse> {
  *
  * @param id - The ID of the task to edit.
  * @param data - The task data from the form.
- * @returns The response in JSON.
+ * @returns The edited task.
  * @throws Error if the request fails.
  */
 export async function editTask(id: string, data: UpdateTaskFormData) {
-  const response = await fetch(`${TASKS_API_URL}/${id}`, {
+  const res = await fetch(`${TASKS_API_URL}/${id}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',
@@ -68,11 +68,11 @@ export async function editTask(id: string, data: UpdateTaskFormData) {
     body: JSON.stringify(data),
   });
 
-  if (!response.ok) {
-    await throwApiError(response, 'Failed to edit task.');
+  if (!res.ok) {
+    await throwApiError(res, 'Failed to edit task.');
   }
 
-  const result: UpdateTaskResponse = await response.json();
+  const result: UpdateTaskResponse = await res.json();
   return result.data.task;
 }
 
@@ -83,11 +83,11 @@ export async function editTask(id: string, data: UpdateTaskFormData) {
  * @throws Error if the request fails.
  */
 export async function deleteTask(id: string) {
-  const response = await fetch(`${TASKS_API_URL}/${id}`, {
+  const res = await fetch(`${TASKS_API_URL}/${id}`, {
     method: 'DELETE',
   });
 
-  if (!response.ok) {
-    await throwApiError(response, 'Failed to delete task.');
+  if (!res.ok) {
+    await throwApiError(res, 'Failed to delete task.');
   }
 }

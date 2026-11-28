@@ -35,7 +35,7 @@ export default function TaskForm({ initialValues, onSubmit }: TaskFormProps) {
     }));
   };
 
-  const handleSubmit = (event: React.ChangeEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     // Build the payload.
