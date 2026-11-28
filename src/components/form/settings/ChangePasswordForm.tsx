@@ -24,6 +24,8 @@ export default function ChangePasswordForm({ isSubmitting, onSubmit }: ChangePas
     confirmPassword: '',
   });
 
+  const canSaveChanges = Boolean(data.currentPassword && data.newPassword && data.confirmPassword);
+
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     const field = name as keyof ChangePasswordFormData;
@@ -101,7 +103,7 @@ export default function ChangePasswordForm({ isSubmitting, onSubmit }: ChangePas
             label={isSubmitting ? 'Saving...' : 'Save Changes'}
             variant='primary'
             type='submit'
-            disabled={isSubmitting}
+            disabled={isSubmitting || !canSaveChanges}
           />
         </div>
       </div>
